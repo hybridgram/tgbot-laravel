@@ -1,0 +1,59 @@
+#!/usr/bin/env php
+<?php
+
+/**
+ * Telegram Hook - запускает Go-бинарник для обработки webhook'ов Telegram
+ * 
+ * Этот скрипт находит .env файл Laravel проекта и передает его путь в бинарник
+ */
+
+// Получаем путь к директории пакета (где находится этот скрипт)
+$packageDir = __DIR__ . '/../';
+$binaryPath = $packageDir . 'src/Core/Processing/resources/main';
+
+// Проверяем существование бинарника
+if (!file_exists($binaryPath) || !is_executable($binaryPath)) {
+    fwrite(STDERR, "Error: Binary not found or not executable: {$binaryPath}\n");
+    exit(1);
+}
+
+// Находим .env файл Laravel проекта
+// Ищем в текущей рабочей директории и поднимаемся вверх по дереву
+$envPath = null;
+$currentDir = getcwd() ?: __DIR__;
+
+// Проверяем текущую директорию и родительские директории
+$searchDirs = [$currentDir];
+$parent = dirname($currentDir);
+while ($parent !== $currentDir && $parent !== '/') {
+    $searchDirs[] = $parent;
+    $currentDir = $parent;
+    $parent = dirname($parent);
+}
+
+foreach ($searchDirs as $dir) {
+    $envFile = $dir . '/.env';
+    if (file_exists($envFile) && is_readable($envFile)) {
+        $envPath = $envFile;
+        break;
+    }
+}
+
+if ($envPath === null) {
+    fwrite(STDERR, "Error: .env file not found. Please run this command from Laravel project root.\n");
+    exit(1);
+}
+
+// Запускаем бинарник с путем к .env файлу
+$command = escapeshellarg($binaryPath) . ' ' . escapeshellarg($envPath);
+
+// Передаем все аргументы командной строки в бинарник
+if ($argc > 1) {
+    $args = array_slice($argv, 1);
+    $command .= ' ' . implode(' ', array_map('escapeshellarg', $args));
+}
+
+// Выполняем команду
+passthru($command, $exitCode);
+exit($exitCode);
+

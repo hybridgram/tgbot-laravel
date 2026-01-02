@@ -1,0 +1,6 @@
+<?php
+TelegramRouter::group(['for_bot' => 'main'], function (\HybridGram\Core\Routing\TelegramRouteBuilder $builder) {
+    $builder->onCommand(function(\HybridGram\Core\Routing\RouteData\CommandData $command) {
+        logger("Received command: $command->command");
+    }, pattern: '/start');
+});

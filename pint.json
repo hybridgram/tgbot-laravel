@@ -1,0 +1,18 @@
+{
+  "preset": "laravel",
+  "rules": {
+    "declare_strict_types": true,
+    "strict_comparison": true,
+    "strict_param": true,
+    "final_class": true,
+    "mb_str_functions": true,
+    "fully_qualified_strict_types": true
+  },
+  "ordered_imports": {
+    "sort_algorithm": "alpha"
+  },
+  "no_useless_else": true,
+  "exclude": [
+    "vendor/"
+  ]
+}
