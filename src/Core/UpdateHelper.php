@@ -25,7 +25,6 @@ final class UpdateHelper
             ?? $update->editedBusinessMessage?->chat
             ?? $update->messageReaction?->chat
             ?? $update->messageReactionCount?->chat
-            ?? $update->inlineQuery?->chat
             ?? $update->chosenInlineResult?->chat
             ?? $update->shippingQuery?->chat
             ?? $update->preCheckoutQuery?->chat
@@ -100,11 +99,11 @@ final class UpdateHelper
         if ($update->preCheckoutQuery !== null) {
             return UpdateTypeEnum::PRE_CHECKOUT_QUERY;
         }
-        if ($update->poll !== null) {
-            return UpdateTypeEnum::POLL_CLOSED;
-        }
         if ($update->pollAnswer !== null) {
             return UpdateTypeEnum::POLL_ANSWER;
+        }
+        if ($update->poll !== null) {
+            return UpdateTypeEnum::POLL_CLOSED;
         }
         if ($update->message?->poll !== null) {
             return UpdateTypeEnum::POLL;

@@ -359,6 +359,16 @@ it('can use onAny in group', function () {
     expect(true)->toBeTrue();
 });
 
+it('can use onInlineQuery in group', function () {
+    TelegramRouter::group(['for_bot' => 'main_bot', 'from_state' => 'state'], function (TelegramRouteBuilder $builder) {
+        $builder->onInlineQuery(function (HybridGram\Core\Routing\RouteData\InlineQueryData $inlineQueryData) {
+            logger()->info("inline query received", ['query' => $inlineQueryData->inlineQuery->query]);
+        });
+    });
+
+    expect(true)->toBeTrue();
+});
+
 it('can use onFallback in group', function () {
     TelegramRouter::group(['for_bot' => 'main_bot', 'from_state' => 'state'], function (TelegramRouteBuilder $builder) {
         $builder->onFallback(function (HybridGram\Core\Routing\RouteData\FallbackData $fallbackData) {

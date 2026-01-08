@@ -19,6 +19,7 @@ use Phptg\BotApi\Type\ExternalReplyInfo;
 use Phptg\BotApi\Type\ForumTopicCreated;
 use Phptg\BotApi\Type\Game\Game;
 use Phptg\BotApi\Type\GeneralForumTopicHidden;
+use Phptg\BotApi\Type\Inline\InlineQuery;
 use Phptg\BotApi\Type\MessageOriginUser;
 use Phptg\BotApi\Type\Message;
 use Phptg\BotApi\Type\MessageAutoDeleteTimerChanged;
@@ -954,6 +955,29 @@ test('onAny routes correctly', function () {
     $route = app(HybridGram\Core\Routing\TelegramRouter::class)->resolveActionsByUpdate($update, 'main_bot');
     expect($route)->toBeInstanceOf(TelegramRoute::class);
     expect($route->type)->toBe(RouteType::ANY);
+});
+
+test('onInlineQuery routes correctly', function () {
+    TelegramRouter::forBot('main_bot')
+        ->onInlineQuery(function (HybridGram\Core\Routing\RouteData\InlineQueryData $inlineQueryData) {
+            return 'inline_query_handler';
+        });
+
+    $user = new User(1, false, 'TestUser');
+    $inlineQuery = new InlineQuery(
+        id: 'test_query_id',
+        from: $user,
+        query: 'test query',
+        offset: ''
+    );
+    $update = new Update(
+        updateId: 1,
+        inlineQuery: $inlineQuery
+    );
+
+    $route = app(HybridGram\Core\Routing\TelegramRouter::class)->resolveActionsByUpdate($update, 'main_bot');
+    expect($route)->toBeInstanceOf(TelegramRoute::class);
+    expect($route->type)->toBe(RouteType::INLINE_QUERY);
 });
 
 test('onFallback routes correctly', function () {

@@ -94,9 +94,11 @@ final class TelegramRouter
                     $telegram = App::make(TelegramBotApi::class, ['botId' => $fallbackData->botId]);
                     $chatStateData = json_encode($state->chatState?->getData() ?? []);
                     $userStateData = json_encode($state->userState?->getData() ?? []);
-                    $telegram->sendMessage($chat->id,
-                        "Fallback route has been called. User: {$fallbackData->getUser()->id} User state: {$state->userState?->getName()} data: $userStateData Chat: {$fallbackData->getChat()->id} Chat state: {$state->chatState?->getName()} data: $chatStateData"
-                    );
+                    if ($chat) {
+                        $telegram->sendMessage($chat->id,
+                            "Fallback route has been called. User: {$fallbackData->getUser()->id} User state: {$state->userState?->getName()} data: $userStateData Chat: {$fallbackData->getChat()->id} Chat state: {$state->chatState?->getName()} data: $chatStateData"
+                        );
+                    }
                 }
             },
             data: new FallbackData($update, $botId)
@@ -279,11 +281,11 @@ final class TelegramRouter
             ->onMessage($action, $pattern);
     }
 
-    public function onCommand(callable|string|array $action, string $botId = '*', string|callable|null $pattern = null): void
+    public function onCommand(callable|string|array $action, string $botId = '*', string|callable|null $pattern = null, ?\Closure $commandParamOptions = null): void
     {
         new TelegramRouteBuilder()
             ->forBot($botId)
-            ->onCommand($action, $pattern);
+            ->onCommand($action, $pattern, $commandParamOptions);
     }
 
 

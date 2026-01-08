@@ -20,7 +20,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static void onVoice(array|string|\Closure $action, string $botId = '*', \Closure|string|null $pattern = null)
  * @method static void onStory(array|string|\Closure $action, string $botId = '*', \Closure|string|null $pattern = null)
  * @method static void onPaidMedia(array|string|\Closure $action, string $botId = '*', \Closure|string|null $pattern = null)
- * @method static void onCommand(array|string|\Closure $action, string $botId = '*', \Closure|string|null $pattern = null)
+ * @method static void onCommand(array|string|\Closure $action, string $botId = '*', \Closure|string|null $pattern = null, ?\Closure $commandParamOptions = null)
  * @method static void onDocument(array|string|\Closure $action, string $botId = '*', \Closure|string|null $pattern = null, ?array<MimeType|string> $documentOptions = null)
  * @method static void onLocation(array|string|\Closure $action, string $botId = '*')
  * @method static void onMessage(array|string|\Closure $action, string $botId = '*', \Closure|string|null $pattern = null)
@@ -52,6 +52,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static void onGeneralForumTopicEvent(array|string|\Closure $action, string $botId = '*')
  * @method static void onBoostAdded(array|string|\Closure $action, string $botId = '*')
  * @method static void onCallbackQuery(array|string|\Closure $action, string $botId = '*', \Closure|string|null $pattern = null, ?array<string, string|null>|array<int, \HybridGram\Core\Routing\RouteOptions\QueryParams\QueryParamInterface> $queryParams = null)
+ * @method static void onInlineQuery(array|string|\Closure $action, string $botId = '*', \Closure|string|null $pattern = null)
  * @method static void onAny(array|string|\Closure $action, string $botId = '*')
  * @method static void onFallback(array|string|\Closure $action, string $botId = '*')
  *

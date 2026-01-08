@@ -25,6 +25,7 @@ use HybridGram\Core\Routing\RouteData\FallbackData;
 use HybridGram\Core\Routing\RouteData\ForumTopicEventData;
 use HybridGram\Core\Routing\RouteData\GameData;
 use HybridGram\Core\Routing\RouteData\GeneralForumTopicEventData;
+use HybridGram\Core\Routing\RouteData\InlineQueryData;
 use HybridGram\Core\Routing\RouteData\InvoiceData;
 use HybridGram\Core\Routing\RouteData\LeftChatMemberData;
 use HybridGram\Core\Routing\RouteData\LocationData;
@@ -37,6 +38,7 @@ use HybridGram\Core\Routing\RouteData\PassportData;
 use HybridGram\Core\Routing\RouteData\PhotoData;
 use HybridGram\Core\Routing\RouteData\PhotoMediaGroupData;
 use HybridGram\Core\Routing\RouteData\PinnedMessageData;
+use HybridGram\Core\Routing\RouteData\PollAnswerData;
 use HybridGram\Core\Routing\RouteData\PollClosedData;
 use HybridGram\Core\Routing\RouteData\PollData;
 use HybridGram\Core\Routing\RouteData\QuoteData;
@@ -87,6 +89,7 @@ final class TelegramRoute
         public ?RouteDataInterface        $data = null, // todo может private?
         /** @var array<int, QueryParamInterface>|null */
         public ?array            $callbackQueryOptions = null,
+        public ?\Closure $commandParamOptions = null,
     ) {
         $this->router = App::get(TelegramRouter::class);
     }
@@ -109,7 +112,7 @@ final class TelegramRoute
             RouteType::DOCUMENT => $this->matchesDocument($update),
             RouteType::POLL => $this->matchesPoll($update),
             RouteType::POLL_CLOSED => $this->matchesPollClosed($update),
-            RouteType::POLL_ANSWER => throw new \Exception('To be implemented'), // todo доделать
+            RouteType::POLL_ANSWER => $this->matchesPollAnswer($update),
             RouteType::PHOTO => $this->matchesPhoto($update),
             RouteType::PHOTO_MEDIA_GROUP => $this->matchesPhotoMediaGroup($update),
             RouteType::VENUE => $this->matchesVenue($update),
@@ -150,7 +153,7 @@ final class TelegramRoute
             RouteType::PRE_CHECKOUT_QUERY => throw new \Exception('To be implemented'),
             RouteType::SUCCESSFULLY_PAYMENT => throw new \Exception('To be implemented'),
             RouteType::PASSPORT_DATE => throw new \Exception('To be implemented'),
-            RouteType::INLINE_QUERY => throw new \Exception('To be implemented'),
+            RouteType::INLINE_QUERY => $this->matchesInlineQuery($update),
             RouteType::CHOSEN_INLINE_RESULT => throw new \Exception('To be implemented'),
             RouteType::CHANNEL_POST => throw new \Exception('To be implemented'),
             RouteType::EDITED_CHANNEL_POST => throw new \Exception('To be implemented'),
@@ -428,10 +431,7 @@ final class TelegramRoute
         }
 
         if (is_callable($this->pattern)) {
-            if (call_user_func($this->pattern, $update->message->replyToMessage)) {
-                return new ReplyData($update, $update->message->replyToMessage, $this->botId);
-            }
-            return null;
+           return new ReplyData($update, $update->message->replyToMessage, $this->botId);
         }
 
         if (is_string($this->pattern) && !is_null($update->message->text)) {
@@ -458,10 +458,7 @@ final class TelegramRoute
         }
 
         if (is_callable($this->pattern)) {
-            if (call_user_func($this->pattern, $update->message->externalReply)) {
-                return new ExternalReplyData($update, $update->message->externalReply, $this->botId);
-            }
-            return null;
+            return new ExternalReplyData($update, $update->message->externalReply, $this->botId);
         }
 
         return null;
@@ -482,10 +479,7 @@ final class TelegramRoute
         }
 
         if (is_callable($this->pattern)) {
-            if (call_user_func($this->pattern, $update->message->quote)) {
-                return new QuoteData($update, $update->message->quote, $this->botId);
-            }
-            return null;
+            return new QuoteData($update, $update->message->quote, $this->botId);
         }
 
         if (is_string($this->pattern) && Str::is($this->pattern, $update->message->quote->text)) {
@@ -510,10 +504,7 @@ final class TelegramRoute
         }
 
         if (is_callable($this->pattern)) {
-            if (call_user_func($this->pattern, $update->message->replyToStory)) {
-                return new ReplyToStoryData($update, $update->message->replyToStory, $this->botId);
-            }
-            return null;
+            return new ReplyToStoryData($update, $update->message->replyToStory, $this->botId);
         }
 
         if (is_string($this->pattern) && !is_null($update->message->text)) {
@@ -776,10 +767,40 @@ final class TelegramRoute
             return null;
         }
 
+        // Извлекаем команду (без '/' и параметров)
         $command = explode(' ', $text)[0];
         $command = mb_substr($command, 1);
 
-        if (preg_replace('/\//', '', $this->pattern, 1) === $command) {
+        // Если pattern === '*' или null, матчим любую команду
+        if (is_null($this->pattern) || $this->pattern === '*') {
+            return new CommandData($update, $command, $this->botId, $this->extractCommandArguments($text));
+        }
+
+        // Нормализуем паттерн (убираем '/' если есть)
+        $pattern = is_string($this->pattern) ? ltrim($this->pattern, '/') : $this->pattern;
+
+        // Если паттерн - замыкание, проверяем через него
+        if (is_callable($pattern)) {
+            if (! call_user_func($pattern, $update)) {
+                return null;
+            }
+            return new CommandData($update, $command, $this->botId, $this->extractCommandArguments($text));
+        }
+
+        // Сравниваем команду с паттерном (поддерживаем wildcards через Str::is)
+        if (Str::is($pattern, $command)) {
+            // Если есть commandParamOptions, проверяем параметры команды
+            if (! is_null($this->commandParamOptions)) {
+                $result = call_user_func($this->commandParamOptions, $update, $this->extractCommandArguments($text));
+                if ($result === false || $result === null) {
+                    return null;
+                }
+                // Если commandParamOptions возвращает CommandData, используем его
+                if ($result instanceof CommandData) {
+                    return $result;
+                }
+            }
+            
             return new CommandData($update, $command, $this->botId, $this->extractCommandArguments($text));
         }
 
@@ -856,6 +877,25 @@ final class TelegramRoute
         return new PollClosedData($update, $update->poll, $this->botId);
     }
 
+    protected function matchesPollAnswer(Update $update): ?PollAnswerData
+    {
+        if (is_null($update->pollAnswer)) {
+            return null;
+        }
+
+        // Note: PollAnswer doesn't contain the full Poll object, only pollId
+        // So we can't filter by pollType or isAnonymous from PollAnswer directly
+        // Pattern matching can still be used if needed via callable pattern
+
+        if (is_callable($this->pattern)) {
+            if (! call_user_func($this->pattern, $update, $update->pollAnswer)) {
+                return null;
+            }
+        }
+
+        return new PollAnswerData($update, $update->pollAnswer, $this->botId);
+    }
+
     public function matchesCallbackQuery(Update $update): ?CallbackQueryData
     {
         if (is_null($update->callbackQuery)) {
@@ -888,6 +928,29 @@ final class TelegramRoute
         }
 
         return new CallbackQueryData($update, $parsed->action, $parsed->params, $update->callbackQuery, $this->botId);
+    }
+
+    protected function matchesInlineQuery(Update $update): ?InlineQueryData
+    {
+        if (is_null($update->inlineQuery)) {
+            return null;
+        }
+
+        $query = $update->inlineQuery->query ?? '';
+
+        if (is_callable($this->pattern)) {
+            return new InlineQueryData($update, $update->inlineQuery, $this->botId);
+        }
+
+        if (is_null($this->pattern) || $this->pattern === '*') {
+            return new InlineQueryData($update, $update->inlineQuery, $this->botId);
+        }
+
+        if (is_string($this->pattern) && Str::is($this->pattern, $query)) {
+            return new InlineQueryData($update, $update->inlineQuery, $this->botId);
+        }
+
+        return null;
     }
 
     protected function extractCommandArguments(string $text): array

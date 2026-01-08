@@ -1,5 +1,5 @@
 {
-    "name": "polopolaw/laravel-hybrid-telegram",
+    "name": "hybridgram/tgbot-laravel",
     "description": "Super fast package for Laravel to build Telegram bots powered by Go",
     "keywords": [
         "telegram",

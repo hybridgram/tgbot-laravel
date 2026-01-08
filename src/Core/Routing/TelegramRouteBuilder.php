@@ -176,11 +176,20 @@ final class TelegramRouteBuilder
         return $this;
     }
 
-    public function onCommand(callable|string|array $action, \Closure|string|null $pattern = null): void
+    /**
+     * @param callable|string|array $action
+     * @param \Closure|string|null $pattern Паттерн для команды
+     * @param \Closure|null $commandParamOptions Фильтр по параметрам команды:
+     *   Пример: function(Update $update, array $args) { return count($args) > 0; }
+     *   Если возвращает false или null, маршрут не матчится
+     *   Если возвращает CommandData, используется он
+     */
+    public function onCommand(callable|string|array $action, \Closure|string|null $pattern = null, ?\Closure $commandParamOptions = null): void
     {
         $this->route->type = RouteType::COMMAND;
         $this->route->action = $action;
         $this->pattern($pattern);
+        $this->route->commandParamOptions = $commandParamOptions;
 
         $this->register();
     }
@@ -523,6 +532,15 @@ final class TelegramRouteBuilder
     {
         $this->route->type = RouteType::ANY;
         $this->route->action = $action;
+
+        $this->register();
+    }
+
+    public function onInlineQuery(callable|string|array $action, \Closure|string|null $pattern = null): void
+    {
+        $this->route->type = RouteType::INLINE_QUERY;
+        $this->route->action = $action;
+        $this->route->pattern = $pattern;
 
         $this->register();
     }

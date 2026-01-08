@@ -7,6 +7,6 @@ use Phptg\BotApi\Type\User;
 
 interface RouteDataInterface
 {
-    public function getChat(): Chat;
+    public function getChat(): ?Chat;
     public function getUser(): ?User;
 }

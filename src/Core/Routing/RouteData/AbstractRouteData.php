@@ -16,13 +16,9 @@ abstract readonly class AbstractRouteData implements RouteDataInterface
         public string $botId,
     ) {}
 
-    public function getChat(): Chat
+    public function getChat(): ?Chat
     {
-        $chat = UpdateHelper::getChatFromUpdate($this->update);
-        if ($chat === null) {
-            throw new \RuntimeException('Chat not found in update');
-        }
-        return $chat;
+        return UpdateHelper::getChatFromUpdate($this->update);
     }
 
     public function getUser(): ?User

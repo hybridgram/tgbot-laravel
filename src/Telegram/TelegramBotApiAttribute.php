@@ -14,7 +14,8 @@ class TelegramBotApiAttribute implements ContextualAttribute
      * Create a new attribute instance.
      */
     public function __construct(
-        public ?string $botId = null
+        public ?string $botId = null,
+        public ?Priority $priority = null
     ) {
     }
 
@@ -39,6 +40,16 @@ class TelegramBotApiAttribute implements ContextualAttribute
             );
         }
 
-        return $container->make(TelegramBotApi::class, ['botId' => $botId]);
+        $telegramBotApi = $container->make(TelegramBotApi::class, ['botId' => $botId]);
+
+        if ($attribute->priority !== null) {
+            $priority = $attribute->priority;
+        } elseif ($container->bound('telegram.priority')) {
+            $priority = $container->make('telegram.priority');
+        } else {
+            $priority = Priority::HIGH;
+        }
+
+        return $telegramBotApi->withPriority($priority);
     }
 }
