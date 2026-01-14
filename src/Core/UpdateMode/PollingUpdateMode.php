@@ -35,11 +35,6 @@ final class PollingUpdateMode extends AbstractUpdateMode
         }
     }
 
-    public function type(): UpdateModeEnum
-    {
-        return UpdateModeEnum::POLLING;
-    }
-
     /**
      * @internal
      */
@@ -50,7 +45,7 @@ final class PollingUpdateMode extends AbstractUpdateMode
             $this->botConfig->pollingConfig->limit,
             $this->botConfig->pollingConfig->timeout,
             $this->botConfig->pollingConfig->allowedUpdates,
-        ); // todo баг тут работает только после второго сообщения
+        );
 
         if ($updates instanceof FailResult) {
             if ($updates->errorCode === 409) {
@@ -198,18 +193,27 @@ final class PollingUpdateMode extends AbstractUpdateMode
         }
 
         $type = UpdateHelper::getUpdateTypeEnum($update)->value ?? 'unknown';
-        $chatId = UpdateHelper::getChatFromUpdate($update)?->id;
+        
+        // Если это сообщение с reply, изменяем тип на message_reply
+        if ($type === 'message' && $update->message?->replyToMessage !== null) {
+            $type = 'message_reply';
+        }
+        
+        $chat = UpdateHelper::getChatFromUpdate($update);
+        $chatId = $chat?->id;
+        $chatType = $chat?->type ?? '-';
         $userId = UpdateHelper::getUserFromUpdate($update)?->id;
 
         $summary = $this->extractUpdateSummary($update);
         $summaryPart = $summary !== '' ? " {$summary}" : '';
 
         $this->command->line(sprintf(
-            '<fg=gray>[update]</fg=gray> bot=%s update_id=%d type=%s chat=%s from=%s%s',
+            '<fg=gray>[update]</fg=gray> bot=%s update_id=%d type=%s chat=%s chat_type=%s from=%s%s',
             $this->botConfig->botId,
             $update->updateId,
             $type,
             $chatId === null ? '-' : (string) $chatId,
+            $chatType,
             $userId === null ? '-' : (string) $userId,
             $summaryPart,
         ));

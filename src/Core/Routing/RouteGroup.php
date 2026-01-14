@@ -37,13 +37,24 @@ final class RouteGroup
         }
 
         if (isset($attributes['to_state'])) {
-            if (! is_string($attributes['to_state'])) {
-                throw new InvalidArgumentException('to_state parameter must be string or array of strings.');
+            if (! is_string($attributes['to_state']) && $attributes['to_state'] !== null) {
+                throw new InvalidArgumentException('to_state parameter must be string, null, or array of strings.');
             }
         }
 
-        if (isset($attributes['chat_type']) && ! ($attributes['chat_type'] instanceof ChatType)) {
-            throw new InvalidArgumentException('chat_type should be instance of '.ChatType::class);
+        if (isset($attributes['chat_type'])) {
+            $chatType = $attributes['chat_type'];
+            if (!($chatType instanceof ChatType)
+                && !is_array($chatType)) {
+                throw new InvalidArgumentException('chat_type should be instance of '.ChatType::class.', array of '.ChatType::class.', or null');
+            }
+            if (is_array($chatType)) {
+                foreach ($chatType as $type) {
+                    if (!($type instanceof ChatType)) {
+                        throw new InvalidArgumentException('chat_type array must contain only instances of '.ChatType::class);
+                    }
+                }
+            }
         }
 
         if (isset($attributes['cache_key']) && ! is_string($attributes['cache_key'])) {
@@ -83,11 +94,18 @@ final class RouteGroup
         }
 
         if (isset($this->attributes['to_state'])) {
-            $builder->toUserState($this->attributes['to_state']); // todo разобраться со вторым вариантометода для чатов
+            $builder->toUserState($this->attributes['to_state']); // todo разобраться со вторым вариантом метода для чатов
         }
 
         if (isset($this->attributes['chat_type'])) {
-            $builder->chatType($this->attributes['chat_type']);
+            $chatType = $this->attributes['chat_type'];
+            if ($chatType === null) {
+                $builder->chatTypes(null);
+            } elseif (is_array($chatType)) {
+                $builder->chatTypes($chatType);
+            } else {
+                $builder->chatType($chatType);
+            }
         }
 
         if (isset($this->attributes['cache_key'])) {

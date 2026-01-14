@@ -14,7 +14,7 @@ use Phptg\BotApi\Type\Update\Update;
 final readonly class SetStateTelegramRouteMiddleware implements TelegramRouteMiddlewareInterface
 {
     public function __construct(
-        private string $newState,
+        private ?string $newState,
         private ?int   $ttl = null,
         private bool   $useUserState = false,
         private mixed  $data = null
@@ -33,10 +33,18 @@ final readonly class SetStateTelegramRouteMiddleware implements TelegramRouteMid
             return $result;
         }
 
-        if ($this->useUserState && $user) {
-            $stateManager->setUserState($chat, $user, $this->newState, $this->ttl, $this->data);
+        if ($this->newState === null) {
+            if ($this->useUserState && $user) {
+                $stateManager->clearUserState($chat, $user);
+            } else {
+                $stateManager->clearChatState($chat);
+            }
         } else {
-            $stateManager->setChatState($chat, $this->newState, $this->ttl, $this->data);
+            if ($this->useUserState && $user) {
+                $stateManager->setUserState($chat, $user, $this->newState, $this->ttl, $this->data);
+            } else {
+                $stateManager->setChatState($chat, $this->newState, $this->ttl, $this->data);
+            }
         }
 
         return $result;

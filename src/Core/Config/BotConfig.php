@@ -55,9 +55,9 @@ final class BotConfig
                         $bot['allowed_updates'],
                         $bot['polling_timeout'],
                     ) : null;
-                $webhookConfig = in_array($bot['update_mode'], [UpdateModeEnum::WEBHOOK, UpdateModeEnum::QUEUE])
+                $webhookConfig = in_array($bot['update_mode'], [UpdateModeEnum::WEBHOOK, UpdateModeEnum::WEBHOOK_ASYNC])
                     ? new WebhookModeConfig(
-                        $bot['update_mode'] === UpdateModeEnum::QUEUE ? $bot['webhook_url'] : route('telegram.bot.webhook', ['botId' => $botId]),
+                        $bot['update_mode'] === UpdateModeEnum::WEBHOOK_ASYNC ? $bot['webhook_url'] : route('telegram.bot.webhook', ['botId' => $botId]),
                             $bot['webhook_port'],
                             $bot['certificate_path'],
                             $bot['ip_address'],

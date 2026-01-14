@@ -197,6 +197,14 @@ final class TelegramServiceProvider extends ServiceProvider
             __DIR__.'/../../routes/telegram-webhook.php' => base_path('routes/telegram-webhook.php'),
             __DIR__.'/../../stubs/telegram.stub' => base_path('routes/telegram.php'),
         ], 'hybridgram-routes');
+        $this->publishes([
+            __DIR__.'/../../stubs/ProcessTelegramUpdateJob.stub' => app_path('Jobs/ProcessTelegramUpdateJob.php'),
+        ], 'hybridgram-jobs');
+        // Also publish job stub with config for convenience
+        $this->publishes([
+            __DIR__.'/../../config/config.php' => config_path('hybridgram.php'),
+            __DIR__.'/../../stubs/ProcessTelegramUpdateJob.stub' => app_path('Jobs/ProcessTelegramUpdateJob.php'),
+        ], 'hybridgram-config');
     }
 
 

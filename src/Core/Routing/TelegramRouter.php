@@ -4,10 +4,14 @@ declare(strict_types=1);
 
 namespace HybridGram\Core\Routing;
 
+use Closure;
 use HybridGram\Core\Routing\RouteData\FallbackData;
+use HybridGram\Core\Routing\RouteOptions\ChatMemberOptions;
 use HybridGram\Core\Routing\RouteOptions\PollOptions;
 use HybridGram\Core\Routing\RouteOptions\QueryParams\QueryParamInterface;
+use HybridGram\Core\State\StateManagerInterface;
 use HybridGram\Core\UpdateHelper;
+use HybridGram\Telegram\ChatMember\ChatMemberStatus;
 use HybridGram\Telegram\Document\MimeType;
 use HybridGram\Telegram\Poll\PollType;
 use HybridGram\Telegram\TelegramBotApi;
@@ -58,7 +62,7 @@ final class TelegramRouter
             return RouteStates::empty();
         }
 
-        $stateManager = App::get(\HybridGram\Core\State\StateManagerInterface::class);
+        $stateManager = App::get(StateManagerInterface::class);
         $chatState = $stateManager->getChatState($chat);
         
         $user = UpdateHelper::getUserFromUpdate($update);
@@ -192,7 +196,7 @@ final class TelegramRouter
             'fromUserState' => $route->fromUserState,
             'exceptChatState' => $route->exceptChatState,
             'exceptUserState' => $route->exceptUserState,
-            'chatType' => $route->chatType,
+            'chatTypes' => $route->chatTypes,
             'toState' => $route->toState,
             'actionType' => $route->actionType,
             'actionTimeout' => $route->actionTimeout,
@@ -203,11 +207,11 @@ final class TelegramRouter
         ];
 
         // Convert closures to SerializableClosure
-        if ($route->action instanceof \Closure) {
+        if ($route->action instanceof Closure) {
             $routeData['action'] = new SerializableClosure($route->action);
         }
 
-        if ($route->pattern instanceof \Closure) {
+        if ($route->pattern instanceof Closure) {
             $routeData['pattern'] = new SerializableClosure($route->pattern);
         }
 
@@ -264,7 +268,7 @@ final class TelegramRouter
             exceptChatState: $routeData['exceptChatState'] ?? null,
             exceptUserState: $routeData['exceptUserState'] ?? null,
             toState: $routeData['toState'],
-            chatType: $routeData['chatType'],
+            chatTypes: $routeData['chatType'],
             actionType: $routeData['actionType'],
             actionTimeout: $routeData['actionTimeout'],
             cacheTtl: $routeData['cacheTtl'],
@@ -278,10 +282,17 @@ final class TelegramRouter
     {
         new TelegramRouteBuilder()
             ->forBot($botId)
-            ->onMessage($action, $pattern);
+            ->onTextMessage($action, $pattern);
     }
 
-    public function onCommand(callable|string|array $action, string $botId = '*', string|callable|null $pattern = null, ?\Closure $commandParamOptions = null): void
+    public function onBusinessMessageText(callable|string|array $action, string $botId = '*', string|callable|null $pattern = null): void
+    {
+        new TelegramRouteBuilder()
+            ->forBot($botId)
+            ->onBusinessMessageText($action, $pattern);
+    }
+
+    public function onCommand(callable|string|array $action, string $botId = '*', string|callable|null $pattern = null, ?Closure $commandParamOptions = null): void
     {
         new TelegramRouteBuilder()
             ->forBot($botId)
@@ -445,6 +456,13 @@ final class TelegramRouter
             ->onPassportData($action);
     }
 
+    public function onBusinessConnection(callable|string|array $action, string $botId = '*'): void
+    {
+        new TelegramRouteBuilder()
+            ->forBot($botId)
+            ->onBusinessConnection($action);
+    }
+
     public function onReply(callable|string|array $action, string $botId = '*', callable|string|null $pattern = null): void
     {
         new TelegramRouteBuilder()
@@ -471,20 +489,6 @@ final class TelegramRouter
         new TelegramRouteBuilder()
             ->forBot($botId)
             ->onReplyToStory($action, $pattern);
-    }
-
-    public function onNewChatMembers(callable|string|array $action, string $botId = '*'): void
-    {
-        new TelegramRouteBuilder()
-            ->forBot($botId)
-            ->onNewChatMembers($action);
-    }
-
-    public function onLeftChatMember(callable|string|array $action, string $botId = '*'): void
-    {
-        new TelegramRouteBuilder()
-            ->forBot($botId)
-            ->onLeftChatMember($action);
     }
 
     public function onNewChatTitle(callable|string|array $action, string $botId = '*'): void
@@ -561,6 +565,32 @@ final class TelegramRouter
         new TelegramRouteBuilder()
             ->forBot($botId)
             ->onAny($action);
+    }
+
+    /**
+     * @param callable|string|array $action
+     * @param string $botId
+     * @param bool|null $isBot
+     * @param array<ChatMemberStatus>|null $allowedStatuses
+     */
+    public function onMyChatMember(callable|string|array $action, string $botId = '*', ?bool $isBot = null, ?array $allowedStatuses = null): void
+    {
+        new TelegramRouteBuilder()
+            ->forBot($botId)
+            ->onMyChatMember($action, new ChatMemberOptions($isBot, $allowedStatuses));
+    }
+
+    /**
+     * @param callable|string|array $action
+     * @param string $botId
+     * @param bool|null $isBot
+     * @param array<ChatMemberStatus>|null $allowedStatuses Разрешенные статусы для newChatMember. null - любые статусы
+     */
+    public function onChatMember(callable|string|array $action, string $botId = '*', ?bool $isBot = null, ?array $allowedStatuses = null): void
+    {
+        new TelegramRouteBuilder()
+            ->forBot($botId)
+            ->onChatMember($action, new ChatMemberOptions($isBot, $allowedStatuses));
     }
 
     public function onFallback(callable|string|array $action, string $botId = '*'): void

@@ -44,6 +44,7 @@ final class UpdateHelper
             ?? $update->editedChannelPost?->from
             ?? $update->businessMessage?->from
             ?? $update->editedBusinessMessage?->from
+            ?? $update->businessConnection?->user
             ?? $update->messageReaction?->user
             ?? $update->inlineQuery?->from
             ?? $update->chosenInlineResult?->from
@@ -144,6 +145,7 @@ final class UpdateHelper
             UpdateTypeEnum::EDITED_CHANNEL_POST => RouteType::EDITED_CHANNEL_POST,
             UpdateTypeEnum::INLINE_QUERY => RouteType::INLINE_QUERY,
             UpdateTypeEnum::BUSINESS_CONNECTION => RouteType::BUSINESS_CONNECTION,
+            UpdateTypeEnum::BUSINESS_MESSAGE => RouteType::BUSINESS_MESSAGE_TEXT,
             UpdateTypeEnum::EDITED_BUSINESS_MESSAGE => RouteType::EDITED_BUSINESS_MESSAGE,
             UpdateTypeEnum::DELETED_BUSINESS_MESSAGES => RouteType::DELETED_BUSINESS_MESSAGES,
             UpdateTypeEnum::MESSAGE_REACTION => RouteType::MESSAGE_REACTION,
@@ -158,7 +160,7 @@ final class UpdateHelper
             UpdateTypeEnum::POLL_CLOSED => RouteType::POLL_CLOSED,
             UpdateTypeEnum::CHAT_MEMBER => RouteType::CHAT_MEMBER,
             UpdateTypeEnum::CHAT_JOIN_REQUEST => RouteType::CHAT_JOIN_REQUEST,
-            UpdateTypeEnum::MY_CHAT_MEMBER => RouteType::CHAT_MEMBER_UPDATED,
+            UpdateTypeEnum::MY_CHAT_MEMBER => RouteType::MY_CHAT_MEMBER,
             UpdateTypeEnum::CHAT_BOOST => RouteType::CHAT_BOOST,
             UpdateTypeEnum::REMOVED_CHAT_BOOST => RouteType::REMOVED_CHAT_BOOST,
             default => RouteType::UNKNOWN,
@@ -168,15 +170,7 @@ final class UpdateHelper
     private static function mapMessageType(?Message $message): RouteType
     {
         if ($message === null) {
-            return RouteType::MESSAGE;
-        }
-
-        if (!empty($message->newChatMembers)) {
-            return RouteType::NEW_CHAT_MEMBER;
-        }
-
-        if ($message->leftChatMember !== null) {
-            return RouteType::LEFT_CHAT_MEMBER;
+            return RouteType::TEXT_MESSAGE;
         }
 
         if (!empty($message->newChatTitle)) {
@@ -199,13 +193,20 @@ final class UpdateHelper
             return RouteType::PINNED_MESSAGE;
         }
 
-        if (
-            $message->forumTopicCreated !== null
-            || $message->forumTopicEdited !== null
-            || $message->forumTopicClosed !== null
-            || $message->forumTopicReopened !== null
-        ) {
-            return RouteType::FORUM_TOPIC_EVENT;
+        if ($message->forumTopicCreated !== null) {
+            return RouteType::FORUM_TOPIC_CREATED;
+        }
+
+        if ($message->forumTopicEdited !== null) {
+            return RouteType::FORUM_TOPIC_EDITED;
+        }
+
+        if ($message->forumTopicClosed !== null) {
+            return RouteType::FORUM_TOPIC_CLOSED;
+        }
+
+        if ($message->forumTopicReopened !== null) {
+            return RouteType::FORUM_TOPIC_REOPENED;
         }
 
         if (
@@ -253,10 +254,6 @@ final class UpdateHelper
 
         if ($message->replyToStory !== null) {
             return RouteType::REPLY_TO_STORY;
-        }
-
-        if ($message->replyToMessage !== null) {
-            return RouteType::REPLY_TO_MESSAGE;
         }
 
         if ($message->story) {
@@ -309,7 +306,20 @@ final class UpdateHelper
             return RouteType::PASSPORT_DATA;
         }
 
-        return RouteType::MESSAGE;
+        if ($message->replyToMessage !== null) {
+            return RouteType::REPLY_TO_MESSAGE;
+        }
+
+        return RouteType::TEXT_MESSAGE;
+    }
+
+    private static function mapBusinessMessageType(?Message $message): RouteType
+    {
+        if ($message->text !== null && str_starts_with($message->text, '/')) {
+            return RouteType::BUSINESS_MESSAGE_COMMAND;
+        }
+
+        return RouteType::BUSINESS_MESSAGE_TEXT;
     }
 
     public static function getChatType(Update $update): ChatType

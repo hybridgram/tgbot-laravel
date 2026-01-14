@@ -1,28 +1,271 @@
 #!/usr/bin/env php
 <?php
 
-/**
- * Telegram Hook - запускает Go-бинарник для обработки webhook'ов Telegram
- * 
- * Этот скрипт находит .env файл Laravel проекта и передает его путь в бинарник
- */
+const GITHUB_REPO = 'hybridgram/go-proxy';
+const BINARY_NAME = 'go-proxy';
+const BINARY_DIR = __DIR__;
+const VERSION_FILE = BINARY_DIR . '/.go-proxy-version';
 
-// Получаем путь к директории пакета (где находится этот скрипт)
-$packageDir = __DIR__ . '/../';
-$binaryPath = $packageDir . 'src/Core/Processing/resources/main';
+if (!function_exists('curl_init')) {
+    fwrite(STDERR, "Error: cURL extension is required. Please install php-curl.\n");
+    exit(1);
+}
 
-// Проверяем существование бинарника
+function detectPlatform(): array
+{
+    $os = strtolower(PHP_OS);
+    $arch = php_uname('m');
+    
+    if (strpos($os, 'win') === 0 || strpos($os, 'cygwin') === 0) {
+        $platform = 'windows';
+        $ext = '.exe';
+    } elseif (strpos($os, 'darwin') === 0 || strpos($os, 'mac') === 0) {
+        $platform = 'darwin';
+        $ext = '';
+    } elseif (strpos($os, 'linux') === 0) {
+        $platform = 'linux';
+        $ext = '';
+    } else {
+        fwrite(STDERR, "Error: Unsupported OS: {$os}\n");
+        exit(1);
+    }
+    
+    if (strpos($arch, 'x86_64') !== false || strpos($arch, 'amd64') !== false || $arch === 'x64') {
+        $architecture = 'amd64';
+    } elseif (strpos($arch, 'aarch64') !== false || strpos($arch, 'arm64') !== false) {
+        $architecture = 'arm64';
+    } else {
+        fwrite(STDERR, "Error: Unsupported architecture: {$arch}\n");
+        exit(1);
+    }
+    
+    return [
+        'os' => $platform,
+        'arch' => $architecture,
+        'ext' => $ext,
+    ];
+}
+
+function getLatestRelease(): array
+{
+    $url = "https://api.github.com/repos/" . GITHUB_REPO . "/releases/latest";
+    
+    $ch = curl_init($url);
+    curl_setopt_array($ch, [
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_FOLLOWLOCATION => true,
+        CURLOPT_HTTPHEADER => [
+            'Accept: application/vnd.github.v3+json',
+            'User-Agent: hybridgram-tgook',
+        ],
+        CURLOPT_TIMEOUT => 30,
+    ]);
+    
+    $response = curl_exec($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    $error = curl_error($ch);
+    curl_close($ch);
+    
+    if ($error) {
+        fwrite(STDERR, "Error: Failed to fetch release info: {$error}\n");
+        exit(1);
+    }
+    
+    if ($httpCode !== 200) {
+        fwrite(STDERR, "Error: GitHub API returned status {$httpCode}\n");
+        exit(1);
+    }
+    
+    $data = json_decode($response, true);
+    if (json_last_error() !== JSON_ERROR_NONE) {
+        fwrite(STDERR, "Error: Failed to parse GitHub API response\n");
+        exit(1);
+    }
+    
+    return $data;
+}
+
+function findAsset(array $release, array $platform): ?array
+{
+    $pattern = "hybridgram-go-proxy_.*_{$platform['os']}_{$platform['arch']}\.zip";
+    
+    foreach ($release['assets'] ?? [] as $asset) {
+        $name = $asset['name'] ?? '';
+        if (preg_match("/^{$pattern}$/", $name)) {
+            return $asset;
+        }
+    }
+    
+    return null;
+}
+
+function downloadFile(string $url, string $destination): bool
+{
+    $ch = curl_init($url);
+    $fp = fopen($destination, 'wb');
+    
+    if (!$fp) {
+        fwrite(STDERR, "Error: Cannot create file: {$destination}\n");
+        return false;
+    }
+    
+    curl_setopt_array($ch, [
+        CURLOPT_FILE => $fp,
+        CURLOPT_FOLLOWLOCATION => true,
+        CURLOPT_HTTPHEADER => [
+            'Accept: application/octet-stream',
+            'User-Agent: hybridgram-tgook',
+        ],
+        CURLOPT_TIMEOUT => 300,
+    ]);
+    
+    $success = curl_exec($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    $error = curl_error($ch);
+    
+    curl_close($ch);
+    fclose($fp);
+    
+    if (!$success || $httpCode !== 200) {
+        @unlink($destination);
+        fwrite(STDERR, "Error: Failed to download file: " . ($error ?: "HTTP {$httpCode}") . "\n");
+        return false;
+    }
+    
+    return true;
+}
+
+function extractZip(string $archivePath, string $extractDir): ?string
+{
+    if (class_exists('ZipArchive')) {
+        $zip = new ZipArchive();
+        if ($zip->open($archivePath) !== true) {
+            fwrite(STDERR, "Error: Failed to open zip archive\n");
+            return null;
+        }
+        
+        $zip->extractTo($extractDir);
+        $zip->close();
+        
+        $files = glob($extractDir . '/hybridgram-' . BINARY_NAME . '*');
+        if (!$files) {
+            $files = glob($extractDir . '/' . BINARY_NAME . '*');
+        }
+        
+        return $files ? $files[0] : null;
+    }
+    
+    $command = sprintf(
+        'unzip -q -o %s -d %s 2>&1',
+        escapeshellarg($archivePath),
+        escapeshellarg($extractDir)
+    );
+    exec($command, $output, $exitCode);
+    
+    if ($exitCode !== 0) {
+        fwrite(STDERR, "Error: Failed to extract zip: " . implode("\n", $output) . "\n");
+        fwrite(STDERR, "Please install unzip or php-zip extension\n");
+        return null;
+    }
+    
+    $files = glob($extractDir . '/hybridgram-' . BINARY_NAME . '*');
+    if (!$files) {
+        $files = glob($extractDir . '/' . BINARY_NAME . '*');
+    }
+    
+    return $files ? $files[0] : null;
+}
+
+function installBinary(): string
+{
+    $platform = detectPlatform();
+    $binaryPath = BINARY_DIR . '/' . BINARY_NAME . $platform['ext'];
+    
+    $needsUpdate = true;
+    if (file_exists($binaryPath) && file_exists(VERSION_FILE)) {
+        $currentVersion = trim(@file_get_contents(VERSION_FILE) ?: '');
+        $release = getLatestRelease();
+        $latestVersion = $release['tag_name'] ?? '';
+        
+        if ($currentVersion === $latestVersion && is_executable($binaryPath)) {
+            $needsUpdate = false;
+        }
+    }
+    
+    if (!$needsUpdate) {
+        return $binaryPath;
+    }
+    
+    fwrite(STDERR, "Downloading go-proxy from GitHub releases...\n");
+    $release = getLatestRelease();
+    $latestVersion = $release['tag_name'] ?? '';
+    
+    if (!$latestVersion) {
+        fwrite(STDERR, "Error: Could not determine latest version\n");
+        exit(1);
+    }
+    
+    $asset = findAsset($release, $platform);
+    
+    if (!$asset) {
+        fwrite(STDERR, "Error: No binary found for platform: {$platform['os']}/{$platform['arch']}\n");
+        fwrite(STDERR, "Available assets:\n");
+        foreach ($release['assets'] ?? [] as $a) {
+            fwrite(STDERR, "  - " . ($a['name'] ?? 'unknown') . "\n");
+        }
+        exit(1);
+    }
+    
+    $downloadUrl = $asset['browser_download_url'] ?? '';
+    if (!$downloadUrl) {
+        fwrite(STDERR, "Error: No download URL found for asset\n");
+        exit(1);
+    }
+    
+    $tempFile = sys_get_temp_dir() . '/' . BINARY_NAME . '_' . uniqid() . '.zip';
+    
+    if (!downloadFile($downloadUrl, $tempFile)) {
+        exit(1);
+    }
+    
+    $extractDir = sys_get_temp_dir() . '/' . BINARY_NAME . '_extract_' . uniqid();
+    @mkdir($extractDir, 0755, true);
+    
+    $extractedFile = extractZip($tempFile, $extractDir);
+    @unlink($tempFile);
+    
+    if (!$extractedFile || !file_exists($extractedFile)) {
+        fwrite(STDERR, "Error: Failed to extract binary from archive\n");
+        exit(1);
+    }
+    
+    if (file_exists($binaryPath)) {
+        @unlink($binaryPath);
+    }
+    
+    if (!rename($extractedFile, $binaryPath)) {
+        fwrite(STDERR, "Error: Failed to move binary to {$binaryPath}\n");
+        exit(1);
+    }
+    
+    @chmod($binaryPath, 0755);
+    @file_put_contents(VERSION_FILE, $latestVersion);
+    
+    fwrite(STDERR, "Installed go-proxy {$latestVersion}\n");
+    
+    return $binaryPath;
+}
+
+$binaryPath = installBinary();
+
 if (!file_exists($binaryPath) || !is_executable($binaryPath)) {
     fwrite(STDERR, "Error: Binary not found or not executable: {$binaryPath}\n");
     exit(1);
 }
 
-// Находим .env файл Laravel проекта
-// Ищем в текущей рабочей директории и поднимаемся вверх по дереву
 $envPath = null;
 $currentDir = getcwd() ?: __DIR__;
 
-// Проверяем текущую директорию и родительские директории
 $searchDirs = [$currentDir];
 $parent = dirname($currentDir);
 while ($parent !== $currentDir && $parent !== '/') {
@@ -44,16 +287,12 @@ if ($envPath === null) {
     exit(1);
 }
 
-// Запускаем бинарник с путем к .env файлу
 $command = escapeshellarg($binaryPath) . ' ' . escapeshellarg($envPath);
 
-// Передаем все аргументы командной строки в бинарник
 if ($argc > 1) {
     $args = array_slice($argv, 1);
     $command .= ' ' . implode(' ', array_map('escapeshellarg', $args));
 }
 
-// Выполняем команду
 passthru($command, $exitCode);
 exit($exitCode);
-

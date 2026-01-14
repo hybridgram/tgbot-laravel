@@ -8,5 +8,5 @@ enum UpdateModeEnum: string
 {
     case POLLING = 'polling';
     case WEBHOOK = 'webhook';
-    case QUEUE = 'queue';
+    case WEBHOOK_ASYNC = 'webhook_async';
 }

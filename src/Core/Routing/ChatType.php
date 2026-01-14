@@ -10,4 +10,9 @@ enum ChatType
     case GROUP;
     case SUPERGROUP;
     case CHANNEL;
+
+    public static function allExceptPrivate(): array
+    {
+        return [self::GROUP, self::SUPERGROUP, self::CHANNEL];
+    }
 }

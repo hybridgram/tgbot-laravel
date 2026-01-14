@@ -22,15 +22,25 @@ it('can use fluent API for routing', function () {
 
 it('can use group method for routing', function () {
     TelegramRouter::group(['for_bot' => 'main_bot', 'from_state' => 'state', 'chat_type' => HybridGram\Core\Routing\ChatType::PRIVATE], function (TelegramRouteBuilder $builder) {
-            $builder->onMessage(function (HybridGram\Core\Routing\RouteData\MessageData $messageData) {
+            $builder->onTextMessage(function (HybridGram\Core\Routing\RouteData\TextMessageData $messageData) {
                 logger()->info("message: $messageData->message");
             }, 'hi');
-            $builder->onMessage(function (HybridGram\Core\Routing\RouteData\MessageData $messageData) {
+            $builder->onTextMessage(function (HybridGram\Core\Routing\RouteData\TextMessageData $messageData) {
                 logger()->info("message * $messageData->message");
             }, '*');
             $builder->onCommand(function (CommandData $commandData) {
                 logger()->info("best command $commandData->command", $commandData->commandParams);
             }, 'best');
+        });
+
+    expect(true)->toBeTrue();
+});
+
+it('can use onBusinessMessageText in group', function () {
+    TelegramRouter::group(['for_bot' => 'main_bot', 'from_state' => 'state'], function (TelegramRouteBuilder $builder) {
+            $builder->onBusinessMessageText(function (HybridGram\Core\Routing\RouteData\BusinessMessageTextData $businessMessageTextData) {
+                logger()->info("business message text received", ['text' => $businessMessageTextData->text]);
+            });
         });
 
     expect(true)->toBeTrue();
@@ -221,28 +231,6 @@ it('can use onReplyToStory in group', function () {
         $builder->onReplyToStory(function (HybridGram\Core\Routing\RouteData\ReplyToStoryData $replyToStoryData) {
             logger()->info("reply to story received", ['replyToStory' => $replyToStoryData->replyToStory]);
         });
-    });
-
-    expect(true)->toBeTrue();
-});
-
-it('can use onNewChatMembers in group', function () {
-    TelegramRouter::group(['for_bot' => 'main_bot', 'from_state' => 'state'], function (TelegramRouteBuilder $builder) {
-        $builder->chatType(HybridGram\Core\Routing\ChatType::GROUP)
-            ->onNewChatMembers(function (HybridGram\Core\Routing\RouteData\NewChatMembersData $newChatMembersData) {
-                logger()->info("new chat members received", ['newChatMembers' => $newChatMembersData->newChatMembers]);
-            });
-    });
-
-    expect(true)->toBeTrue();
-});
-
-it('can use onLeftChatMember in group', function () {
-    TelegramRouter::group(['for_bot' => 'main_bot', 'from_state' => 'state'], function (TelegramRouteBuilder $builder) {
-        $builder->chatType(HybridGram\Core\Routing\ChatType::GROUP)
-            ->onLeftChatMember(function (HybridGram\Core\Routing\RouteData\LeftChatMemberData $leftChatMemberData) {
-                logger()->info("left chat member received", ['leftChatMember' => $leftChatMemberData->leftChatMember]);
-            });
     });
 
     expect(true)->toBeTrue();

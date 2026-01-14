@@ -20,7 +20,7 @@
 - [ ] **`onChannelPost`** (`channel_post`) – новый пост в канале любого типа.
 - [ ] **`onEditedChannelPost`** (`edited_channel_post`) – отредактированный пост в канале.
 
-- [ ] **`onBusinessConnection`** (`business_connection`) – бот был подключен/отключен к бизнес‑аккаунту, либо пользователь изменил настройки подключения.
+- [x] **`onBusinessConnection`** (`business_connection`) – бот был подключен/отключен к бизнес‑аккаунту, либо пользователь изменил настройки подключения. Обрабатывает объект `BusinessConnection` из `update.business_connection`. Метод принимает только `action` (без паттерна). В action передается `BusinessConnectionData` с полями: `businessConnection` (объект `BusinessConnection`), `update`, `botId`, а также доступны методы `getUser()` и `getChat()`.
 - [ ] **`onBusinessMessage`** (`business_message`) – новое сообщение от подключённого бизнес‑аккаунта.
 - [ ] **`onEditedBusinessMessage`** (`edited_business_message`) – отредактированное сообщение от бизнес‑аккаунта.
 - [ ] **`onDeletedBusinessMessages`** (`deleted_business_messages`) – сообщения были удалены из подключённого бизнес‑аккаунта.
@@ -85,8 +85,6 @@
 - [x] **`onQuoteMessage`** (`message.quote`) – ответ с цитированием части исходного сообщения.
 - [x] **`onReplyToStoryMessage`** (`message.reply_to_story`) – ответ на историю.
 
-- [x] **`onNewChatMembers`** (`message.new_chat_members`) – в чат добавлены новые участники.
-- [x] **`onLeftChatMember`** (`message.left_chat_member`) – участник вышел из чата.
 - [x] **`onNewChatTitle`** (`message.new_chat_title`) – изменён заголовок чата.
 - [x] **`onNewChatPhoto`** (`message.new_chat_photo`) – установлено новое фото чата.
 - [x] **`onDeleteChatPhoto`** (`message.delete_chat_photo`) – фото чата удалено.

@@ -45,7 +45,10 @@ final class RouteCollection
         $routeType = UpdateHelper::mapToRouteType($update);
         $chatType = UpdateHelper::getChatType($update);
 
-        $matchRoutes = $this->routes[$routeType->name][$botId] ?? $this->routes[$routeType->name]['*'] ?? [];
+        $matchRoutes = array_merge(
+            $this->routes[$routeType->name][$botId] ?? [],
+            $this->routes[$routeType->name]['*'] ?? []
+        );
 
         if (! empty($matchRoutes)) {
             $matchRoutes = $this->applyFilters($matchRoutes, $states, $chatType);
@@ -63,7 +66,10 @@ final class RouteCollection
         }
 
         // find routed with ANY route type
-        $withAnyRoutes = $this->routes[RouteType::ANY->name][$botId] ?? $this->routes[RouteType::ANY->name]['*'] ?? [];
+        $withAnyRoutes = array_merge(
+            $this->routes[RouteType::ANY->name][$botId] ?? [],
+            $this->routes[RouteType::ANY->name]['*'] ?? []
+        );
 
         if (! empty($withAnyRoutes)) {
             $withAnyRoutes = $this->applyFilters($withAnyRoutes, $states, $chatType);
@@ -81,7 +87,11 @@ final class RouteCollection
         }
 
         // fallback if not found route
-        $fallbackRoute = $this->routes[RouteType::FALLBACK->name][$botId] ?? (App::get(TelegramRouter::class)->fallbackRoute($update, $botId));
+        $fallbackRoute = $this->routes[RouteType::FALLBACK->name][$botId][0]
+            ?? $this->routes[RouteType::FALLBACK->name]['*'][0]
+            ?? (App::get(TelegramRouter::class)->fallbackRoute($update, $botId));
+
+        $fallbackRoute->data = $fallbackRoute->matches($update);
 
         if (empty($fallbackRoute)) {
             throw new RouteNotFoundException("Route with type: $routeType->name for $botId not found");
@@ -101,8 +111,15 @@ final class RouteCollection
         ?ChatType $chatType = null
     ): array {
         return array_filter($prematchRoutes, function (TelegramRoute $route) use ($states, $chatType) {
-            if ($chatType !== $route->chatType) {
-                return false;
+            // Если chatTypes === null, разрешаем все типы чатов
+            if ($route->chatTypes !== null) {
+                if ($chatType === null) {
+                    return false;
+                }
+
+                if (! in_array($chatType, $route->chatTypes, true)) {
+                    return false;
+                }
             }
 
             if ($route->exceptUserState !== null) {

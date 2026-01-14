@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use HybridGram\Core\Routing\ActionType;
 use HybridGram\Core\Routing\ChatType;
+use HybridGram\Core\Routing\RouteData\BusinessMessageTextData;
 use HybridGram\Core\Routing\RouteData\CommandData;
 use HybridGram\Core\Routing\RouteType;
 use HybridGram\Core\Routing\TelegramRoute;
@@ -17,6 +18,9 @@ use Phptg\BotApi\Type\ChecklistTask;
 use Phptg\BotApi\Type\Contact;
 use Phptg\BotApi\Type\ExternalReplyInfo;
 use Phptg\BotApi\Type\ForumTopicCreated;
+use Phptg\BotApi\Type\ForumTopicEdited;
+use Phptg\BotApi\Type\ForumTopicClosed;
+use Phptg\BotApi\Type\ForumTopicReopened;
 use Phptg\BotApi\Type\Game\Game;
 use Phptg\BotApi\Type\GeneralForumTopicHidden;
 use Phptg\BotApi\Type\Inline\InlineQuery;
@@ -621,64 +625,6 @@ test('onReplyToStory routes correctly', function () {
     expect($route->type)->toBe(RouteType::REPLY_TO_STORY);
 });
 
-test('onNewChatMembers routes correctly', function () {
-    TelegramRouter::forBot('main_bot')
-        ->chatType(ChatType::GROUP)
-        ->onNewChatMembers(function (HybridGram\Core\Routing\RouteData\NewChatMembersData $newChatMembersData) {
-            return 'new_chat_members_handler';
-        });
-
-    $inviter = new User(1, false, 'Inviter');
-    $newMember = new User(2, false, 'NewMember');
-    $chat = new Chat(1, 'group');
-
-    $message = new Message(
-        messageId: 1,
-        date: new DateTimeImmutable,
-        chat: $chat,
-        from: $inviter,
-        newChatMembers: [$newMember],
-    );
-
-    $update = new Update(
-        updateId: 1,
-        message: $message
-    );
-
-    $route = app(HybridGram\Core\Routing\TelegramRouter::class)->resolveActionsByUpdate($update, 'main_bot');
-    expect($route)->toBeInstanceOf(TelegramRoute::class);
-    expect($route->type)->toBe(RouteType::NEW_CHAT_MEMBER);
-});
-
-test('onLeftChatMember routes correctly', function () {
-    TelegramRouter::forBot('main_bot')
-        ->chatType(ChatType::GROUP)
-        ->onLeftChatMember(function (HybridGram\Core\Routing\RouteData\LeftChatMemberData $leftChatMemberData) {
-            return 'left_chat_member_handler';
-        });
-
-    $actor = new User(1, false, 'Actor');
-    $leftMember = new User(2, false, 'LeftMember');
-    $chat = new Chat(1, 'group');
-
-    $message = new Message(
-        messageId: 1,
-        date: new DateTimeImmutable,
-        chat: $chat,
-        from: $actor,
-        leftChatMember: $leftMember,
-    );
-
-    $update = new Update(
-        updateId: 1,
-        message: $message
-    );
-
-    $route = app(HybridGram\Core\Routing\TelegramRouter::class)->resolveActionsByUpdate($update, 'main_bot');
-    expect($route)->toBeInstanceOf(TelegramRoute::class);
-    expect($route->type)->toBe(RouteType::LEFT_CHAT_MEMBER);
-});
-
 test('onNewChatTitle routes correctly', function () {
     TelegramRouter::forBot('main_bot')
         ->chatType(ChatType::GROUP)
@@ -871,6 +817,133 @@ test('onForumTopicEvent routes correctly', function () {
     expect($route->type)->toBe(RouteType::FORUM_TOPIC_EVENT);
 });
 
+test('onForumTopicCreated routes correctly', function () {
+    TelegramRouter::forBot('main_bot')
+        ->chatType(ChatType::GROUP)
+        ->onForumTopicCreated(function (HybridGram\Core\Routing\RouteData\ForumTopicCreatedData $data) {
+            return 'forum_topic_created_handler';
+        });
+
+    $actor = new User(1, false, 'Actor');
+    $chat = new Chat(1, 'group');
+
+    $created = new ForumTopicCreated(
+        name: 'Topic name',
+        iconColor: 0x6FB9F0,
+        iconCustomEmojiId: null,
+    );
+
+    $message = new Message(
+        messageId: 1,
+        date: new DateTimeImmutable,
+        chat: $chat,
+        from: $actor,
+        forumTopicCreated: $created,
+    );
+
+    $update = new Update(
+        updateId: 1,
+        message: $message
+    );
+
+    $route = app(HybridGram\Core\Routing\TelegramRouter::class)->resolveActionsByUpdate($update, 'main_bot');
+    expect($route)->toBeInstanceOf(TelegramRoute::class);
+    expect($route->type)->toBe(RouteType::FORUM_TOPIC_CREATED);
+});
+
+test('onForumTopicEdited routes correctly', function () {
+    TelegramRouter::forBot('main_bot')
+        ->chatType(ChatType::GROUP)
+        ->onForumTopicEdited(function (HybridGram\Core\Routing\RouteData\ForumTopicEditedData $data) {
+            return 'forum_topic_edited_handler';
+        });
+
+    $actor = new User(1, false, 'Actor');
+    $chat = new Chat(1, 'group');
+
+    $edited = new ForumTopicEdited(
+        name: 'Updated topic name',
+        iconCustomEmojiId: null,
+    );
+
+    $message = new Message(
+        messageId: 1,
+        date: new DateTimeImmutable,
+        chat: $chat,
+        from: $actor,
+        forumTopicEdited: $edited,
+    );
+
+    $update = new Update(
+        updateId: 1,
+        message: $message
+    );
+
+    $route = app(HybridGram\Core\Routing\TelegramRouter::class)->resolveActionsByUpdate($update, 'main_bot');
+    expect($route)->toBeInstanceOf(TelegramRoute::class);
+    expect($route->type)->toBe(RouteType::FORUM_TOPIC_EDITED);
+});
+
+test('onForumTopicClosed routes correctly', function () {
+    TelegramRouter::forBot('main_bot')
+        ->chatType(ChatType::GROUP)
+        ->onForumTopicClosed(function (HybridGram\Core\Routing\RouteData\ForumTopicClosedData $data) {
+            return 'forum_topic_closed_handler';
+        });
+
+    $actor = new User(1, false, 'Actor');
+    $chat = new Chat(1, 'group');
+
+    $closed = new ForumTopicClosed();
+
+    $message = new Message(
+        messageId: 1,
+        date: new DateTimeImmutable,
+        chat: $chat,
+        from: $actor,
+        forumTopicClosed: $closed,
+    );
+
+    $update = new Update(
+        updateId: 1,
+        message: $message
+    );
+
+    $route = app(HybridGram\Core\Routing\TelegramRouter::class)->resolveActionsByUpdate($update, 'main_bot');
+    expect($route)->toBeInstanceOf(TelegramRoute::class);
+    expect($route->type)->toBe(RouteType::FORUM_TOPIC_CLOSED);
+});
+
+test('onForumTopicReopened routes correctly', function () {
+    TelegramRouter::forBot('main_bot')
+        ->chatType(ChatType::GROUP)
+        ->onForumTopicReopened(function (HybridGram\Core\Routing\RouteData\ForumTopicReopenedData $data) {
+            return 'forum_topic_reopened_handler';
+        });
+
+    $actor = new User(1, false, 'Actor');
+    $chat = new Chat(1, 'group');
+
+    $reopened = new ForumTopicReopened();
+
+    $message = new Message(
+        messageId: 1,
+        date: new DateTimeImmutable,
+        chat: $chat,
+        from: $actor,
+        forumTopicReopened: $reopened,
+    );
+
+    $update = new Update(
+        updateId: 1,
+        message: $message
+    );
+
+    $route = app(HybridGram\Core\Routing\TelegramRouter::class)->resolveActionsByUpdate($update, 'main_bot');
+    expect($route)->toBeInstanceOf(TelegramRoute::class);
+    expect($route->type)->toBe(RouteType::FORUM_TOPIC_REOPENED);
+});
+
 test('onGeneralForumTopicEvent routes correctly', function () {
     TelegramRouter::forBot('main_bot')
         ->chatType(ChatType::GROUP)
@@ -1003,4 +1076,30 @@ test('onFallback routes correctly', function () {
     $route = app(HybridGram\Core\Routing\TelegramRouter::class)->resolveActionsByUpdate($update, 'main_bot');
     expect($route)->toBeInstanceOf(TelegramRoute::class);
     expect($route->type)->toBe(RouteType::FALLBACK);
+});
+
+test('onBusinessMessageText routes correctly', function () {
+    TelegramRouter::forBot('main_bot')
+        ->onBusinessMessageText(function (HybridGram\Core\Routing\RouteData\BusinessMessageTextData $businessMessageTextData) {
+            return 'business_message_text_handler';
+        });
+
+    $user = new User(1, false, 'TestUser');
+    $chat = new Chat(1, 'private');
+    $businessMessage = new Message(
+        messageId: 213629,
+        date: new DateTimeImmutable,
+        chat: $chat,
+        from: $user,
+        text: 'Привет команда SVK 🥺, у меня вопрос. (Отправьте это сообщение нам и магия начнется)',
+        businessConnectionId: 'JExJblLGWUuyFwAArZrLhOGnjeQ'
+    );
+    $update = new Update(
+        updateId: 102669566,
+        businessMessage: $businessMessage
+    );
+
+    $route = app(HybridGram\Core\Routing\TelegramRouter::class)->resolveActionsByUpdate($update, 'main_bot');
+    expect($route)->toBeInstanceOf(TelegramRoute::class);
+    expect($route->type)->toBe(RouteType::BUSINESS_MESSAGE_TEXT);
 });

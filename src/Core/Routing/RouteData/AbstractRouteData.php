@@ -21,6 +21,16 @@ abstract readonly class AbstractRouteData implements RouteDataInterface
         return UpdateHelper::getChatFromUpdate($this->update);
     }
 
+    public function getChatId(): ?int
+    {
+        return UpdateHelper::getChatFromUpdate($this->update)->id;
+    }
+
+    public function getUserId(): ?int
+    {
+        return UpdateHelper::getUserFromUpdate($this->update)->id;
+    }
+
     public function getUser(): ?User
     {
         return UpdateHelper::getUserFromUpdate($this->update);

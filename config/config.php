@@ -9,19 +9,22 @@ return [
         [
             'token' => env('BOT_TOKEN'),
             'bot_id' => env('BOT_ID', 'main'),
+            'bot_name' => env('BOT_NAME'),
             'update_mode' => UpdateModeEnum::POLLING,
             'routes_file' => base_path(env('TELEGRAM_ROUTES_FILE', 'routes/telegram.php')),
+
             'polling_limit' => env('TELEGRAM_POLLING_LIMIT', 100),
             'polling_timeout' => env('TELEGRAM_POLLING_TIMEOUT', 0),
-            'allowed_updates' => explode(',', env('ALLOWED_TELEGRAM_UPDATES', '')) ,
+
+            'allowed_updates' => explode(',', env('ALLOWED_TELEGRAM_UPDATES', '')),
+
             'secret_token' => env('TELEGRAM_SECRET_TOKEN'),
             'webhook_url' => env('TELEGRAM_WEBHOOK_URL'),
-            'webhook_port' => env('TELEGRAM_WEBHOOK_PORT', 9070),
+            'webhook_port' => env('TELEGRAM_WEBHOOK_PORT', 6945),
+            'webhook_ip_address' => env('TELEGRAM_WEBHOOK_IP_ADDRESS'),
             'certificate_path' => env('TELEGRAM_CERTIFICATE_PATH'),
             'webhook_drop_pending_updates' => env('TELEGRAM_WEBHOOK_DROP_PENDING', false),
-            'bot_name' => env('BOT_NAME', 'main'),
         ],
-        // Вы можете установить сколько угодно ботов
     ],
     'base_url' => env('TELEGRAM_BASE_URL', 'https://api.telegram.org/bot'),
     

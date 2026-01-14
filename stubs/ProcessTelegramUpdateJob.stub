@@ -1,0 +1,36 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Jobs;
+
+use HybridGram\Core\Config\BotConfig;
+use HybridGram\Core\UpdateMode\WebhookAsyncUpdateMode;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
+use Phptg\BotApi\Type\Update\Update;
+
+final class ProcessTelegramUpdateJob implements ShouldQueue
+{
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+
+    public function __construct(
+        public readonly string $botId,
+        public readonly Update $update,
+    ) {}
+
+    public function handle(): void
+    {
+        $botConfig = BotConfig::getBotConfig($this->botId);
+        if ($botConfig === null) {
+            logger()->error('Bot config not found', ['bot_id' => $this->botId]);
+            return;
+        }
+
+        $updateMode = new WebhookAsyncUpdateMode($botConfig);
+        $updateMode->run($this->update);
+    }
+}

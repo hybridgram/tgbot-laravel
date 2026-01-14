@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace HybridGram\Console;
 
 use Closure;
+use HybridGram\Core\Routing\ChatType;
 use HybridGram\Core\Routing\TelegramRoute;
 use HybridGram\Core\Routing\TelegramRouter;
 use Illuminate\Console\Command;
@@ -145,7 +146,7 @@ final class TelegramRouteListCommand extends Command
             'from_state' => $this->formatState($route->fromChatState),
             'to_state' => $this->formatState($route->toState),
             'middleware' => $this->formatMiddleware($route->middlewares),
-            'chat_type' => $route->chatType->name,
+            'chat_type' => $this->formatChatTypes($route->chatTypes),
             'query_params' => $this->formatQueryParams($route->callbackQueryOptions),
         ];
     }
@@ -204,6 +205,25 @@ final class TelegramRouteListCommand extends Command
         }
 
         return $state;
+    }
+
+    /**
+     * Format chat types for display.
+     *
+     * @param ChatType[]|null $chatTypes
+     * @return string
+     */
+    protected function formatChatTypes(?array $chatTypes): string
+    {
+        if ($chatTypes === null) {
+            return '*';
+        }
+
+        if (empty($chatTypes)) {
+            return '*';
+        }
+
+        return implode(', ', array_map(fn(ChatType $type) => $type->name, $chatTypes));
     }
 
     /**
@@ -339,6 +359,7 @@ final class TelegramRouteListCommand extends Command
             $type = $route['type'];
             $pattern = $route['pattern'];
             $botId = $route['bot_id'];
+            $chatType = $route['chat_type'];
             $action = $route['action'];
             $fromChatState = $route['from_state'];
             $toState = $route['to_state'];
@@ -352,10 +373,13 @@ final class TelegramRouteListCommand extends Command
             // Calculate spacing for type
             $typeSpaces = str_repeat(' ', max($maxTypeLength + 6 - mb_strlen($type), 0));
 
-            // Build pattern with bot_id
+            // Build pattern with chat type and bot_id
             $patternWithBot = $pattern;
+            $chatTypePart = sprintf('[chat:%s]', $chatType);
             if ($botId !== '*') {
-                $patternWithBot = sprintf('%s [bot:%s]', $pattern, $botId);
+                $patternWithBot = sprintf('%s %s [bot:%s]', $pattern, $chatTypePart, $botId);
+            } else {
+                $patternWithBot = sprintf('%s %s', $pattern, $chatTypePart);
             }
 
             // Build action part

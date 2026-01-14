@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace HybridGram\Core\Routing;
 
 use Closure;
+use HybridGram\Core\Routing\RouteOptions\ChatMemberOptions;
 use HybridGram\Core\Routing\RouteOptions\PollOptions;
 use HybridGram\Core\Routing\RouteOptions\QueryParams\QueryParamInterface;
 use HybridGram\Http\Middlewares\SetStateTelegramRouteMiddleware;
@@ -127,9 +128,11 @@ final class TelegramRouteBuilder
         }, $states);
     }
 
-    public function toChatState(string|\BackedEnum $state, ?int $ttl = null, mixed $data = null): self
+    public function toChatState(string|\BackedEnum|null $state, ?int $ttl = null, mixed $data = null): self
     {
-        if ($state instanceof \BackedEnum) {
+        if ($state === null) {
+            $this->route->toState = null;
+        } elseif ($state instanceof \BackedEnum) {
             $this->route->toState = $state->value;
         } else {
             $this->route->toState = $state;
@@ -140,9 +143,11 @@ final class TelegramRouteBuilder
         return $this;
     }
 
-    public function toUserState(string|\BackedEnum $state, ?int $ttl = null, mixed $data = null): self
+    public function toUserState(string|\BackedEnum|null $state, ?int $ttl = null, mixed $data = null): self
     {
-        if ($state instanceof \BackedEnum) {
+        if ($state === null) {
+            $this->route->toState = null;
+        } elseif ($state instanceof \BackedEnum) {
             $this->route->toState = $state->value;
         } else {
             $this->route->toState = $state;
@@ -169,9 +174,30 @@ final class TelegramRouteBuilder
         return $this;
     }
 
+    /**
+     * Устанавливает один тип чата (для обратной совместимости)
+     */
     public function chatType(ChatType $chatType): self
     {
-        $this->route->chatType = $chatType;
+        $this->route->chatTypes = [$chatType];
+
+        return $this;
+    }
+
+    /**
+     * Устанавливает несколько типов чатов
+     * @param ChatType[]|null $chatTypes null означает все типы чатов
+     */
+    public function chatTypes(?array $chatTypes): self
+    {
+        if ($chatTypes !== null) {
+            foreach ($chatTypes as $chatType) {
+                if (!($chatType instanceof ChatType)) {
+                    throw new \InvalidArgumentException('All chatTypes must be instances of '.ChatType::class);
+                }
+            }
+        }
+        $this->route->chatTypes = $chatTypes;
 
         return $this;
     }
@@ -194,9 +220,18 @@ final class TelegramRouteBuilder
         $this->register();
     }
 
-    public function onMessage(callable|string|array $action, \Closure|string|null $pattern = null): void
+    public function onTextMessage(callable|string|array $action, \Closure|string|null $pattern = null): void
     {
-        $this->route->type = RouteType::MESSAGE;
+        $this->route->type = RouteType::TEXT_MESSAGE;
+        $this->route->action = $action;
+        $this->pattern($pattern);
+
+        $this->register();
+    }
+
+    public function onBusinessMessageText(callable|string|array $action, \Closure|string|null $pattern = null): void
+    {
+        $this->route->type = RouteType::BUSINESS_MESSAGE_TEXT;
         $this->route->action = $action;
         $this->pattern($pattern);
 
@@ -396,6 +431,14 @@ final class TelegramRouteBuilder
         $this->register();
     }
 
+    public function onBusinessConnection(callable|string|array $action): void
+    {
+        $this->route->type = RouteType::BUSINESS_CONNECTION;
+        $this->route->action = $action;
+
+        $this->register();
+    }
+
     public function onReply(callable|string|array $action, \Closure|string|null $pattern = null): void
     {
         $this->route->type = RouteType::REPLY_TO_MESSAGE;
@@ -448,26 +491,13 @@ final class TelegramRouteBuilder
         $this->register();
     }
 
-    public function onNewChatMembers(callable|string|array $action): void
-    {
-        $this->route->type = RouteType::NEW_CHAT_MEMBER;
-        $this->route->action = $action;
-
-        $this->register();
-    }
-
-    public function onLeftChatMember(callable|string|array $action): void
-    {
-        $this->route->type = RouteType::LEFT_CHAT_MEMBER;
-        $this->route->action = $action;
-
-        $this->register();
-    }
-
     public function onNewChatTitle(callable|string|array $action): void
     {
         $this->route->type = RouteType::NEW_CHAT_TITLE;
         $this->route->action = $action;
+        if ($this->route->chatTypes === [ChatType::PRIVATE]) {
+            $this->route->chatTypes = null;
+        }
 
         $this->register();
     }
@@ -476,6 +506,9 @@ final class TelegramRouteBuilder
     {
         $this->route->type = RouteType::NEW_CHAT_PHOTO;
         $this->route->action = $action;
+        if ($this->route->chatTypes === [ChatType::PRIVATE]) {
+            $this->route->chatTypes = null;
+        }
 
         $this->register();
     }
@@ -484,6 +517,9 @@ final class TelegramRouteBuilder
     {
         $this->route->type = RouteType::DELETE_CHAT_PHOTO;
         $this->route->action = $action;
+        if ($this->route->chatTypes === [ChatType::PRIVATE]) {
+            $this->route->chatTypes = null;
+        }
 
         $this->register();
     }
@@ -492,6 +528,9 @@ final class TelegramRouteBuilder
     {
         $this->route->type = RouteType::AUTO_DELETE_TIMER_CHANGED;
         $this->route->action = $action;
+        if ($this->route->chatTypes === [ChatType::PRIVATE]) {
+            $this->route->chatTypes = null;
+        }
 
         $this->register();
     }
@@ -500,6 +539,9 @@ final class TelegramRouteBuilder
     {
         $this->route->type = RouteType::PINNED_MESSAGE;
         $this->route->action = $action;
+        if ($this->route->chatTypes === [ChatType::PRIVATE]) {
+            $this->route->chatTypes = null;
+        }
 
         $this->register();
     }
@@ -508,6 +550,53 @@ final class TelegramRouteBuilder
     {
         $this->route->type = RouteType::FORUM_TOPIC_EVENT;
         $this->route->action = $action;
+        if ($this->route->chatTypes === [ChatType::PRIVATE]) {
+            $this->route->chatTypes = null;
+        }
+
+        $this->register();
+    }
+
+    public function onForumTopicCreated(callable|string|array $action): void
+    {
+        $this->route->type = RouteType::FORUM_TOPIC_CREATED;
+        $this->route->action = $action;
+        if ($this->route->chatTypes === [ChatType::PRIVATE]) {
+            $this->route->chatTypes = null;
+        }
+
+        $this->register();
+    }
+
+    public function onForumTopicEdited(callable|string|array $action): void
+    {
+        $this->route->type = RouteType::FORUM_TOPIC_EDITED;
+        $this->route->action = $action;
+        if ($this->route->chatTypes === [ChatType::PRIVATE]) {
+            $this->route->chatTypes = null;
+        }
+
+        $this->register();
+    }
+
+    public function onForumTopicClosed(callable|string|array $action): void
+    {
+        $this->route->type = RouteType::FORUM_TOPIC_CLOSED;
+        $this->route->action = $action;
+        if ($this->route->chatTypes === [ChatType::PRIVATE]) {
+            $this->route->chatTypes = null;
+        }
+
+        $this->register();
+    }
+
+    public function onForumTopicReopened(callable|string|array $action): void
+    {
+        $this->route->type = RouteType::FORUM_TOPIC_REOPENED;
+        $this->route->action = $action;
+        if ($this->route->chatTypes === [ChatType::PRIVATE]) {
+            $this->route->chatTypes = null;
+        }
 
         $this->register();
     }
@@ -516,6 +605,9 @@ final class TelegramRouteBuilder
     {
         $this->route->type = RouteType::GENERAL_FORUM_TOPIC_EVENT;
         $this->route->action = $action;
+        if ($this->route->chatTypes === [ChatType::PRIVATE]) {
+            $this->route->chatTypes = null;
+        }
 
         $this->register();
     }
@@ -524,6 +616,9 @@ final class TelegramRouteBuilder
     {
         $this->route->type = RouteType::BOOST_ADDED;
         $this->route->action = $action;
+        if ($this->route->chatTypes === [ChatType::PRIVATE]) {
+            $this->route->chatTypes = null;
+        }
 
         $this->register();
     }
@@ -541,6 +636,32 @@ final class TelegramRouteBuilder
         $this->route->type = RouteType::INLINE_QUERY;
         $this->route->action = $action;
         $this->route->pattern = $pattern;
+
+        $this->register();
+    }
+
+    public function onMyChatMember(callable|string|array $action, ?ChatMemberOptions $chatMemberOptions = null): void
+    {
+        $this->route->type = RouteType::MY_CHAT_MEMBER;
+        $this->route->action = $action;
+        $this->route->chatMemberOptions = $chatMemberOptions;
+
+        if ($this->route->chatTypes === [ChatType::PRIVATE]) {
+            $this->route->chatTypes = ChatType::allExceptPrivate();
+        }
+
+        $this->register();
+    }
+
+    public function onChatMember(callable|string|array $action, ?ChatMemberOptions $chatMemberOptions = null): void
+    {
+        $this->route->type = RouteType::CHAT_MEMBER;
+        $this->route->action = $action;
+        $this->route->chatMemberOptions = $chatMemberOptions;
+
+        if ($this->route->chatTypes === [ChatType::PRIVATE]) {
+            $this->route->chatTypes = ChatType::allExceptPrivate();
+        }
 
         $this->register();
     }

@@ -2,3 +2,9 @@
 .cursor
 .env
 vendor
+starlight-docs/
+
+# go-proxy binary files
+bin/go-proxy
+bin/go-proxy.exe
+bin/.go-proxy-version

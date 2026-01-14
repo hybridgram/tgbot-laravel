@@ -9,6 +9,4 @@ use Phptg\BotApi\Type\Update\Update;
 interface UpdateModeInterface
 {
     public function run(?Update $update = null): void;
-
-    public function type(): UpdateModeEnum;
 }

@@ -10,16 +10,10 @@ final class WebhookUpdateMode extends AbstractUpdateMode
 {
     public function run(?Update $update = null): void
     {
+        if ($update === null) {
+            return;
+        }
+
         $this->processUpdate($update);
-    }
-
-    public function serveRoadRunnerServer()
-    {
-
-    }
-
-    public function type(): UpdateModeEnum
-    {
-        return UpdateModeEnum::WEBHOOK;
     }
 }

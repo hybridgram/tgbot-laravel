@@ -44,6 +44,8 @@ php artisan hybridgram:polling main --hot-reload --watch=app,routes,config,src -
 - [ ] событие вызывать что стейт переключисля чтобы в клиентском коде можно было завязаться и делать какие-то действия нарпимер удалять клавиатуру
 - [ ] \HybridGram\Http\Middlewares\SetStateTelegramRouteMiddleware должен поддерживать еще постустановку стейта
 - [ ] Атоматическоге экранирование точки при отправке запросыо с етстовм в телеграм
+- [ ] в CommandData надо проверить как с base64url будет работать
+- [ ] автоэксейпинг escapeMarkdownV2 для сообщений тектовых
 
 ## Outgoing Message Sending
 

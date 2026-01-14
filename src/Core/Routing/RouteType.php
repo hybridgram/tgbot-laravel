@@ -8,7 +8,7 @@ enum RouteType
 {
     case ANY;
     case COMMAND;
-    case MESSAGE;
+    case TEXT_MESSAGE;
     case POLL;
     case POLL_ANSWER;
     case POLL_CLOSED;
@@ -38,14 +38,16 @@ enum RouteType
     case EXTERNAL_REPLY_MESSAGE;
     case QUOTED_MESSAGE;
     case REPLY_TO_STORY;
-    case NEW_CHAT_MEMBER;
-    case LEFT_CHAT_MEMBER;
     case NEW_CHAT_TITLE;
     case NEW_CHAT_PHOTO;
     case DELETE_CHAT_PHOTO;
     case AUTO_DELETE_TIMER_CHANGED;
     case PINNED_MESSAGE;
     case FORUM_TOPIC_EVENT;
+    case FORUM_TOPIC_CREATED;
+    case FORUM_TOPIC_EDITED;
+    case FORUM_TOPIC_CLOSED;
+    case FORUM_TOPIC_REOPENED;
     case GENERAL_FORUM_TOPIC_EVENT;
     case BOOST_ADDED;
     case REPLY_TO_MESSAGE;
@@ -63,11 +65,14 @@ enum RouteType
     case EDITED_CHANNEL_POST;
     case CHAT_JOIN_REQUEST;
     case CHAT_MEMBER_UPDATED;
+    case MY_CHAT_MEMBER;
     case WEBAPP_DATA;
     case USER_SHARED;
     case CHAT_SHARED;
     case UPDATE;
     case BUSINESS_CONNECTION;
+    case BUSINESS_MESSAGE_COMMAND;
+    case BUSINESS_MESSAGE_TEXT;
     case EDITED_BUSINESS_MESSAGE;
     case REMOVED_CHAT_BOOST;
     case CHAT_BOOST;
@@ -78,6 +83,6 @@ enum RouteType
     case DELETED_BUSINESS_MESSAGES;
 
     case UNKNOWN;
-    
+
     case FALLBACK;
 }
