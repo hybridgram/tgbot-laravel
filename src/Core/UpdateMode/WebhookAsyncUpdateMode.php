@@ -17,16 +17,7 @@ final class WebhookAsyncUpdateMode extends AbstractUpdateMode
             return;
         }
 
-        $this->processUpdate($update);
-    }
-
-    /**
-     * Process update with database storage and media group handling
-     */
-    protected function processUpdate(Update $update): void
-    {
         $processedUpdate = $this->handleMediaGroup($update, $this->botConfig->botId);
-
         if ($processedUpdate !== null) {
             $this->processUpdate($processedUpdate);
 
