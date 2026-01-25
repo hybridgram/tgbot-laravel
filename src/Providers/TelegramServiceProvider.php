@@ -11,11 +11,12 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use HybridGram\Auth\TelegramGuard;
 use HybridGram\Auth\TelegramUserProvider;
+use HybridGram\Console\ClearOptimizationsCommand;
 use HybridGram\Console\DeleteWebhookCommand;
 use HybridGram\Console\GetWebhookInfoCommand;
-use HybridGram\Console\SetWebhookCommand;
 use HybridGram\Console\OptimizeRoutesCommand;
-use HybridGram\Console\ClearOptimizationsCommand;
+use HybridGram\Console\SetBotSettingsCommand;
+use HybridGram\Console\SetWebhookCommand;
 use HybridGram\Console\StartPollingCommand;
 use HybridGram\Console\TelegramRouteListCommand;
 use HybridGram\Core\Config\BotConfig;
@@ -49,6 +50,7 @@ final class TelegramServiceProvider extends ServiceProvider
                 ClearOptimizationsCommand::class,
                 StartPollingCommand::class,
                 TelegramRouteListCommand::class,
+                SetBotSettingsCommand::class,
             ]);
 
             $this->optimizes(
