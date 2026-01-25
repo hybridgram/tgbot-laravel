@@ -28,6 +28,7 @@
         "phptg/bot-api": "dev-master"
     },
     "require-dev": {
+        "larastan/larastan": "^3.0",
         "laravel/framework": "^11.0",
         "laravel/pint": "^1.25",
         "marcocesarato/php-conventional-changelog": "^1.17",
@@ -73,6 +74,9 @@
         ],
         "lint": [
             "@php vendor/bin/pint --ansi"
+        ],
+        "stan": [
+            "@php vendor/bin/phpstan analyse --ansi"
         ],
         "test": [
             "@clear",
