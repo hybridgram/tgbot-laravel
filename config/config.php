@@ -2,15 +2,13 @@
 
 declare(strict_types=1);
 
-use HybridGram\Core\UpdateMode\UpdateModeEnum;
-
 return [
     'bots' => [
         [
             'token' => env('BOT_TOKEN'),
             'bot_id' => env('BOT_ID', 'main'),
             'bot_name' => env('BOT_NAME'),
-            'update_mode' => UpdateModeEnum::POLLING,
+            'update_mode' => 'polling', // any value from \HybridGram\Core\UpdateMode\UpdateModeEnum
             'routes_file' => base_path(env('TELEGRAM_ROUTES_FILE', 'routes/telegram.php')),
 
             'polling_limit' => env('TELEGRAM_POLLING_LIMIT', 100),

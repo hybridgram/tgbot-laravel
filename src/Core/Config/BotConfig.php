@@ -20,7 +20,7 @@ final class BotConfig
         #[SensitiveParameter]
         public readonly string $token,
         public readonly string $botId,
-        public readonly UpdateModeEnum $updateMode,
+        public string|UpdateModeEnum $updateMode,
         public string $routesPath,
         ?PollingModeConfig $pollingConfig = null,
         ?WebhookModeConfig $webhookConfig = null,
@@ -40,7 +40,7 @@ final class BotConfig
 
     public function getUpdateMode(): UpdateModeEnum
     {
-        return $this->updateMode;
+        return $this->updateMode instanceof UpdateModeEnum ? $this->updateMode : UpdateModeEnum::from($this->updateMode);
     }
 
     public static function getBotConfig(string $botId): ?BotConfig
