@@ -31,5 +31,3 @@ final class DirectOutgoingDispatcher implements OutgoingDispatcherInterface
         return $config->token;
     }
 }
-
-

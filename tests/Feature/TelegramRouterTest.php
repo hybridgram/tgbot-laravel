@@ -17,26 +17,26 @@ use Phptg\BotApi\Type\Checklist;
 use Phptg\BotApi\Type\ChecklistTask;
 use Phptg\BotApi\Type\Contact;
 use Phptg\BotApi\Type\ExternalReplyInfo;
+use Phptg\BotApi\Type\ForumTopicClosed;
 use Phptg\BotApi\Type\ForumTopicCreated;
 use Phptg\BotApi\Type\ForumTopicEdited;
-use Phptg\BotApi\Type\ForumTopicClosed;
 use Phptg\BotApi\Type\ForumTopicReopened;
 use Phptg\BotApi\Type\Game\Game;
 use Phptg\BotApi\Type\GeneralForumTopicHidden;
 use Phptg\BotApi\Type\Inline\InlineQuery;
-use Phptg\BotApi\Type\MessageOriginUser;
 use Phptg\BotApi\Type\Message;
 use Phptg\BotApi\Type\MessageAutoDeleteTimerChanged;
+use Phptg\BotApi\Type\MessageOriginUser;
+use Phptg\BotApi\Type\PaidMediaInfo;
 use Phptg\BotApi\Type\PaidMediaPreview;
+use Phptg\BotApi\Type\Passport\EncryptedCredentials;
+use Phptg\BotApi\Type\Passport\PassportData as TelegramPassportData;
 use Phptg\BotApi\Type\PhotoSize;
 use Phptg\BotApi\Type\Sticker\Sticker;
 use Phptg\BotApi\Type\Story;
+use Phptg\BotApi\Type\TextQuote;
 use Phptg\BotApi\Type\Update\Update;
 use Phptg\BotApi\Type\User;
-use Phptg\BotApi\Type\PaidMediaInfo;
-use Phptg\BotApi\Type\Passport\EncryptedCredentials;
-use Phptg\BotApi\Type\Passport\PassportData as TelegramPassportData;
-use Phptg\BotApi\Type\TextQuote;
 use Phptg\BotApi\Type\VideoNote;
 use Phptg\BotApi\Type\Voice;
 
@@ -66,7 +66,6 @@ test('add route registered in router', function () {
     );
 
     expect(app(HybridGram\Core\Routing\TelegramRouter::class)->resolveActionsByUpdate($update, 'main_bot'))->toBeInstanceOf(TelegramRoute::class);
-
 
     $groupChat = new Chat(1, 'group');
     $groupMessage = new Message(
@@ -340,7 +339,7 @@ test('onDice routes correctly', function () {
 
     $user = new User(1, false, 'TestUser');
     $chat = new Chat(1, 'private');
-    $dice = new \Phptg\BotApi\Type\Dice(
+    $dice = new Phptg\BotApi\Type\Dice(
         emoji: '🎲',
         value: 4
     );
@@ -399,7 +398,7 @@ test('onInvoice routes correctly', function () {
 
     $user = new User(1, false, 'TestUser');
     $chat = new Chat(1, 'private');
-    $invoice = new \Phptg\BotApi\Type\Payment\Invoice(
+    $invoice = new Phptg\BotApi\Type\Payment\Invoice(
         title: 'Test Invoice',
         description: 'Test Description',
         startParameter: 'test_param',
@@ -431,7 +430,7 @@ test('onSuccessfulPayment routes correctly', function () {
 
     $user = new User(1, false, 'TestUser');
     $chat = new Chat(1, 'private');
-    $successfulPayment = new \Phptg\BotApi\Type\Payment\SuccessfulPayment(
+    $successfulPayment = new Phptg\BotApi\Type\Payment\SuccessfulPayment(
         currency: 'USD',
         totalAmount: 1000,
         invoicePayload: 'test_payload',
@@ -532,7 +531,7 @@ test('onExternalReply routes correctly', function () {
     $chat = new Chat(1, 'private');
 
     $origin = new MessageOriginUser(
-        date: new DateTimeImmutable(),
+        date: new DateTimeImmutable,
         senderUser: $user,
     );
     $externalReply = new ExternalReplyInfo(origin: $origin);
@@ -894,7 +893,7 @@ test('onForumTopicClosed routes correctly', function () {
     $actor = new User(1, false, 'Actor');
     $chat = new Chat(1, 'group');
 
-    $closed = new ForumTopicClosed();
+    $closed = new ForumTopicClosed;
 
     $message = new Message(
         messageId: 1,
@@ -924,7 +923,7 @@ test('onForumTopicReopened routes correctly', function () {
     $actor = new User(1, false, 'Actor');
     $chat = new Chat(1, 'group');
 
-    $reopened = new ForumTopicReopened();
+    $reopened = new ForumTopicReopened;
 
     $message = new Message(
         messageId: 1,
@@ -954,7 +953,7 @@ test('onGeneralForumTopicEvent routes correctly', function () {
     $actor = new User(1, false, 'Actor');
     $chat = new Chat(1, 'group');
 
-    $payload = new GeneralForumTopicHidden();
+    $payload = new GeneralForumTopicHidden;
 
     $message = new Message(
         messageId: 1,
@@ -1080,7 +1079,7 @@ test('onFallback routes correctly', function () {
 
 test('onBusinessMessageText routes correctly', function () {
     TelegramRouter::forBot('main_bot')
-        ->onBusinessMessageText(function (HybridGram\Core\Routing\RouteData\BusinessMessageTextData $businessMessageTextData) {
+        ->onBusinessMessageText(function (BusinessMessageTextData $businessMessageTextData) {
             return 'business_message_text_handler';
         });
 

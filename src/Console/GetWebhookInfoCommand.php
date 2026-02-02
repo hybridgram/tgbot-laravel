@@ -21,9 +21,10 @@ final class GetWebhookInfoCommand extends Command
     {
         $botId = $this->option('bot');
         $config = BotConfig::getBotConfig($botId);
-        
+
         if ($config === null) {
             $this->error("Bot config not found for bot: {$botId}");
+
             return;
         }
 

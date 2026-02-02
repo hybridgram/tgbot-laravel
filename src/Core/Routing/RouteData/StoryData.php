@@ -10,11 +10,10 @@ use Phptg\BotApi\Type\Update\Update;
 final readonly class StoryData extends AbstractRouteData
 {
     public function __construct(
-        Update       $update,
+        Update $update,
         public Story $story,
-        string       $botId,
+        string $botId,
     ) {
         parent::__construct($update, $botId);
     }
 }
-

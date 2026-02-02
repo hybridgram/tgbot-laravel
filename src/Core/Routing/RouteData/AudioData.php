@@ -10,11 +10,10 @@ use Phptg\BotApi\Type\Update\Update;
 final readonly class AudioData extends AbstractRouteData
 {
     public function __construct(
-        Update       $update,
+        Update $update,
         public Audio $audio,
-        string       $botId,
+        string $botId,
     ) {
         parent::__construct($update, $botId);
     }
 }
-

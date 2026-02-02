@@ -14,20 +14,22 @@ use HybridGram\Telegram\Document\MimeType;
 final class TelegramRouteBuilder
 {
     private TelegramRoute $route;
-    private ?\Closure $resetCallback = null;
+
+    private ?Closure $resetCallback = null;
 
     public function __construct(
     ) {
-        $this->route = new TelegramRoute();
+        $this->route = new TelegramRoute;
     }
 
     /**
      * Устанавливает callback для восстановления базового состояния маршрута
      * после регистрации. Используется в группах для сохранения атрибутов.
      */
-    public function setResetCallback(\Closure $callback): self
+    public function setResetCallback(Closure $callback): self
     {
         $this->resetCallback = $callback;
+
         return $this;
     }
 
@@ -38,14 +40,14 @@ final class TelegramRouteBuilder
         return $this;
     }
 
-    public function action(\Closure|string|array $action): TelegramRouteBuilder
+    public function action(Closure|string|array $action): TelegramRouteBuilder
     {
         $this->route->action = $action;
 
         return $this;
     }
 
-    public function pattern(\Closure|string|null $pattern): TelegramRouteBuilder
+    public function pattern(Closure|string|null $pattern): TelegramRouteBuilder
     {
         $this->route->pattern = $pattern ?? '*';
 
@@ -67,7 +69,7 @@ final class TelegramRouteBuilder
     }
 
     /**
-     * @param array<string|\BackedEnum> $states
+     * @param  array<string|\BackedEnum>  $states
      */
     public function fromChatState(array $states): self
     {
@@ -79,7 +81,7 @@ final class TelegramRouteBuilder
     }
 
     /**
-     * @param array<string|\BackedEnum> $states
+     * @param  array<string|\BackedEnum>  $states
      */
     public function fromUserState(array $states): self
     {
@@ -92,7 +94,8 @@ final class TelegramRouteBuilder
 
     /**
      * Маршрут будет работать только если чат НЕ находится в указанных стейтах
-     * @param array<string|\BackedEnum> $states
+     *
+     * @param  array<string|\BackedEnum>  $states
      */
     public function exceptChatState(array $states): self
     {
@@ -105,7 +108,8 @@ final class TelegramRouteBuilder
 
     /**
      * Маршрут будет работать только если пользователь НЕ находится в указанных стейтах
-     * @param array<string|\BackedEnum> $states
+     *
+     * @param  array<string|\BackedEnum>  $states
      */
     public function exceptUserState(array $states): self
     {
@@ -118,7 +122,8 @@ final class TelegramRouteBuilder
 
     /**
      * Нормализует стейты: конвертирует BackedEnum в строки
-     * @param array<string|\BackedEnum> $states
+     *
+     * @param  array<string|\BackedEnum>  $states
      * @return array<string>
      */
     private function normalizeStates(array $states): array
@@ -186,13 +191,14 @@ final class TelegramRouteBuilder
 
     /**
      * Устанавливает несколько типов чатов
-     * @param ChatType[]|null $chatTypes null означает все типы чатов
+     *
+     * @param  ChatType[]|null  $chatTypes  null означает все типы чатов
      */
     public function chatTypes(?array $chatTypes): self
     {
         if ($chatTypes !== null) {
             foreach ($chatTypes as $chatType) {
-                if (!($chatType instanceof ChatType)) {
+                if (! ($chatType instanceof ChatType)) {
                     throw new \InvalidArgumentException('All chatTypes must be instances of '.ChatType::class);
                 }
             }
@@ -203,14 +209,13 @@ final class TelegramRouteBuilder
     }
 
     /**
-     * @param callable|string|array $action
-     * @param \Closure|string|null $pattern Паттерн для команды
-     * @param \Closure|null $commandParamOptions Фильтр по параметрам команды:
-     *   Пример: function(Update $update, array $args) { return count($args) > 0; }
-     *   Если возвращает false или null, маршрут не матчится
-     *   Если возвращает CommandData, используется он
+     * @param  Closure|string|null  $pattern  Паттерн для команды
+     * @param  Closure|null  $commandParamOptions  Фильтр по параметрам команды:
+     *                                             Пример: function(Update $update, array $args) { return count($args) > 0; }
+     *                                             Если возвращает false или null, маршрут не матчится
+     *                                             Если возвращает CommandData, используется он
      */
-    public function onCommand(callable|string|array $action, \Closure|string|null $pattern = null, ?\Closure $commandParamOptions = null): void
+    public function onCommand(callable|string|array $action, Closure|string|null $pattern = null, ?Closure $commandParamOptions = null): void
     {
         $this->route->type = RouteType::COMMAND;
         $this->route->action = $action;
@@ -220,7 +225,7 @@ final class TelegramRouteBuilder
         $this->register();
     }
 
-    public function onTextMessage(callable|string|array $action, \Closure|string|null $pattern = null): void
+    public function onTextMessage(callable|string|array $action, Closure|string|null $pattern = null): void
     {
         $this->route->type = RouteType::TEXT_MESSAGE;
         $this->route->action = $action;
@@ -229,7 +234,7 @@ final class TelegramRouteBuilder
         $this->register();
     }
 
-    public function onBusinessMessageText(callable|string|array $action, \Closure|string|null $pattern = null): void
+    public function onBusinessMessageText(callable|string|array $action, Closure|string|null $pattern = null): void
     {
         $this->route->type = RouteType::BUSINESS_MESSAGE_TEXT;
         $this->route->action = $action;
@@ -284,7 +289,7 @@ final class TelegramRouteBuilder
     }
 
     /**
-     * @param array<MimeType|string>|null $documentOptions
+     * @param  array<MimeType|string>|null  $documentOptions
      */
     public function onDocument(callable|string|array $action, string|Closure|null $pattern = null, ?array $documentOptions = null): void
     {
@@ -439,7 +444,7 @@ final class TelegramRouteBuilder
         $this->register();
     }
 
-    public function onReply(callable|string|array $action, \Closure|string|null $pattern = null): void
+    public function onReply(callable|string|array $action, Closure|string|null $pattern = null): void
     {
         $this->route->type = RouteType::REPLY_TO_MESSAGE;
         $this->route->action = $action;
@@ -448,7 +453,7 @@ final class TelegramRouteBuilder
         $this->register();
     }
 
-    public function onExternalReply(callable|string|array $action, \Closure|string|null $pattern = null): void
+    public function onExternalReply(callable|string|array $action, Closure|string|null $pattern = null): void
     {
         $this->route->type = RouteType::EXTERNAL_REPLY_MESSAGE;
         $this->route->action = $action;
@@ -457,7 +462,7 @@ final class TelegramRouteBuilder
         $this->register();
     }
 
-    public function onQuote(callable|string|array $action, \Closure|string|null $pattern = null): void
+    public function onQuote(callable|string|array $action, Closure|string|null $pattern = null): void
     {
         $this->route->type = RouteType::QUOTED_MESSAGE;
         $this->route->action = $action;
@@ -466,7 +471,7 @@ final class TelegramRouteBuilder
         $this->register();
     }
 
-    public function onReplyToStory(callable|string|array $action, \Closure|string|null $pattern = null): void
+    public function onReplyToStory(callable|string|array $action, Closure|string|null $pattern = null): void
     {
         $this->route->type = RouteType::REPLY_TO_STORY;
         $this->route->action = $action;
@@ -476,12 +481,11 @@ final class TelegramRouteBuilder
     }
 
     /**
-     * @param callable|string|array $action
-     * @param \Closure|string|null $pattern Паттерн для action
-     * @param array<string, string|null>|array<int, QueryParamInterface>|null $queryParams Фильтры по query параметрам:
-     *   Пример: queryParams: [new Exist('lang'), new Value('some', '12')]
+     * @param  Closure|string|null  $pattern  Паттерн для action
+     * @param  array<string, string|null>|array<int, QueryParamInterface>|null  $queryParams  Фильтры по query параметрам:
+     *                                                                                        Пример: queryParams: [new Exist('lang'), new Value('some', '12')]
      */
-    public function onCallbackQuery(callable|string|array $action, \Closure|string|null $pattern = '*', ?array $queryParams = null): void
+    public function onCallbackQuery(callable|string|array $action, Closure|string|null $pattern = '*', ?array $queryParams = null): void
     {
         $this->route->type = RouteType::CALLBACK_QUERY;
         $this->route->action = $action;
@@ -631,7 +635,7 @@ final class TelegramRouteBuilder
         $this->register();
     }
 
-    public function onInlineQuery(callable|string|array $action, \Closure|string|null $pattern = null): void
+    public function onInlineQuery(callable|string|array $action, Closure|string|null $pattern = null): void
     {
         $this->route->type = RouteType::INLINE_QUERY;
         $this->route->action = $action;
@@ -682,7 +686,7 @@ final class TelegramRouteBuilder
         $router->register($this->build());
 
         // Создаем новый экземпляр маршрута для следующего использования
-        $this->route = new TelegramRoute();
+        $this->route = new TelegramRoute;
 
         // Если есть callback для восстановления состояния (из группы), применяем его
         if ($this->resetCallback !== null) {
@@ -694,7 +698,7 @@ final class TelegramRouteBuilder
     {
         if (is_null($this->route->action)) {
             // todo кидать ошибку нормальное
-            throw new \Exception();
+            throw new \Exception;
         }
 
         // Клонируем маршрут, чтобы избежать проблем с переиспользованием объекта

@@ -21,4 +21,3 @@ final class TelegramOutgoingRateLimited extends RuntimeException
         );
     }
 }
-

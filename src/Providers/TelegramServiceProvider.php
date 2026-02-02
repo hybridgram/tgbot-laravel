@@ -4,11 +4,6 @@ declare(strict_types=1);
 
 namespace HybridGram\Providers;
 
-use Illuminate\Routing\Middleware\SubstituteBindings;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Facades\Route;
-use Illuminate\Support\ServiceProvider;
 use HybridGram\Auth\TelegramGuard;
 use HybridGram\Auth\TelegramUserProvider;
 use HybridGram\Console\ClearOptimizationsCommand;
@@ -21,6 +16,11 @@ use HybridGram\Console\StartPollingCommand;
 use HybridGram\Console\TelegramRouteListCommand;
 use HybridGram\Core\Config\BotConfig;
 use HybridGram\Http\Middlewares\ForceJsonResponse;
+use Illuminate\Routing\Middleware\SubstituteBindings;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\ServiceProvider;
 
 final class TelegramServiceProvider extends ServiceProvider
 {
@@ -59,7 +59,7 @@ final class TelegramServiceProvider extends ServiceProvider
     private function registerAuthGuard(): void
     {
         $guards = Config::get('auth.guards', []);
-        if (!isset($guards['hybridgram'])) {
+        if (! isset($guards['hybridgram'])) {
             Config::set('auth.guards.hybridgram', [
                 'driver' => 'hybridgram',
                 'provider' => null,
@@ -112,7 +112,6 @@ final class TelegramServiceProvider extends ServiceProvider
             __DIR__.'/../../stubs/ProcessTelegramUpdateJob.stub' => app_path('Jobs/ProcessTelegramUpdateJob.php'),
         ], 'hybridgram-config');
     }
-
 
     private function loadRoutes(): void
     {

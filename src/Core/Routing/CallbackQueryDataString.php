@@ -16,6 +16,7 @@ namespace HybridGram\Core\Routing;
 final class CallbackQueryDataString implements \Stringable
 {
     private const int MIN_BYTES = 1;
+
     private const int MAX_BYTES = 64;
 
     /** @var array<string, string> */
@@ -59,15 +60,16 @@ final class CallbackQueryDataString implements \Stringable
 
         if ($this->params === []) {
             self::assertByteLength($encodedAction);
+
             return $encodedAction;
         }
 
         $pairs = [];
         foreach ($this->params as $k => $v) {
-            $pairs[] = rawurlencode($k) . '=' . rawurlencode($v);
+            $pairs[] = rawurlencode($k).'='.rawurlencode($v);
         }
 
-        $result = $encodedAction . '|' . implode('&', $pairs);
+        $result = $encodedAction.'|'.implode('&', $pairs);
         self::assertByteLength($result);
 
         return $result;
@@ -105,7 +107,7 @@ final class CallbackQueryDataString implements \Stringable
 
     private static function assertByteLength(string $data): void
     {
-        $bytes = strlen($data);
+        $bytes = mb_strlen($data);
         if ($bytes < self::MIN_BYTES || $bytes > self::MAX_BYTES) {
             throw new \InvalidArgumentException(
                 sprintf('Telegram callback_data must be %d..%d bytes, got %d bytes.', self::MIN_BYTES, self::MAX_BYTES, $bytes)
@@ -118,5 +120,3 @@ final class CallbackQueryDataString implements \Stringable
         return $this->toString();
     }
 }
-
-

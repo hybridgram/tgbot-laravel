@@ -16,12 +16,12 @@ beforeEach(function () {
     $this->router = app(TelegramRouter::class);
     $this->stateManager = Mockery::mock(StateManagerInterface::class);
     $this->app->instance(StateManagerInterface::class, $this->stateManager);
-    
+
     $this->chat = new Chat(id: 123, type: 'private');
     $this->user = new User(id: 456, isBot: false, firstName: 'Test');
     $this->message = new Message(
         messageId: 1,
-        date: new \DateTimeImmutable(),
+        date: new DateTimeImmutable,
         chat: $this->chat,
         from: $this->user,
         text: '/help'
@@ -34,24 +34,24 @@ it('routes to handler without fromChatState from any state', function () {
     $this->stateManager->shouldReceive('getChatState')
         ->with($this->chat)
         ->andReturn(new State('some_state'));
-    
+
     // Также мокируем getStateForUser
     $this->stateManager->shouldReceive('getUserState')
         ->with($this->chat, $this->user)
         ->andReturn(null);
-    
+
     // Регистрируем роут БЕЗ fromChatState - должен работать из любого стейта
     $this->router->forBot('test_bot')
         ->chatType(ChatType::PRIVATE)
         ->onCommand('help', function ($data) {
             return 'help_handler';
         });
-    
+
     $route = $this->router->resolveActionsByUpdate(
         $this->update,
         'test_bot'
     );
-    
+
     // Проверяем, что роут найден
     expect($route)->not->toBeNull();
     expect($route->fromChatState)->toBeNull(); // Должен быть null для роута без fromChatState
@@ -64,24 +64,24 @@ it('routes to handler without fromChatState when no state is set', function () {
     $this->stateManager->shouldReceive('getChatState')
         ->with($this->chat)
         ->andReturn(null);
-    
+
     // Также мокируем getStateForUser
     $this->stateManager->shouldReceive('getUserState')
         ->with($this->chat, $this->user)
         ->andReturn(null);
-    
+
     // Регистрируем роут БЕЗ fromChatState
     $this->router->forBot('test_bot')
         ->chatType(ChatType::PRIVATE)
         ->onCommand('help', function ($data) {
             return 'help_handler';
         });
-    
+
     $route = $this->router->resolveActionsByUpdate(
         $this->update,
         'test_bot'
     );
-    
+
     // Проверяем, что роут найден
     expect($route)->not->toBeNull();
     expect($route->fromChatState)->toBeNull();

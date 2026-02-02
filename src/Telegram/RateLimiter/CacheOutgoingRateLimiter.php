@@ -12,14 +12,16 @@ use Illuminate\Support\Facades\Cache;
 final class CacheOutgoingRateLimiter implements OutgoingRateLimiterInterface
 {
     private const int WINDOW_MILLISECONDS = 60_000;
+
     private const int CACHE_TTL_SECONDS = 180;
+
     private const string CACHE_KEY_PREFIX = 'tg:out:';
 
     public function __construct(
         private readonly int $rateLimitPerMinute,
         private readonly int $reserveHighPerMinute,
         /**
-         * @var null|\Closure():int  Current time in milliseconds (for testing)
+         * @var null|\Closure():int Current time in milliseconds (for testing)
          */
         private readonly ?\Closure $nowMs = null,
     ) {}
@@ -52,7 +54,7 @@ final class CacheOutgoingRateLimiter implements OutgoingRateLimiterInterface
         if ($store instanceof LockProvider) {
             try {
                 /** @var RateLimitDecision $result */
-                $result = Cache::lock($this->getKey($botId) . ':lock', 3)->block(2, $operation);
+                $result = Cache::lock($this->getKey($botId).':lock', 3)->block(2, $operation);
 
                 return $result;
             } catch (LockTimeoutException) {
@@ -101,12 +103,13 @@ final class CacheOutgoingRateLimiter implements OutgoingRateLimiterInterface
     {
         $current = $this->currentUsage($botId);
         $effectiveLimit = $this->getEffectiveLimit($priority);
+
         return max(0, $effectiveLimit - $current);
     }
 
     private function getKey(string $botId): string
     {
-        return self::CACHE_KEY_PREFIX . $botId . ':global:window_ms';
+        return self::CACHE_KEY_PREFIX.$botId.':global:window_ms';
     }
 
     private function getEffectiveLimit(Priority $priority): int
@@ -155,11 +158,10 @@ final class CacheOutgoingRateLimiter implements OutgoingRateLimiterInterface
     }
 
     /**
-     * @param list<int> $timestamps
+     * @param  list<int>  $timestamps
      */
     private function saveWindow(string $botId, array $timestamps): void
     {
         Cache::put($this->getKey($botId), $timestamps, self::CACHE_TTL_SECONDS);
     }
 }
-

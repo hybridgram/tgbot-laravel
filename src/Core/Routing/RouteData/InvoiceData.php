@@ -17,4 +17,3 @@ final readonly class InvoiceData extends AbstractRouteData
         parent::__construct($update, $botId);
     }
 }
-

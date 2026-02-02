@@ -6,7 +6,6 @@ namespace HybridGram\Core\Routing\RouteData;
 
 use Phptg\BotApi\Type\Location;
 use Phptg\BotApi\Type\Update\Update;
-use Phptg\BotApi\Type\Venue;
 
 final readonly class LocationData extends AbstractRouteData
 {

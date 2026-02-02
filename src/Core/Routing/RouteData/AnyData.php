@@ -15,4 +15,3 @@ final readonly class AnyData extends AbstractRouteData
         parent::__construct($update, $botId);
     }
 }
-

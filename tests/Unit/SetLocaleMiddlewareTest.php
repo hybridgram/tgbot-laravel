@@ -17,15 +17,15 @@ it('sets locale from user language code', function () {
     $user = new User(id: 456, isBot: false, firstName: 'Test', languageCode: 'ru');
     $message = new Message(
         messageId: 1,
-        date: new \DateTimeImmutable(),
+        date: new DateTimeImmutable,
         chat: $this->chat,
         from: $user,
         text: 'test message'
     );
     $update = new Update(updateId: 1, message: $message);
 
-    $middleware = new SetLocaleTelegramRouteMiddleware();
-    $next = fn($update) => 'processed';
+    $middleware = new SetLocaleTelegramRouteMiddleware;
+    $next = fn ($update) => 'processed';
 
     $result = $middleware->handle($update, $next);
 
@@ -37,15 +37,15 @@ it('normalizes hyphenated locale codes', function () {
     $user = new User(id: 456, isBot: false, firstName: 'Test', languageCode: 'pt-br');
     $message = new Message(
         messageId: 1,
-        date: new \DateTimeImmutable(),
+        date: new DateTimeImmutable,
         chat: $this->chat,
         from: $user,
         text: 'test message'
     );
     $update = new Update(updateId: 1, message: $message);
 
-    $middleware = new SetLocaleTelegramRouteMiddleware();
-    $next = fn($update) => 'processed';
+    $middleware = new SetLocaleTelegramRouteMiddleware;
+    $next = fn ($update) => 'processed';
 
     $middleware->handle($update, $next);
 
@@ -56,7 +56,7 @@ it('uses fallback locale when user has no language code', function () {
     $user = new User(id: 456, isBot: false, firstName: 'Test');
     $message = new Message(
         messageId: 1,
-        date: new \DateTimeImmutable(),
+        date: new DateTimeImmutable,
         chat: $this->chat,
         from: $user,
         text: 'test message'
@@ -64,7 +64,7 @@ it('uses fallback locale when user has no language code', function () {
     $update = new Update(updateId: 1, message: $message);
 
     $middleware = new SetLocaleTelegramRouteMiddleware(fallbackLocale: 'en');
-    $next = fn($update) => 'processed';
+    $next = fn ($update) => 'processed';
 
     $middleware->handle($update, $next);
 
@@ -75,7 +75,7 @@ it('uses fallback locale when user locale is not supported', function () {
     $user = new User(id: 456, isBot: false, firstName: 'Test', languageCode: 'ja');
     $message = new Message(
         messageId: 1,
-        date: new \DateTimeImmutable(),
+        date: new DateTimeImmutable,
         chat: $this->chat,
         from: $user,
         text: 'test message'
@@ -86,7 +86,7 @@ it('uses fallback locale when user locale is not supported', function () {
         supportedLocales: ['en', 'ru', 'uk'],
         fallbackLocale: 'en'
     );
-    $next = fn($update) => 'processed';
+    $next = fn ($update) => 'processed';
 
     $middleware->handle($update, $next);
 
@@ -97,7 +97,7 @@ it('sets locale when it is in supported locales list', function () {
     $user = new User(id: 456, isBot: false, firstName: 'Test', languageCode: 'uk');
     $message = new Message(
         messageId: 1,
-        date: new \DateTimeImmutable(),
+        date: new DateTimeImmutable,
         chat: $this->chat,
         from: $user,
         text: 'test message'
@@ -108,7 +108,7 @@ it('sets locale when it is in supported locales list', function () {
         supportedLocales: ['en', 'ru', 'uk'],
         fallbackLocale: 'en'
     );
-    $next = fn($update) => 'processed';
+    $next = fn ($update) => 'processed';
 
     $middleware->handle($update, $next);
 
@@ -119,7 +119,7 @@ it('matches base locale when full locale is not in supported list', function () 
     $user = new User(id: 456, isBot: false, firstName: 'Test', languageCode: 'en-gb');
     $message = new Message(
         messageId: 1,
-        date: new \DateTimeImmutable(),
+        date: new DateTimeImmutable,
         chat: $this->chat,
         from: $user,
         text: 'test message'
@@ -130,7 +130,7 @@ it('matches base locale when full locale is not in supported list', function () 
         supportedLocales: ['en', 'ru'],
         fallbackLocale: 'ru'
     );
-    $next = fn($update) => 'processed';
+    $next = fn ($update) => 'processed';
 
     $middleware->handle($update, $next);
 
@@ -142,14 +142,14 @@ it('does not change locale when no user in update and no fallback', function () 
 
     $message = new Message(
         messageId: 1,
-        date: new \DateTimeImmutable(),
+        date: new DateTimeImmutable,
         chat: $this->chat,
         text: 'test message'
     );
     $update = new Update(updateId: 1, message: $message);
 
-    $middleware = new SetLocaleTelegramRouteMiddleware();
-    $next = fn($update) => 'processed';
+    $middleware = new SetLocaleTelegramRouteMiddleware;
+    $next = fn ($update) => 'processed';
 
     $middleware->handle($update, $next);
 
@@ -160,12 +160,12 @@ it('works with callback query updates', function () {
     $user = new User(id: 456, isBot: false, firstName: 'Test', languageCode: 'fr');
     $message = new Message(
         messageId: 1,
-        date: new \DateTimeImmutable(),
+        date: new DateTimeImmutable,
         chat: $this->chat,
         from: $user,
         text: 'test message'
     );
-    $callbackQuery = new \Phptg\BotApi\Type\CallbackQuery(
+    $callbackQuery = new Phptg\BotApi\Type\CallbackQuery(
         id: 'callback_123',
         from: $user,
         chatInstance: 'instance',
@@ -173,8 +173,8 @@ it('works with callback query updates', function () {
     );
     $update = new Update(updateId: 1, callbackQuery: $callbackQuery);
 
-    $middleware = new SetLocaleTelegramRouteMiddleware();
-    $next = fn($update) => 'processed';
+    $middleware = new SetLocaleTelegramRouteMiddleware;
+    $next = fn ($update) => 'processed';
 
     $middleware->handle($update, $next);
 

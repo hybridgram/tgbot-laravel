@@ -22,5 +22,3 @@ final readonly class ForumTopicEventData extends AbstractRouteData
         parent::__construct($update, $botId);
     }
 }
-
-

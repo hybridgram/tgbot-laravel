@@ -4,19 +4,19 @@ declare(strict_types=1);
 
 namespace HybridGram\Providers;
 
-use Illuminate\Support\ServiceProvider;
 use HybridGram\Core\Config\BotConfig;
-use HybridGram\Core\Middleware\MiddlewareManager;
 use HybridGram\Core\HybridGramBotManager;
+use HybridGram\Core\Middleware\MiddlewareManager;
 use HybridGram\Core\Routing\TelegramRouter;
 use HybridGram\Core\State\StateManager;
 use HybridGram\Core\State\StateManagerInterface;
-use HybridGram\Telegram\TelegramBotApi;
-use HybridGram\Telegram\RateLimiter\OutgoingRateLimiterInterface;
 use HybridGram\Telegram\RateLimiter\CacheOutgoingRateLimiter;
+use HybridGram\Telegram\RateLimiter\OutgoingRateLimiterInterface;
+use HybridGram\Telegram\Sender\DirectOutgoingDispatcher;
 use HybridGram\Telegram\Sender\OutgoingDispatcherInterface;
 use HybridGram\Telegram\Sender\QueueOutgoingDispatcher;
-use HybridGram\Telegram\Sender\DirectOutgoingDispatcher;
+use HybridGram\Telegram\TelegramBotApi;
+use Illuminate\Support\ServiceProvider;
 
 final class TelegramBindingsServiceProvider extends ServiceProvider
 {
@@ -47,6 +47,7 @@ final class TelegramBindingsServiceProvider extends ServiceProvider
             $sendingConfig = config('hybridgram.sending', []);
             $rateLimit = (int) ($sendingConfig['rate_limit_per_minute'] ?? 1800);
             $reserveHigh = (int) ($sendingConfig['reserve_high_per_minute'] ?? 300);
+
             return new CacheOutgoingRateLimiter($rateLimit, $reserveHigh);
         });
 
@@ -59,10 +60,11 @@ final class TelegramBindingsServiceProvider extends ServiceProvider
                     'high' => $sendingConfig['queues']['high'] ?? 'telegram-high',
                     'low' => $sendingConfig['queues']['low'] ?? 'telegram-low',
                 ];
+
                 return new QueueOutgoingDispatcher($queueNames);
             }
 
-            return new DirectOutgoingDispatcher();
+            return new DirectOutgoingDispatcher;
         });
 
         $this->app->bind(TelegramBotApi::class, function ($app, array $params) {
@@ -86,6 +88,7 @@ final class TelegramBindingsServiceProvider extends ServiceProvider
             }
 
             $dispatcher = $app->make(OutgoingDispatcherInterface::class);
+
             return (new TelegramBotApi($config->token, 'https://api.telegram.org', null, $dispatcher))->withBotId($botId);
         });
     }

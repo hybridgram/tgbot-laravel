@@ -8,12 +8,12 @@ use Phptg\BotApi\Type\PhotoSize;
 use Phptg\BotApi\Type\Update\Update;
 
 /**
- * @param PhotoSize[] $newChatPhoto
+ * @param  PhotoSize[]  $newChatPhoto
  */
 final readonly class NewChatPhotoData extends AbstractRouteData
 {
     /**
-     * @param PhotoSize[] $newChatPhoto
+     * @param  PhotoSize[]  $newChatPhoto
      */
     public function __construct(
         Update $update,
@@ -23,5 +23,3 @@ final readonly class NewChatPhotoData extends AbstractRouteData
         parent::__construct($update, $botId);
     }
 }
-
-

@@ -22,20 +22,19 @@ final class SetWebhookCommand extends Command
     {
         $botId = $this->option('bot');
         $config = BotConfig::getBotConfig($botId);
-        
+
         if ($config === null) {
             $this->error("Bot config not found for bot: {$botId}");
+
             return;
         }
 
         $dispatcher = App::make(OutgoingDispatcherInterface::class);
         $telegram = (new TelegramBotApi($config->token, 'https://api.telegram.org', null, $dispatcher))->withBotId($botId);
 
-        $webhookConfig = $config->webhookConfig ?? new WebhookModeConfig();
-        
+        $webhookConfig = $config->webhookConfig ?? new WebhookModeConfig;
 
         $url = $webhookConfig->url ?? route('telegram.bot.webhook', ['botId' => $botId]);
-        
 
         if ($webhookConfig->port !== null && $webhookConfig->port !== 0) {
             $parsedUrl = parse_url($url);
@@ -43,13 +42,12 @@ final class SetWebhookCommand extends Command
                 $scheme = $parsedUrl['scheme'] ?? 'https';
                 $host = $parsedUrl['host'] ?? '';
                 $path = $parsedUrl['path'] ?? '';
-                $query = isset($parsedUrl['query']) ? '?' . $parsedUrl['query'] : '';
+                $query = isset($parsedUrl['query']) ? '?'.$parsedUrl['query'] : '';
                 $url = "{$scheme}://{$host}:{$webhookConfig->port}{$path}{$query}";
             }
         }
 
-
-        $allowedUpdates = !empty($webhookConfig->allowedUpdates) ? $webhookConfig->allowedUpdates : null;
+        $allowedUpdates = ! empty($webhookConfig->allowedUpdates) ? $webhookConfig->allowedUpdates : null;
 
         $dropPendingUpdates = $webhookConfig->dropPendingUpdates ? true : null;
 
@@ -61,7 +59,7 @@ final class SetWebhookCommand extends Command
             $dropPendingUpdates,
             $webhookConfig->secretToken
         );
-        
+
         if ($result instanceof FailResult) {
             $this->error("Failed to set webhook: {$result->response->body}");
         } else {
@@ -71,13 +69,13 @@ final class SetWebhookCommand extends Command
                 $this->line("IP Address: {$webhookConfig->ipAddress}");
             }
             if ($allowedUpdates !== null) {
-                $this->line("Allowed Updates: " . implode(', ', $allowedUpdates));
+                $this->line('Allowed Updates: '.implode(', ', $allowedUpdates));
             }
             if ($webhookConfig->dropPendingUpdates) {
-                $this->line("Drop Pending Updates: enabled");
+                $this->line('Drop Pending Updates: enabled');
             }
             if ($webhookConfig->secretToken) {
-                $this->line("Secret Token: configured");
+                $this->line('Secret Token: configured');
             }
         }
     }

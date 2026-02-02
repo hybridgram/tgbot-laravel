@@ -16,10 +16,9 @@ interface QueryParamInterface
 
     /**
      * Проверить параметр в массиве params
-     * 
-     * @param array<string, string> $params Параметры из callback query
+     *
+     * @param  array<string, string>  $params  Параметры из callback query
      * @return bool true если проверка прошла успешно
      */
     public function matches(array $params): bool;
 }
-

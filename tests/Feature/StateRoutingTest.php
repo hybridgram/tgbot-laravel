@@ -16,12 +16,12 @@ beforeEach(function () {
     $this->router = app(TelegramRouter::class);
     $this->stateManager = Mockery::mock(StateManagerInterface::class);
     $this->app->instance(StateManagerInterface::class, $this->stateManager);
-    
+
     $this->chat = new Chat(id: 123, type: 'private');
     $this->user = new User(id: 456, isBot: false, firstName: 'Test');
     $this->message = new Message(
         messageId: 1,
-        date: new \DateTimeImmutable(),
+        date: new DateTimeImmutable,
         chat: $this->chat,
         from: $this->user,
         text: '/start'
@@ -34,12 +34,12 @@ it('routes to correct handler based on state', function () {
     $this->stateManager->shouldReceive('getChatState')
         ->with($this->chat)
         ->andReturn(new State('waiting_for_name'));
-    
+
     // Также мокируем getStateForUser (теперь вызывается всегда)
     $this->stateManager->shouldReceive('getUserState')
         ->with($this->chat, $this->user)
         ->andReturn(null);
-    
+
     // Регистрируем роут для стейта
     $this->router->forBot('test_bot')
         ->chatType(ChatType::PRIVATE)
@@ -47,12 +47,12 @@ it('routes to correct handler based on state', function () {
         ->onCommand('start', function ($data) {
             return 'name_handler';
         });
-    
+
     $route = $this->router->resolveActionsByUpdate(
         $this->update,
         'test_bot'
     );
-    
+
     // Проверяем, что роут найден
     expect($route)->not->toBeNull();
     expect($route->fromChatState)->toBe(['waiting_for_name']);
@@ -65,12 +65,12 @@ it('does not route to handler when state does not match', function () {
     $this->stateManager->shouldReceive('getChatState')
         ->with($this->chat)
         ->andReturn(new State('different_state'));
-    
+
     // Также мокируем getStateForUser
     $this->stateManager->shouldReceive('getUserState')
         ->with($this->chat, $this->user)
         ->andReturn(null);
-    
+
     // Регистрируем роут для другого стейта
     $this->router->forBot('test_bot')
         ->chatType(ChatType::PRIVATE)
@@ -78,16 +78,16 @@ it('does not route to handler when state does not match', function () {
         ->onCommand('start', function ($data) {
             return 'name_handler';
         });
-    
+
     // Должен найти fallback роут
     $router = $this->router;
     $update = $this->update;
-    
+
     $route = $router->resolveActionsByUpdate(
         $update,
         'test_bot'
     );
-    
+
     expect($route->type)->toBe(RouteType::FALLBACK);
 });
 
@@ -96,23 +96,23 @@ it('routes to handler without state requirement', function () {
     $this->stateManager->shouldReceive('getChatState')
         ->with($this->chat)
         ->andReturn(null);
-    
+
     // Также мокируем getStateForUser
     $this->stateManager->shouldReceive('getUserState')
         ->with($this->chat, $this->user)
         ->andReturn(null);
-    
+
     // Регистрируем роут без требования стейта
     $this->router->forBot('test_bot')
         ->chatType(ChatType::PRIVATE)
         ->onCommand('start', function ($data) {
             return 'general_handler';
         });
-    
+
     $route = $this->router->resolveActionsByUpdate(
         $this->update,
         'test_bot'
     );
-    
+
     expect($route->fromChatState)->toBeNull();
 });

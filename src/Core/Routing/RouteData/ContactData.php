@@ -17,4 +17,3 @@ final readonly class ContactData extends AbstractRouteData
         parent::__construct($update, $botId);
     }
 }
-

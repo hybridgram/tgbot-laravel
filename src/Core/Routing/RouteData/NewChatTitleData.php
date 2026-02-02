@@ -16,5 +16,3 @@ final readonly class NewChatTitleData extends AbstractRouteData
         parent::__construct($update, $botId);
     }
 }
-
-

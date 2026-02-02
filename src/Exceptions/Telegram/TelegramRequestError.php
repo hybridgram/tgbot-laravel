@@ -86,7 +86,7 @@ final class TelegramRequestError extends \Exception
             }
         }
 
-        if (!empty($response->body)) {
+        if (! empty($response->body)) {
             $message .= "\nResponse body: {$response->body}";
         }
 

@@ -10,14 +10,12 @@ use Phptg\BotApi\Type\Update\Update;
 final readonly class CallbackQueryData extends AbstractRouteData
 {
     public function __construct(
-        Update               $update,
-        public string        $action,
-        public array         $params = [],
+        Update $update,
+        public string $action,
+        public array $params,
         public CallbackQuery $query,
-        string               $botId,
-    )
-    {
+        string $botId,
+    ) {
         parent::__construct($update, $botId);
     }
 }
-

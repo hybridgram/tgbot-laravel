@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace HybridGram\Core\Config;
 
 use HybridGram\Core\UpdateMode\UpdateModeEnum;
-use HybridGram\Exceptions\UpdateModeDoesntSet;
 use SensitiveParameter;
 
 final class BotConfig
@@ -14,8 +13,6 @@ final class BotConfig
 
     public ?WebhookModeConfig $webhookConfig;
 
-    /**
-     */
     public function __construct(
         #[SensitiveParameter]
         public readonly string $token,
@@ -29,12 +26,12 @@ final class BotConfig
         $this->pollingConfig = $pollingConfig;
         $this->webhookConfig = $webhookConfig;
 
-        if ($updateMode === UpdateModeEnum::POLLING && !$pollingConfig) {
-            $this->pollingConfig = new PollingModeConfig();
+        if ($updateMode === UpdateModeEnum::POLLING && ! $pollingConfig) {
+            $this->pollingConfig = new PollingModeConfig;
         }
 
-        if ($updateMode === UpdateModeEnum::WEBHOOK && !$webhookConfig) {
-            $this->webhookConfig = new WebhookModeConfig();
+        if ($updateMode === UpdateModeEnum::WEBHOOK && ! $webhookConfig) {
+            $this->webhookConfig = new WebhookModeConfig;
         }
     }
 
@@ -55,15 +52,15 @@ final class BotConfig
                         $bot['allowed_updates'],
                         $bot['polling_timeout'],
                     ) : null;
-                $webhookConfig = in_array($bot['update_mode'], [UpdateModeEnum::WEBHOOK, UpdateModeEnum::WEBHOOK_ASYNC])
+                $webhookConfig = in_array($bot['update_mode'], [UpdateModeEnum::WEBHOOK, UpdateModeEnum::WEBHOOK_ASYNC], true)
                     ? new WebhookModeConfig(
                         $bot['update_mode'] === UpdateModeEnum::WEBHOOK_ASYNC ? $bot['webhook_url'] : route('telegram.bot.webhook', ['botId' => $botId]),
-                            $bot['webhook_port'],
-                            $bot['certificate_path'],
-                            $bot['ip_address'],
-                            $bot['allowed_updates'],
-                            $bot['webhook_drop_pending_updates'],
-                            $bot['secret_token'],
+                        $bot['webhook_port'],
+                        $bot['certificate_path'],
+                        $bot['ip_address'],
+                        $bot['allowed_updates'],
+                        $bot['webhook_drop_pending_updates'],
+                        $bot['secret_token'],
                     ) : null;
 
                 return new BotConfig(

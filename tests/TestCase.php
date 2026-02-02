@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Tests;
 
-use Orchestra\Testbench\TestCase as BaseTestCase;
 use HybridGram\Core\UpdateMode\UpdateModeEnum;
 use HybridGram\Providers\TelegramServiceProvider;
+use Orchestra\Testbench\TestCase as BaseTestCase;
 
 abstract class TestCase extends BaseTestCase
 {

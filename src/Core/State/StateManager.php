@@ -8,21 +8,25 @@ use Illuminate\Support\Facades\Cache;
 use Phptg\BotApi\Type\Chat;
 use Phptg\BotApi\Type\User;
 
-class StateManager implements StateManagerInterface
+final class StateManager implements StateManagerInterface
 {
     private const string CACHE_PREFIX_CHAT = 'telegram_state_chat_';
+
     private const string CACHE_PREFIX_USER = 'telegram_state_user_';
+
     private const int CACHE_TTL = 86400; // 24 часа
 
     public function getChatState(Chat $chat): ?State
     {
         $stored = Cache::get($this->getChatKey($chat));
+
         return $this->deserializeState($stored);
     }
 
     public function getUserState(Chat $chat, User $user): ?State
     {
         $stored = Cache::get($this->getUserKey($chat, $user));
+
         return $this->deserializeState($stored);
     }
 
@@ -61,12 +65,14 @@ class StateManager implements StateManagerInterface
     public function isChatInState(Chat $chat, string $state): bool
     {
         $currentState = $this->getChatState($chat);
+
         return $currentState !== null && $currentState->getName() === $state;
     }
 
     public function isUserInState(Chat $chat, User $user, string $state): bool
     {
         $currentState = $this->getUserState($chat, $user);
+
         return $currentState !== null && $currentState->getName() === $state;
     }
 
@@ -76,6 +82,7 @@ class StateManager implements StateManagerInterface
         if ($currentState === null) {
             return false;
         }
+
         return in_array($currentState->getName(), $states, true);
     }
 
@@ -85,17 +92,18 @@ class StateManager implements StateManagerInterface
         if ($currentState === null) {
             return false;
         }
+
         return in_array($currentState->getName(), $states, true);
     }
 
     private function getChatKey(Chat $chat): string
     {
-        return self::CACHE_PREFIX_CHAT . $chat->id;
+        return self::CACHE_PREFIX_CHAT.$chat->id;
     }
 
     private function getUserKey(Chat $chat, User $user): string
     {
-        return self::CACHE_PREFIX_USER . $chat->id . '_' . $user->id;
+        return self::CACHE_PREFIX_USER.$chat->id.'_'.$user->id;
     }
 
     private function serializeState(State $state): array

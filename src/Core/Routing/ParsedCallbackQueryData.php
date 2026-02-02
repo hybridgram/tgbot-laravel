@@ -10,8 +10,8 @@ namespace HybridGram\Core\Routing;
 final readonly class ParsedCallbackQueryData
 {
     /**
-     * @param string $action The action name
-     * @param array<string, string> $params The parsed parameters
+     * @param  string  $action  The action name
+     * @param  array<string, string>  $params  The parsed parameters
      */
     public function __construct(
         public string $action,
@@ -22,4 +22,3 @@ final readonly class ParsedCallbackQueryData
         }
     }
 }
-

@@ -4,13 +4,10 @@ declare(strict_types=1);
 
 namespace HybridGram\Core\UpdateMode;
 
-use HybridGram\Core\MediaGroup\MediaGroupGrouper;
-use Illuminate\Support\Facades\App;
-use Illuminate\Support\Facades\Cache;
 use HybridGram\Core\Config\BotConfig;
 use HybridGram\Core\Routing\TelegramRouter;
 use HybridGram\Exceptions\InvalidRouteAction;
-use HybridGram\Telegram\Priority;
+use Illuminate\Support\Facades\App;
 use Phptg\BotApi\TelegramBotApi as VjikTelegramBotApi;
 use Phptg\BotApi\Type\Update\Update;
 
@@ -45,6 +42,7 @@ abstract class AbstractUpdateMode implements UpdateModeInterface
                     }
                     [$class, $method] = $routeWithParams->action;
                     $instance = App::make($class);
+
                     return $instance->$method($routeWithParams->data, $update);
                 } else {
                     throw new InvalidRouteAction($routeWithParams->action);

@@ -20,5 +20,3 @@ final readonly class GeneralForumTopicEventData extends AbstractRouteData
         parent::__construct($update, $botId);
     }
 }
-
-

@@ -173,15 +173,15 @@ final class UpdateHelper
             return RouteType::TEXT_MESSAGE;
         }
 
-        if (!empty($message->newChatTitle)) {
+        if (! empty($message->newChatTitle)) {
             return RouteType::NEW_CHAT_TITLE;
         }
 
-        if (!empty($message->newChatPhoto)) {
+        if (! empty($message->newChatPhoto)) {
             return RouteType::NEW_CHAT_PHOTO;
         }
 
-        if (!empty($message->deleteChatPhoto)) {
+        if (! empty($message->deleteChatPhoto)) {
             return RouteType::DELETE_CHAT_PHOTO;
         }
 
@@ -264,45 +264,47 @@ final class UpdateHelper
             return RouteType::COMMAND;
         }
 
-        if (!empty($message->photo)) {
-            if (!is_null($message->mediaGroupId)) {
+        if (! empty($message->photo)) {
+            if (! is_null($message->mediaGroupId)) {
                 return RouteType::PHOTO_MEDIA_GROUP;
             }
+
             return RouteType::PHOTO;
         }
 
-        if (!empty($message->document)) {
-            if (!is_null($message->mediaGroupId)) {
+        if (! empty($message->document)) {
+            if (! is_null($message->mediaGroupId)) {
                 return RouteType::DOCUMENT_MEDIA_GROUP;
             }
+
             return RouteType::DOCUMENT;
         }
 
-        if (!empty($message->contact)) {
+        if (! empty($message->contact)) {
             return RouteType::CONTACT;
         }
 
-        if (!empty($message->checklist)) {
+        if (! empty($message->checklist)) {
             return RouteType::CHECKLIST;
         }
 
-        if (!empty($message->dice)) {
+        if (! empty($message->dice)) {
             return RouteType::DICE;
         }
 
-        if (!empty($message->game)) {
+        if (! empty($message->game)) {
             return RouteType::GAME;
         }
 
-        if (!empty($message->invoice)) {
+        if (! empty($message->invoice)) {
             return RouteType::INVOICE;
         }
 
-        if (!empty($message->successfulPayment)) {
+        if (! empty($message->successfulPayment)) {
             return RouteType::SUCCESSFUL_PAYMENT;
         }
 
-        if (!empty($message->passportData)) {
+        if (! empty($message->passportData)) {
             return RouteType::PASSPORT_DATA;
         }
 
@@ -339,4 +341,3 @@ final class UpdateHelper
         };
     }
 }
-

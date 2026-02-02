@@ -22,16 +22,17 @@ final class DeleteWebhookCommand extends Command
     {
         $botId = $this->option('bot');
         $config = BotConfig::getBotConfig($botId);
-        
+
         if ($config === null) {
             $this->error("Bot config not found for bot: {$botId}");
+
             return;
         }
 
         $dispatcher = App::make(OutgoingDispatcherInterface::class);
         $telegram = (new TelegramBotApi($config->token, 'https://api.telegram.org', null, $dispatcher))->withBotId($botId);
 
-        $webhookConfig = $config->webhookConfig ?? new WebhookModeConfig();
+        $webhookConfig = $config->webhookConfig ?? new WebhookModeConfig;
         $dropPendingUpdates = $webhookConfig->dropPendingUpdates ? true : null;
 
         $result = $telegram->deleteWebhook($dropPendingUpdates);
@@ -41,7 +42,7 @@ final class DeleteWebhookCommand extends Command
         } else {
             $this->info("Webhook deleted successfully for bot: {$botId}");
             if ($dropPendingUpdates) {
-                $this->line("Pending updates were dropped");
+                $this->line('Pending updates were dropped');
             }
         }
     }

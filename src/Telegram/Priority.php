@@ -9,4 +9,3 @@ enum Priority: string
     case HIGH = 'high';
     case LOW = 'low';
 }
-

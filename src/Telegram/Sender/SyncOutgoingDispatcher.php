@@ -68,7 +68,7 @@ final class SyncOutgoingDispatcher implements OutgoingDispatcherInterface
         if ($config === null) {
             throw new \RuntimeException("Bot config not found for botId '{$botId}'.");
         }
+
         return $config->token;
     }
 }
-

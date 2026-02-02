@@ -6,12 +6,10 @@ namespace HybridGram\Core\Routing\RouteOptions;
 
 use HybridGram\Telegram\Poll\PollType;
 
-readonly class PollOptions
+final readonly class PollOptions
 {
     public function __construct(
         public ?bool $isAnonymous = null,
         public ?PollType $pollType = null,
-    )
-    {
-    }
+    ) {}
 }

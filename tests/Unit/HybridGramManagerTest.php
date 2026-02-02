@@ -3,7 +3,6 @@
 declare(strict_types=1);
 
 use HybridGram\Core\HybridGramBotManager;
-use HybridGram\Facades\ReactBot;
 
 beforeEach(function () {
     // Очищаем состояние менеджера перед каждым тестом
@@ -16,7 +15,7 @@ beforeEach(function () {
 
 test('can add new bot', function () {
     $manager = app(HybridGramBotManager::class);
-    $botConfig = new \HybridGram\Core\Config\BotConfig('token', 'main_bot', \HybridGram\Core\UpdateMode\UpdateModeEnum::POLLING, 'routes', new \HybridGram\Core\Config\PollingModeConfig, null, 'bot');
+    $botConfig = new HybridGram\Core\Config\BotConfig('token', 'main_bot', HybridGram\Core\UpdateMode\UpdateModeEnum::POLLING, 'routes', new HybridGram\Core\Config\PollingModeConfig, null, 'bot');
 
     $result = $manager->withBot($botConfig);
 
@@ -24,7 +23,7 @@ test('can add new bot', function () {
 });
 
 test('can use facade to add new bot', function () {
-    $botConfig = new \HybridGram\Core\Config\BotConfig('token', 'main_bot', \HybridGram\Core\UpdateMode\UpdateModeEnum::POLLING, 'routes', new \HybridGram\Core\Config\PollingModeConfig, null, 'bot');
+    $botConfig = new HybridGram\Core\Config\BotConfig('token', 'main_bot', HybridGram\Core\UpdateMode\UpdateModeEnum::POLLING, 'routes', new HybridGram\Core\Config\PollingModeConfig, null, 'bot');
 
     $result = HybridGramBotManager::withBot($botConfig);
 
@@ -33,7 +32,7 @@ test('can use facade to add new bot', function () {
 
 test('can add single bot config and retrieve it', function () {
     $manager = app(HybridGramBotManager::class);
-    $botConfig = new \HybridGram\Core\Config\BotConfig('token', 'main_bot', \HybridGram\Core\UpdateMode\UpdateModeEnum::POLLING, 'routes', new \HybridGram\Core\Config\PollingModeConfig, null, 'bot');
+    $botConfig = new HybridGram\Core\Config\BotConfig('token', 'main_bot', HybridGram\Core\UpdateMode\UpdateModeEnum::POLLING, 'routes', new HybridGram\Core\Config\PollingModeConfig, null, 'bot');
 
     $manager->withBot($botConfig);
     $retrievedConfigs = $manager->getBotConfigs();
@@ -47,9 +46,9 @@ test('can add single bot config and retrieve it', function () {
 
 test('can add multiple bot configs and retrieve them', function () {
     $manager = app(HybridGramBotManager::class);
-    $botConfig1 = new \HybridGram\Core\Config\BotConfig('token1', 'main_bot1', \HybridGram\Core\UpdateMode\UpdateModeEnum::POLLING, 'routes1', new \HybridGram\Core\Config\PollingModeConfig, null, 'bot1');
-    $botConfig2 = new \HybridGram\Core\Config\BotConfig('token2', 'main_bot2', \HybridGram\Core\UpdateMode\UpdateModeEnum::WEBHOOK, 'routes2', null, new \HybridGram\Core\Config\WebhookModeConfig, 'bot2');
-    $botConfig3 = new \HybridGram\Core\Config\BotConfig('token3', 'main_bot3', \HybridGram\Core\UpdateMode\UpdateModeEnum::POLLING, 'routes3', new \HybridGram\Core\Config\PollingModeConfig, null, 'bot3');
+    $botConfig1 = new HybridGram\Core\Config\BotConfig('token1', 'main_bot1', HybridGram\Core\UpdateMode\UpdateModeEnum::POLLING, 'routes1', new HybridGram\Core\Config\PollingModeConfig, null, 'bot1');
+    $botConfig2 = new HybridGram\Core\Config\BotConfig('token2', 'main_bot2', HybridGram\Core\UpdateMode\UpdateModeEnum::WEBHOOK, 'routes2', null, new HybridGram\Core\Config\WebhookModeConfig, 'bot2');
+    $botConfig3 = new HybridGram\Core\Config\BotConfig('token3', 'main_bot3', HybridGram\Core\UpdateMode\UpdateModeEnum::POLLING, 'routes3', new HybridGram\Core\Config\PollingModeConfig, null, 'bot3');
 
     $manager->withBot($botConfig1)
         ->withBot($botConfig2)
@@ -66,9 +65,9 @@ test('can add multiple bot configs and retrieve them', function () {
 test('can add multiple bots at once using withBots method', function () {
     $manager = app(HybridGramBotManager::class);
     $botConfigs = [
-        new \HybridGram\Core\Config\BotConfig('token1', 'main_bot1', \HybridGram\Core\UpdateMode\UpdateModeEnum::POLLING, 'routes1', new \HybridGram\Core\Config\PollingModeConfig, null, 'bot1'),
-        new \HybridGram\Core\Config\BotConfig('token2', 'main_bot2', \HybridGram\Core\UpdateMode\UpdateModeEnum::WEBHOOK, 'routes2', null, new \HybridGram\Core\Config\WebhookModeConfig, 'bot2'),
-        new \HybridGram\Core\Config\BotConfig('token3', 'main_bot3', \HybridGram\Core\UpdateMode\UpdateModeEnum::POLLING, 'routes3', new \HybridGram\Core\Config\PollingModeConfig, null, 'bot3'),
+        new HybridGram\Core\Config\BotConfig('token1', 'main_bot1', HybridGram\Core\UpdateMode\UpdateModeEnum::POLLING, 'routes1', new HybridGram\Core\Config\PollingModeConfig, null, 'bot1'),
+        new HybridGram\Core\Config\BotConfig('token2', 'main_bot2', HybridGram\Core\UpdateMode\UpdateModeEnum::WEBHOOK, 'routes2', null, new HybridGram\Core\Config\WebhookModeConfig, 'bot2'),
+        new HybridGram\Core\Config\BotConfig('token3', 'main_bot3', HybridGram\Core\UpdateMode\UpdateModeEnum::POLLING, 'routes3', new HybridGram\Core\Config\PollingModeConfig, null, 'bot3'),
     ];
 
     $manager->withBots($botConfigs);
@@ -82,10 +81,10 @@ test('can add multiple bots at once using withBots method', function () {
 
 test('can mix single and multiple bot additions', function () {
     $manager = app(HybridGramBotManager::class);
-    $singleBot = new \HybridGram\Core\Config\BotConfig('singleToken', 'single', \HybridGram\Core\UpdateMode\UpdateModeEnum::POLLING, 'single', new \HybridGram\Core\Config\PollingModeConfig, null, 'single');
+    $singleBot = new HybridGram\Core\Config\BotConfig('singleToken', 'single', HybridGram\Core\UpdateMode\UpdateModeEnum::POLLING, 'single', new HybridGram\Core\Config\PollingModeConfig, null, 'single');
     $multipleBots = [
-        new \HybridGram\Core\Config\BotConfig('token1', 'main_bot1', \HybridGram\Core\UpdateMode\UpdateModeEnum::POLLING, 'routes1', new \HybridGram\Core\Config\PollingModeConfig, null, 'bot1'),
-        new \HybridGram\Core\Config\BotConfig('token2', 'main_bot2', \HybridGram\Core\UpdateMode\UpdateModeEnum::WEBHOOK, 'routes2', null, new \HybridGram\Core\Config\WebhookModeConfig, 'bot2'),
+        new HybridGram\Core\Config\BotConfig('token1', 'main_bot1', HybridGram\Core\UpdateMode\UpdateModeEnum::POLLING, 'routes1', new HybridGram\Core\Config\PollingModeConfig, null, 'bot1'),
+        new HybridGram\Core\Config\BotConfig('token2', 'main_bot2', HybridGram\Core\UpdateMode\UpdateModeEnum::WEBHOOK, 'routes2', null, new HybridGram\Core\Config\WebhookModeConfig, 'bot2'),
     ];
 
     $manager->withBot($singleBot)
@@ -100,8 +99,8 @@ test('can mix single and multiple bot additions', function () {
 });
 
 test('can use facade to add multiple bots', function () {
-    $botConfig1 = new \HybridGram\Core\Config\BotConfig('token1', 'main_bot1', \HybridGram\Core\UpdateMode\UpdateModeEnum::POLLING, 'routes1', new \HybridGram\Core\Config\PollingModeConfig, null, 'bot1');
-    $botConfig2 = new \HybridGram\Core\Config\BotConfig('token2', 'main_bot2', \HybridGram\Core\UpdateMode\UpdateModeEnum::WEBHOOK, 'routes2', null, new \HybridGram\Core\Config\WebhookModeConfig, 'bot2');
+    $botConfig1 = new HybridGram\Core\Config\BotConfig('token1', 'main_bot1', HybridGram\Core\UpdateMode\UpdateModeEnum::POLLING, 'routes1', new HybridGram\Core\Config\PollingModeConfig, null, 'bot1');
+    $botConfig2 = new HybridGram\Core\Config\BotConfig('token2', 'main_bot2', HybridGram\Core\UpdateMode\UpdateModeEnum::WEBHOOK, 'routes2', null, new HybridGram\Core\Config\WebhookModeConfig, 'bot2');
 
     HybridGramBotManager::withBot($botConfig1);
     HybridGramBotManager::withBot($botConfig2);
@@ -126,8 +125,8 @@ test('can handle empty array in withBots method', function () {
 
 test('can handle duplicate bot configs', function () {
     $manager = app(HybridGramBotManager::class);
-    $botConfig = new \HybridGram\Core\Config\BotConfig('token1', 'main_bot1', \HybridGram\Core\UpdateMode\UpdateModeEnum::POLLING, 'routes1', new \HybridGram\Core\Config\PollingModeConfig, null, 'bot1');
-    $botConfigWebhook = new \HybridGram\Core\Config\BotConfig('token1', 'main_bot1', \HybridGram\Core\UpdateMode\UpdateModeEnum::WEBHOOK, 'routes1', null, new \HybridGram\Core\Config\WebhookModeConfig, 'bot1');
+    $botConfig = new HybridGram\Core\Config\BotConfig('token1', 'main_bot1', HybridGram\Core\UpdateMode\UpdateModeEnum::POLLING, 'routes1', new HybridGram\Core\Config\PollingModeConfig, null, 'bot1');
+    $botConfigWebhook = new HybridGram\Core\Config\BotConfig('token1', 'main_bot1', HybridGram\Core\UpdateMode\UpdateModeEnum::WEBHOOK, 'routes1', null, new HybridGram\Core\Config\WebhookModeConfig, 'bot1');
 
     $manager->withBot($botConfig)
         ->withBot($botConfig)
@@ -141,8 +140,8 @@ test('can handle duplicate bot configs', function () {
 
 test('can handle bots with same properties but different instances', function () {
     $manager = app(HybridGramBotManager::class);
-    $botConfig1 = new \HybridGram\Core\Config\BotConfig('same_token', 'same_id', \HybridGram\Core\UpdateMode\UpdateModeEnum::POLLING, 'routes', new \HybridGram\Core\Config\PollingModeConfig, null, 'SameName');
-    $botConfig2 = new \HybridGram\Core\Config\BotConfig('same_token', 'same_id', \HybridGram\Core\UpdateMode\UpdateModeEnum::POLLING, 'routes', new \HybridGram\Core\Config\PollingModeConfig, null, 'SameName');
+    $botConfig1 = new HybridGram\Core\Config\BotConfig('same_token', 'same_id', HybridGram\Core\UpdateMode\UpdateModeEnum::POLLING, 'routes', new HybridGram\Core\Config\PollingModeConfig, null, 'SameName');
+    $botConfig2 = new HybridGram\Core\Config\BotConfig('same_token', 'same_id', HybridGram\Core\UpdateMode\UpdateModeEnum::POLLING, 'routes', new HybridGram\Core\Config\PollingModeConfig, null, 'SameName');
 
     $manager->withBot($botConfig1)
         ->withBot($botConfig2);
@@ -163,9 +162,9 @@ test('getBotConfigs returns empty array when no bots added', function () {
 
 test('can chain multiple withBot calls', function () {
     $manager = app(HybridGramBotManager::class);
-    $botConfig1 = new \HybridGram\Core\Config\BotConfig('token1', 'id1', \HybridGram\Core\UpdateMode\UpdateModeEnum::POLLING, 'routes1', new \HybridGram\Core\Config\PollingModeConfig, null, 'Bot1');
-    $botConfig2 = new \HybridGram\Core\Config\BotConfig('token2', 'id2', \HybridGram\Core\UpdateMode\UpdateModeEnum::POLLING, 'routes2', new \HybridGram\Core\Config\PollingModeConfig, null, 'Bot2');
-    $botConfig3 = new \HybridGram\Core\Config\BotConfig('token3', 'id3', \HybridGram\Core\UpdateMode\UpdateModeEnum::POLLING, 'routes3', new \HybridGram\Core\Config\PollingModeConfig, null, 'Bot3');
+    $botConfig1 = new HybridGram\Core\Config\BotConfig('token1', 'id1', HybridGram\Core\UpdateMode\UpdateModeEnum::POLLING, 'routes1', new HybridGram\Core\Config\PollingModeConfig, null, 'Bot1');
+    $botConfig2 = new HybridGram\Core\Config\BotConfig('token2', 'id2', HybridGram\Core\UpdateMode\UpdateModeEnum::POLLING, 'routes2', new HybridGram\Core\Config\PollingModeConfig, null, 'Bot2');
+    $botConfig3 = new HybridGram\Core\Config\BotConfig('token3', 'id3', HybridGram\Core\UpdateMode\UpdateModeEnum::POLLING, 'routes3', new HybridGram\Core\Config\PollingModeConfig, null, 'Bot3');
 
     $result = $manager->withBot($botConfig1)
         ->withBot($botConfig2)
@@ -178,10 +177,10 @@ test('can chain multiple withBot calls', function () {
 test('can chain withBots and withBot calls', function () {
     $manager = app(HybridGramBotManager::class);
     $initialBots = [
-        new \HybridGram\Core\Config\BotConfig('token1', 'id1', \HybridGram\Core\UpdateMode\UpdateModeEnum::POLLING, 'routes1', new \HybridGram\Core\Config\PollingModeConfig, null, 'InitialBot1'),
-        new \HybridGram\Core\Config\BotConfig('token2', 'id2', \HybridGram\Core\UpdateMode\UpdateModeEnum::POLLING, 'routes2', new \HybridGram\Core\Config\PollingModeConfig, null, 'InitialBot2'),
+        new HybridGram\Core\Config\BotConfig('token1', 'id1', HybridGram\Core\UpdateMode\UpdateModeEnum::POLLING, 'routes1', new HybridGram\Core\Config\PollingModeConfig, null, 'InitialBot1'),
+        new HybridGram\Core\Config\BotConfig('token2', 'id2', HybridGram\Core\UpdateMode\UpdateModeEnum::POLLING, 'routes2', new HybridGram\Core\Config\PollingModeConfig, null, 'InitialBot2'),
     ];
-    $additionalBot = new \HybridGram\Core\Config\BotConfig('token3', 'id3', \HybridGram\Core\UpdateMode\UpdateModeEnum::POLLING, 'routes3', new \HybridGram\Core\Config\PollingModeConfig, null, 'AdditionalBot');
+    $additionalBot = new HybridGram\Core\Config\BotConfig('token3', 'id3', HybridGram\Core\UpdateMode\UpdateModeEnum::POLLING, 'routes3', new HybridGram\Core\Config\PollingModeConfig, null, 'AdditionalBot');
 
     $result = $manager->withBots($initialBots)
         ->withBot($additionalBot);
@@ -203,9 +202,9 @@ test('manager is properly initialized with empty configs', function () {
 
 test('can retrieve specific bot config by index', function () {
     $manager = app(HybridGramBotManager::class);
-    $botConfig1 = new \HybridGram\Core\Config\BotConfig('token1', 'id1', \HybridGram\Core\UpdateMode\UpdateModeEnum::POLLING, 'routes1', new \HybridGram\Core\Config\PollingModeConfig, null, 'FirstBot');
-    $botConfig2 = new \HybridGram\Core\Config\BotConfig('token2', 'id2', \HybridGram\Core\UpdateMode\UpdateModeEnum::POLLING, 'routes2', new \HybridGram\Core\Config\PollingModeConfig, null, 'SecondBot');
-    $botConfig3 = new \HybridGram\Core\Config\BotConfig('token3', 'id3', \HybridGram\Core\UpdateMode\UpdateModeEnum::POLLING, 'routes3', new \HybridGram\Core\Config\PollingModeConfig, null, 'ThirdBot');
+    $botConfig1 = new HybridGram\Core\Config\BotConfig('token1', 'id1', HybridGram\Core\UpdateMode\UpdateModeEnum::POLLING, 'routes1', new HybridGram\Core\Config\PollingModeConfig, null, 'FirstBot');
+    $botConfig2 = new HybridGram\Core\Config\BotConfig('token2', 'id2', HybridGram\Core\UpdateMode\UpdateModeEnum::POLLING, 'routes2', new HybridGram\Core\Config\PollingModeConfig, null, 'SecondBot');
+    $botConfig3 = new HybridGram\Core\Config\BotConfig('token3', 'id3', HybridGram\Core\UpdateMode\UpdateModeEnum::POLLING, 'routes3', new HybridGram\Core\Config\PollingModeConfig, null, 'ThirdBot');
 
     $manager->withBot($botConfig1)
         ->withBot($botConfig2)

@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace HybridGram\Core\Routing;
 
-use Illuminate\Support\Facades\App;
 use HybridGram\Core\UpdateHelper;
-use Symfony\Component\Routing\Exception\RouteNotFoundException;
+use Illuminate\Support\Facades\App;
 use Phptg\BotApi\Type\Update\Update;
+use Symfony\Component\Routing\Exception\RouteNotFoundException;
 
 /**
  * @property array $routes An array of the routes keyed by method.
@@ -138,6 +138,7 @@ final class RouteCollection
                 if ($states->userState === null) {
                     return false;
                 }
+
                 return in_array($states->userState->getName(), $route->fromUserState, true);
             }
 
@@ -145,6 +146,7 @@ final class RouteCollection
                 if ($states->chatState === null) {
                     return false;
                 }
+
                 return in_array($states->chatState->getName(), $route->fromChatState, true);
             }
 

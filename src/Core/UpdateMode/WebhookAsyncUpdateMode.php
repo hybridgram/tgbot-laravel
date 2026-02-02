@@ -46,6 +46,7 @@ final class WebhookAsyncUpdateMode extends AbstractUpdateMode
                 return $groupedUpdates[0] ?? $update;
             } else {
                 Cache::put($cacheKey, $groupUpdates, 10);
+
                 return null;
             }
         }

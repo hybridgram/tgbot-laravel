@@ -22,186 +22,186 @@ it('can use fluent API for routing', function () {
 
 it('can use group method for routing', function () {
     TelegramRouter::group(['for_bot' => 'main_bot', 'from_state' => 'state', 'chat_type' => HybridGram\Core\Routing\ChatType::PRIVATE], function (TelegramRouteBuilder $builder) {
-            $builder->onTextMessage(function (HybridGram\Core\Routing\RouteData\TextMessageData $messageData) {
-                logger()->info("message: $messageData->message");
-            }, 'hi');
-            $builder->onTextMessage(function (HybridGram\Core\Routing\RouteData\TextMessageData $messageData) {
-                logger()->info("message * $messageData->message");
-            }, '*');
-            $builder->onCommand(function (CommandData $commandData) {
-                logger()->info("best command $commandData->command", $commandData->commandParams);
-            }, 'best');
-        });
+        $builder->onTextMessage(function (HybridGram\Core\Routing\RouteData\TextMessageData $messageData) {
+            logger()->info("message: $messageData->message");
+        }, 'hi');
+        $builder->onTextMessage(function (HybridGram\Core\Routing\RouteData\TextMessageData $messageData) {
+            logger()->info("message * $messageData->message");
+        }, '*');
+        $builder->onCommand(function (CommandData $commandData) {
+            logger()->info("best command $commandData->command", $commandData->commandParams);
+        }, 'best');
+    });
 
     expect(true)->toBeTrue();
 });
 
 it('can use onBusinessMessageText in group', function () {
     TelegramRouter::group(['for_bot' => 'main_bot', 'from_state' => 'state'], function (TelegramRouteBuilder $builder) {
-            $builder->onBusinessMessageText(function (HybridGram\Core\Routing\RouteData\BusinessMessageTextData $businessMessageTextData) {
-                logger()->info("business message text received", ['text' => $businessMessageTextData->text]);
-            });
+        $builder->onBusinessMessageText(function (HybridGram\Core\Routing\RouteData\BusinessMessageTextData $businessMessageTextData) {
+            logger()->info('business message text received', ['text' => $businessMessageTextData->text]);
         });
+    });
 
     expect(true)->toBeTrue();
 });
 
 it('can use onVenue in group', function () {
     TelegramRouter::group(['for_bot' => 'main_bot', 'from_state' => 'state'], function (TelegramRouteBuilder $builder) {
-            $builder->onVenue(function (HybridGram\Core\Routing\RouteData\VenueData $venueData) {
-                logger()->info("venue received", ['videos' => $venueData->venue]);
-            });
+        $builder->onVenue(function (HybridGram\Core\Routing\RouteData\VenueData $venueData) {
+            logger()->info('venue received', ['videos' => $venueData->venue]);
         });
+    });
 
     expect(true)->toBeTrue();
 });
 
 it('can use onLocation in group', function () {
     TelegramRouter::group(['for_bot' => 'main_bot', 'from_state' => 'state'], function (TelegramRouteBuilder $builder) {
-            $builder->onLocation(function (HybridGram\Core\Routing\RouteData\VenueData $venueData) {
-                logger()->info("venue received", ['videos' => $venueData->venue]);
-            });
+        $builder->onLocation(function (HybridGram\Core\Routing\RouteData\VenueData $venueData) {
+            logger()->info('venue received', ['videos' => $venueData->venue]);
         });
+    });
 
     expect(true)->toBeTrue();
 });
 
 it('can use onAnimation in group', function () {
     TelegramRouter::group(['for_bot' => 'main_bot', 'from_state' => 'state'], function (TelegramRouteBuilder $builder) {
-            $builder->onAnimation(function (HybridGram\Core\Routing\RouteData\AnimationData $animationData) {
-                logger()->info("animation received", ['animation' => $animationData->animation]);
-            });
+        $builder->onAnimation(function (HybridGram\Core\Routing\RouteData\AnimationData $animationData) {
+            logger()->info('animation received', ['animation' => $animationData->animation]);
         });
+    });
 
     expect(true)->toBeTrue();
 });
 
 it('can use onAudio in group', function () {
     TelegramRouter::group(['for_bot' => 'main_bot', 'from_state' => 'state'], function (TelegramRouteBuilder $builder) {
-            $builder->onAudio(function (HybridGram\Core\Routing\RouteData\AudioData $audioData) {
-                logger()->info("audio received", ['audio' => $audioData->audio]);
-            });
+        $builder->onAudio(function (HybridGram\Core\Routing\RouteData\AudioData $audioData) {
+            logger()->info('audio received', ['audio' => $audioData->audio]);
         });
+    });
 
     expect(true)->toBeTrue();
 });
 
 it('can use onSticker in group', function () {
     TelegramRouter::group(['for_bot' => 'main_bot', 'from_state' => 'state'], function (TelegramRouteBuilder $builder) {
-            $builder->onSticker(function (HybridGram\Core\Routing\RouteData\StickerData $stickerData) {
-                logger()->info("sticker received", ['sticker' => $stickerData->sticker]);
-            });
+        $builder->onSticker(function (HybridGram\Core\Routing\RouteData\StickerData $stickerData) {
+            logger()->info('sticker received', ['sticker' => $stickerData->sticker]);
         });
+    });
 
     expect(true)->toBeTrue();
 });
 
 it('can use onVideoNote in group', function () {
     TelegramRouter::group(['for_bot' => 'main_bot', 'from_state' => 'state'], function (TelegramRouteBuilder $builder) {
-            $builder->onVideoNote(function (HybridGram\Core\Routing\RouteData\VideoNoteData $videoNoteData) {
-                logger()->info("video note received", ['videoNote' => $videoNoteData->videoNote]);
-            });
+        $builder->onVideoNote(function (HybridGram\Core\Routing\RouteData\VideoNoteData $videoNoteData) {
+            logger()->info('video note received', ['videoNote' => $videoNoteData->videoNote]);
         });
+    });
 
     expect(true)->toBeTrue();
 });
 
 it('can use onVoice in group', function () {
     TelegramRouter::group(['for_bot' => 'main_bot', 'from_state' => 'state'], function (TelegramRouteBuilder $builder) {
-            $builder->onVoice(function (HybridGram\Core\Routing\RouteData\VoiceData $voiceData) {
-                logger()->info("voice received", ['voice' => $voiceData->voice]);
-            });
+        $builder->onVoice(function (HybridGram\Core\Routing\RouteData\VoiceData $voiceData) {
+            logger()->info('voice received', ['voice' => $voiceData->voice]);
         });
+    });
 
     expect(true)->toBeTrue();
 });
 
 it('can use onPaidMedia in group', function () {
     TelegramRouter::group(['for_bot' => 'main_bot', 'from_state' => 'state'], function (TelegramRouteBuilder $builder) {
-            $builder->onPaidMedia(function (HybridGram\Core\Routing\RouteData\PaidMediaData $paidMediaData) {
-                logger()->info("paid media received", ['paidMedia' => $paidMediaData->paidMedia]);
-            });
+        $builder->onPaidMedia(function (HybridGram\Core\Routing\RouteData\PaidMediaData $paidMediaData) {
+            logger()->info('paid media received', ['paidMedia' => $paidMediaData->paidMedia]);
         });
+    });
 
     expect(true)->toBeTrue();
 });
 
 it('can use onContact in group', function () {
     TelegramRouter::group(['for_bot' => 'main_bot', 'from_state' => 'state'], function (TelegramRouteBuilder $builder) {
-            $builder->onContact(function (HybridGram\Core\Routing\RouteData\ContactData $contactData) {
-                logger()->info("contact received", ['contact' => $contactData->contact]);
-            });
+        $builder->onContact(function (HybridGram\Core\Routing\RouteData\ContactData $contactData) {
+            logger()->info('contact received', ['contact' => $contactData->contact]);
         });
+    });
 
     expect(true)->toBeTrue();
 });
 
 it('can use onChecklist in group', function () {
     TelegramRouter::group(['for_bot' => 'main_bot', 'from_state' => 'state'], function (TelegramRouteBuilder $builder) {
-            $builder->onChecklist(function (HybridGram\Core\Routing\RouteData\ChecklistData $checklistData) {
-                logger()->info("checklist received", ['checklist' => $checklistData->checklist]);
-            });
+        $builder->onChecklist(function (HybridGram\Core\Routing\RouteData\ChecklistData $checklistData) {
+            logger()->info('checklist received', ['checklist' => $checklistData->checklist]);
         });
+    });
 
     expect(true)->toBeTrue();
 });
 
 it('can use onDice in group', function () {
     TelegramRouter::group(['for_bot' => 'main_bot', 'from_state' => 'state'], function (TelegramRouteBuilder $builder) {
-            $builder->onDice(function (HybridGram\Core\Routing\RouteData\DiceData $diceData) {
-                logger()->info("dice received", ['dice' => $diceData->dice]);
-            });
+        $builder->onDice(function (HybridGram\Core\Routing\RouteData\DiceData $diceData) {
+            logger()->info('dice received', ['dice' => $diceData->dice]);
         });
+    });
 
     expect(true)->toBeTrue();
 });
 
 it('can use onGame in group', function () {
     TelegramRouter::group(['for_bot' => 'main_bot', 'from_state' => 'state'], function (TelegramRouteBuilder $builder) {
-            $builder->onGame(function (HybridGram\Core\Routing\RouteData\GameData $gameData) {
-                logger()->info("game received", ['game' => $gameData->game]);
-            });
+        $builder->onGame(function (HybridGram\Core\Routing\RouteData\GameData $gameData) {
+            logger()->info('game received', ['game' => $gameData->game]);
         });
+    });
 
     expect(true)->toBeTrue();
 });
 
 it('can use onInvoice in group', function () {
     TelegramRouter::group(['for_bot' => 'main_bot', 'from_state' => 'state'], function (TelegramRouteBuilder $builder) {
-            $builder->onInvoice(function (HybridGram\Core\Routing\RouteData\InvoiceData $invoiceData) {
-                logger()->info("invoice received", ['invoice' => $invoiceData->invoice]);
-            });
+        $builder->onInvoice(function (HybridGram\Core\Routing\RouteData\InvoiceData $invoiceData) {
+            logger()->info('invoice received', ['invoice' => $invoiceData->invoice]);
         });
+    });
 
     expect(true)->toBeTrue();
 });
 
 it('can use onSuccessfulPayment in group', function () {
     TelegramRouter::group(['for_bot' => 'main_bot', 'from_state' => 'state'], function (TelegramRouteBuilder $builder) {
-            $builder->onSuccessfulPayment(function (HybridGram\Core\Routing\RouteData\SuccessfulPaymentData $successfulPaymentData) {
-                logger()->info("successful payment received", ['successfulPayment' => $successfulPaymentData->successfulPayment]);
-            });
+        $builder->onSuccessfulPayment(function (HybridGram\Core\Routing\RouteData\SuccessfulPaymentData $successfulPaymentData) {
+            logger()->info('successful payment received', ['successfulPayment' => $successfulPaymentData->successfulPayment]);
         });
+    });
 
     expect(true)->toBeTrue();
 });
 
 it('can use onPassportData in group', function () {
     TelegramRouter::group(['for_bot' => 'main_bot', 'from_state' => 'state'], function (TelegramRouteBuilder $builder) {
-            $builder->onPassportData(function (HybridGram\Core\Routing\RouteData\PassportData $passportData) {
-                logger()->info("passport data received", ['passportData' => $passportData->passportData]);
-            });
+        $builder->onPassportData(function (HybridGram\Core\Routing\RouteData\PassportData $passportData) {
+            logger()->info('passport data received', ['passportData' => $passportData->passportData]);
         });
+    });
 
     expect(true)->toBeTrue();
 });
 
 it('can use onReply in group', function () {
     TelegramRouter::group(['for_bot' => 'main_bot', 'from_state' => 'state'], function (TelegramRouteBuilder $builder) {
-            $builder->onReply(function (HybridGram\Core\Routing\RouteData\ReplyData $replyData) {
-                logger()->info("reply received", ['replyToMessage' => $replyData->replyToMessage]);
-            });
+        $builder->onReply(function (HybridGram\Core\Routing\RouteData\ReplyData $replyData) {
+            logger()->info('reply received', ['replyToMessage' => $replyData->replyToMessage]);
         });
+    });
 
     expect(true)->toBeTrue();
 });
@@ -209,7 +209,7 @@ it('can use onReply in group', function () {
 it('can use onExternalReply in group', function () {
     TelegramRouter::group(['for_bot' => 'main_bot', 'from_state' => 'state'], function (TelegramRouteBuilder $builder) {
         $builder->onExternalReply(function (HybridGram\Core\Routing\RouteData\ExternalReplyData $externalReplyData) {
-            logger()->info("external reply received", ['externalReply' => $externalReplyData->externalReply]);
+            logger()->info('external reply received', ['externalReply' => $externalReplyData->externalReply]);
         });
     });
 
@@ -219,7 +219,7 @@ it('can use onExternalReply in group', function () {
 it('can use onQuote in group', function () {
     TelegramRouter::group(['for_bot' => 'main_bot', 'from_state' => 'state'], function (TelegramRouteBuilder $builder) {
         $builder->onQuote(function (HybridGram\Core\Routing\RouteData\QuoteData $quoteData) {
-            logger()->info("quote received", ['quote' => $quoteData->quote]);
+            logger()->info('quote received', ['quote' => $quoteData->quote]);
         });
     });
 
@@ -229,7 +229,7 @@ it('can use onQuote in group', function () {
 it('can use onReplyToStory in group', function () {
     TelegramRouter::group(['for_bot' => 'main_bot', 'from_state' => 'state'], function (TelegramRouteBuilder $builder) {
         $builder->onReplyToStory(function (HybridGram\Core\Routing\RouteData\ReplyToStoryData $replyToStoryData) {
-            logger()->info("reply to story received", ['replyToStory' => $replyToStoryData->replyToStory]);
+            logger()->info('reply to story received', ['replyToStory' => $replyToStoryData->replyToStory]);
         });
     });
 
@@ -240,7 +240,7 @@ it('can use onNewChatTitle in group', function () {
     TelegramRouter::group(['for_bot' => 'main_bot', 'from_state' => 'state'], function (TelegramRouteBuilder $builder) {
         $builder->chatType(HybridGram\Core\Routing\ChatType::GROUP)
             ->onNewChatTitle(function (HybridGram\Core\Routing\RouteData\NewChatTitleData $newChatTitleData) {
-                logger()->info("new chat title received", ['newChatTitle' => $newChatTitleData->newChatTitle]);
+                logger()->info('new chat title received', ['newChatTitle' => $newChatTitleData->newChatTitle]);
             });
     });
 
@@ -251,7 +251,7 @@ it('can use onNewChatPhoto in group', function () {
     TelegramRouter::group(['for_bot' => 'main_bot', 'from_state' => 'state'], function (TelegramRouteBuilder $builder) {
         $builder->chatType(HybridGram\Core\Routing\ChatType::GROUP)
             ->onNewChatPhoto(function (HybridGram\Core\Routing\RouteData\NewChatPhotoData $newChatPhotoData) {
-                logger()->info("new chat photo received", ['newChatPhoto' => $newChatPhotoData->newChatPhoto]);
+                logger()->info('new chat photo received', ['newChatPhoto' => $newChatPhotoData->newChatPhoto]);
             });
     });
 
@@ -262,7 +262,7 @@ it('can use onDeleteChatPhoto in group', function () {
     TelegramRouter::group(['for_bot' => 'main_bot', 'from_state' => 'state'], function (TelegramRouteBuilder $builder) {
         $builder->chatType(HybridGram\Core\Routing\ChatType::GROUP)
             ->onDeleteChatPhoto(function (HybridGram\Core\Routing\RouteData\DeleteChatPhotoData $deleteChatPhotoData) {
-                logger()->info("chat photo deleted", ['deleteChatPhoto' => $deleteChatPhotoData->deleteChatPhoto]);
+                logger()->info('chat photo deleted', ['deleteChatPhoto' => $deleteChatPhotoData->deleteChatPhoto]);
             });
     });
 
@@ -340,7 +340,7 @@ it('can use onBoostAdded in group', function () {
 it('can use onAny in group', function () {
     TelegramRouter::group(['for_bot' => 'main_bot', 'from_state' => 'state'], function (TelegramRouteBuilder $builder) {
         $builder->onAny(function (HybridGram\Core\Routing\RouteData\AnyData $anyData) {
-            logger()->info("any update received", ['update' => $anyData->update]);
+            logger()->info('any update received', ['update' => $anyData->update]);
         });
     });
 
@@ -350,7 +350,7 @@ it('can use onAny in group', function () {
 it('can use onInlineQuery in group', function () {
     TelegramRouter::group(['for_bot' => 'main_bot', 'from_state' => 'state'], function (TelegramRouteBuilder $builder) {
         $builder->onInlineQuery(function (HybridGram\Core\Routing\RouteData\InlineQueryData $inlineQueryData) {
-            logger()->info("inline query received", ['query' => $inlineQueryData->inlineQuery->query]);
+            logger()->info('inline query received', ['query' => $inlineQueryData->inlineQuery->query]);
         });
     });
 
@@ -360,7 +360,7 @@ it('can use onInlineQuery in group', function () {
 it('can use onFallback in group', function () {
     TelegramRouter::group(['for_bot' => 'main_bot', 'from_state' => 'state'], function (TelegramRouteBuilder $builder) {
         $builder->onFallback(function (HybridGram\Core\Routing\RouteData\FallbackData $fallbackData) {
-            logger()->info("fallback route called", ['update' => $fallbackData->update]);
+            logger()->info('fallback route called', ['update' => $fallbackData->update]);
         });
     });
 

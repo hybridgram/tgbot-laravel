@@ -27,4 +27,3 @@ final readonly class Exist implements QueryParamInterface
         return isset($params[$this->key]);
     }
 }
-

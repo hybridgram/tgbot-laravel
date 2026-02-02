@@ -6,27 +6,28 @@ namespace HybridGram\Core\Middleware;
 
 use Phptg\BotApi\Type\Update\Update;
 
-class MiddlewarePipeline
+final class MiddlewarePipeline
 {
     private array $middlewares = [];
-    public function __construct()
-    {
-    }
+
+    public function __construct() {}
 
     public function add(TelegramRouteMiddlewareInterface $middleware): self
     {
         $this->middlewares[] = $middleware;
+
         return $this;
     }
 
     public function addMany(array $middlewares): self
     {
         foreach ($middlewares as $middleware) {
-            if (!$middleware instanceof TelegramRouteMiddlewareInterface) {
+            if (! $middleware instanceof TelegramRouteMiddlewareInterface) {
                 throw new \InvalidArgumentException('All middlewares must implement MiddlewareInterface');
             }
             $this->middlewares[] = $middleware;
         }
+
         return $this;
     }
 
@@ -35,9 +36,9 @@ class MiddlewarePipeline
         if (empty($this->middlewares)) {
             return $finalHandler($update);
         }
-        
+
         $pipeline = $this->createPipeline($this->middlewares, $finalHandler);
-        
+
         return $pipeline($update);
     }
 
@@ -51,7 +52,7 @@ class MiddlewarePipeline
                 return $middleware->handle($update, $pipeline);
             };
         }
-        
+
         return $pipeline;
     }
 }

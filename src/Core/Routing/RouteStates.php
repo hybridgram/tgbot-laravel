@@ -21,7 +21,6 @@ final readonly class RouteStates
      */
     public static function empty(): self
     {
-        return new self();
+        return new self;
     }
 }
-

@@ -17,8 +17,8 @@ final class LocalizedString
     /**
      * Add a localized value.
      *
-     * @param string $value The string value
-     * @param string|null $languageCode ISO 639-1 language code (e.g., 'en', 'ru'). Null for default.
+     * @param  string  $value  The string value
+     * @param  string|null  $languageCode  ISO 639-1 language code (e.g., 'en', 'ru'). Null for default.
      */
     public function add(string $value, ?string $languageCode = null): self
     {

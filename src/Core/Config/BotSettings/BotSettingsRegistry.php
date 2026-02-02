@@ -36,8 +36,8 @@ final class BotSettingsRegistry
     /**
      * Register BotSettings for a specific bot.
      *
-     * @param string $botId The bot identifier
-     * @param Closure(): BotSettings $callback Callback that returns BotSettings instance
+     * @param  string  $botId  The bot identifier
+     * @param  Closure(): BotSettings  $callback  Callback that returns BotSettings instance
      */
     public static function forBot(string $botId, Closure $callback): void
     {
@@ -47,7 +47,7 @@ final class BotSettingsRegistry
     /**
      * Get BotSettings for a specific bot.
      *
-     * @param string $botId The bot identifier
+     * @param  string  $botId  The bot identifier
      * @return BotSettings|null Returns null if no settings registered for this bot
      */
     public static function get(string $botId): ?BotSettings

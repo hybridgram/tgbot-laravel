@@ -11,11 +11,11 @@ namespace HybridGram\Core\Routing\RouteOptions\QueryParams;
 final readonly class Value implements QueryParamInterface
 {
     /**
-     * @param string $key Ключ параметра
-     * @param string|\Closure|int $expectedValue Ожидаемое значение или callable для проверки
+     * @param  string  $key  Ключ параметра
+     * @param  string|\Closure|int  $expectedValue  Ожидаемое значение или callable для проверки
      */
     public function __construct(
-        private string              $key,
+        private string $key,
         private string|\Closure|int $expectedValue,
     ) {
         if ($this->key === '') {
@@ -30,7 +30,7 @@ final readonly class Value implements QueryParamInterface
 
     public function matches(array $params): bool
     {
-        if (!isset($params[$this->key])) {
+        if (! isset($params[$this->key])) {
             return false;
         }
 
@@ -45,4 +45,3 @@ final readonly class Value implements QueryParamInterface
         return (string) $this->expectedValue === $actualValue;
     }
 }
-

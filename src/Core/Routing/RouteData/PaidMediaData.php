@@ -10,11 +10,10 @@ use Phptg\BotApi\Type\Update\Update;
 final readonly class PaidMediaData extends AbstractRouteData
 {
     public function __construct(
-        Update         $update,
+        Update $update,
         public PaidMediaInfo $paidMedia,
-        string         $botId,
+        string $botId,
     ) {
         parent::__construct($update, $botId);
     }
 }
-
