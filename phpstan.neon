@@ -1,0 +1,15 @@
+includes:
+    - vendor/larastan/larastan/extension.neon
+
+parameters:
+    paths:
+        - src
+
+    level: 5
+
+    ignoreErrors:
+        # Ignore dynamic method calls on Telegram API objects
+        - '#Call to an undefined method#'
+
+    excludePaths:
+        - vendor/*
