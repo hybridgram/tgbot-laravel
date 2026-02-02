@@ -12,8 +12,8 @@ use Phptg\BotApi\Type\Update\Update;
 final class SetLocaleTelegramRouteMiddleware implements TelegramRouteMiddlewareInterface
 {
     /**
-     * @param array<string>|null $supportedLocales List of supported locales. If null, any locale from Telegram will be used.
-     * @param string|null $fallbackLocale Fallback locale if user's locale is not supported or not available.
+     * @param  array<string>|null  $supportedLocales  List of supported locales. If null, any locale from Telegram will be used.
+     * @param  string|null  $fallbackLocale  Fallback locale if user's locale is not supported or not available.
      */
     public function __construct(
         private ?array $supportedLocales = null,
@@ -27,7 +27,7 @@ final class SetLocaleTelegramRouteMiddleware implements TelegramRouteMiddlewareI
 
         if ($locale !== null) {
             $locale = $this->normalizeLocale($locale);
-            
+
             if ($this->isLocaleSupported($locale)) {
                 App::setLocale($locale);
             } elseif ($this->fallbackLocale !== null) {
@@ -61,7 +61,7 @@ final class SetLocaleTelegramRouteMiddleware implements TelegramRouteMiddlewareI
 
         // Check base language match (e.g., "en" matches "en_US")
         $baseLocale = explode('_', $locale)[0];
-        
+
         return in_array($baseLocale, $this->supportedLocales, true);
     }
 }

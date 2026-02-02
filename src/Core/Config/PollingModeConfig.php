@@ -3,8 +3,9 @@
 declare(strict_types=1);
 
 namespace HybridGram\Core\Config;
+
 /**
- * @param array<string> $allowedUpdates
+ * @param  array<string>  $allowedUpdates
  */
 final class PollingModeConfig
 {

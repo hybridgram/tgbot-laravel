@@ -21,4 +21,3 @@ final readonly class RateLimitDecision
         return new self(false, max(0, $milliseconds));
     }
 }
-

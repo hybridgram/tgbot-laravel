@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace HybridGram\Console;
 
+use HybridGram\Core\Routing\TelegramRouter;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\App;
-use HybridGram\Core\Routing\TelegramRouter;
 
 final class OptimizeRoutesCommand extends Command
 {
     protected $signature = 'hybridgram:optimize';
+
     protected $description = 'Cache Telegram routes for better performance';
 
     public function handle(): int
@@ -24,9 +25,9 @@ final class OptimizeRoutesCommand extends Command
         }
 
         $router->cacheRoutes();
-        
+
         $this->info('Telegram routes have been cached successfully!');
-        
+
         return self::SUCCESS;
     }
 }

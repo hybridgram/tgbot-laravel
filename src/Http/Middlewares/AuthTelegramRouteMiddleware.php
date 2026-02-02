@@ -22,7 +22,7 @@ final class AuthTelegramRouteMiddleware implements TelegramRouteMiddlewareInterf
                 'error' => $e->getMessage(),
             ]);
         }
-        
+
         return $next($update);
     }
 }

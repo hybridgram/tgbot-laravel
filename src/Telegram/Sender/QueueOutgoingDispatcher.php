@@ -13,7 +13,7 @@ use Phptg\BotApi\MethodInterface;
 final class QueueOutgoingDispatcher implements OutgoingDispatcherInterface
 {
     /**
-     * @param array<string, string> $queueNames Map of priority to queue name
+     * @param  array<string, string>  $queueNames  Map of priority to queue name
      */
     public function __construct(
         private readonly array $queueNames,
@@ -36,4 +36,3 @@ final class QueueOutgoingDispatcher implements OutgoingDispatcherInterface
         return (int) Cache::increment($key);
     }
 }
-

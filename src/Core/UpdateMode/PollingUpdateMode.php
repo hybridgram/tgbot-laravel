@@ -50,6 +50,7 @@ final class PollingUpdateMode extends AbstractUpdateMode
         if ($updates instanceof FailResult) {
             if ($updates->errorCode === 409) {
                 $this->handleWebhookConflict($updates);
+
                 return;
             }
 
@@ -63,6 +64,7 @@ final class PollingUpdateMode extends AbstractUpdateMode
             if ($this->botConfig->pollingConfig->timeout <= 0) {
                 usleep(200_000);
             }
+
             return;
         }
 
@@ -110,8 +112,8 @@ final class PollingUpdateMode extends AbstractUpdateMode
             logger()->error($errorMessage);
             $this->outputError($errorMessage);
             throw new \RuntimeException(
-                "Cannot start polling: webhook is active and automatic deletion failed. " .
-                "Please delete webhook manually using: php artisan react_telegram:webhook:delete --bot={$this->botConfig->botId}. " .
+                'Cannot start polling: webhook is active and automatic deletion failed. '.
+                "Please delete webhook manually using: php artisan react_telegram:webhook:delete --bot={$this->botConfig->botId}. ".
                 "Original error: {$originalError->getMessage()}",
                 0,
                 $originalError
@@ -132,7 +134,7 @@ final class PollingUpdateMode extends AbstractUpdateMode
 
     private function formatErrorMessage(\Throwable $e): string
     {
-        return get_class($e) . ': ' . $e->getMessage();
+        return get_class($e).': '.$e->getMessage();
     }
 
     private function extractResponseBody(\Throwable $e): ?string
@@ -188,17 +190,17 @@ final class PollingUpdateMode extends AbstractUpdateMode
         }
 
         $logUpdates = $this->getCommandBoolOption('log-updates') || $this->getCommandBoolOption('full');
-        if (!$logUpdates) {
+        if (! $logUpdates) {
             return;
         }
 
         $type = UpdateHelper::getUpdateTypeEnum($update)->value ?? 'unknown';
-        
+
         // Если это сообщение с reply, изменяем тип на message_reply
         if ($type === 'message' && $update->message?->replyToMessage !== null) {
             $type = 'message_reply';
         }
-        
+
         $chat = UpdateHelper::getChatFromUpdate($update);
         $chatId = $chat?->id;
         $chatType = $chat?->type ?? '-';
@@ -244,13 +246,13 @@ final class PollingUpdateMode extends AbstractUpdateMode
             return '';
         }
 
-        $text = preg_replace('/\s+/u', ' ', trim($text)) ?? '';
+        $text = preg_replace('/\s+/u', ' ', mb_trim($text)) ?? '';
         $max = 160;
         if ($this->stringLength($text) > $max) {
-            $text = $this->stringSlice($text, 0, $max - 1) . '…';
+            $text = $this->stringSlice($text, 0, $max - 1).'…';
         }
 
-        return 'text=' . $text;
+        return 'text='.$text;
     }
 
     private function encodeUpdatePayload(Update $update): string
@@ -266,20 +268,20 @@ final class PollingUpdateMode extends AbstractUpdateMode
             $json = json_encode(
                 ['update_id' => $update->updateId],
                 JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES
-            ) ?: '{"update_id":' . $update->updateId . '}';
+            ) ?: '{"update_id":'.$update->updateId.'}';
         }
 
-        return "<fg=yellow>payload:</fg=yellow>\n" . $json;
+        return "<fg=yellow>payload:</fg=yellow>\n".$json;
     }
 
     private function stringLength(string $value): int
     {
-        return function_exists('mb_strlen') ? mb_strlen($value) : strlen($value);
+        return function_exists('mb_strlen') ? mb_strlen($value) : mb_strlen($value);
     }
 
     private function stringSlice(string $value, int $start, int $length): string
     {
-        return function_exists('mb_substr') ? mb_substr($value, $start, $length) : substr($value, $start, $length);
+        return function_exists('mb_substr') ? mb_substr($value, $start, $length) : mb_substr($value, $start, $length);
     }
 
     private function getCommandBoolOption(string $name): bool

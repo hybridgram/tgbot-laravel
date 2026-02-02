@@ -24,9 +24,9 @@ final class SendTelegramMethodJob implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     /**
-     * @param string $botId Bot identifier
-     * @param MethodInterface $method Telegram API method (must be serializable, no InputFile with resource)
-     * @param Priority $priority Request priority
+     * @param  string  $botId  Bot identifier
+     * @param  MethodInterface  $method  Telegram API method (must be serializable, no InputFile with resource)
+     * @param  Priority  $priority  Request priority
      */
     public function __construct(
         public readonly string $botId,
@@ -47,6 +47,7 @@ final class SendTelegramMethodJob implements ShouldQueue
         if ($gate['action'] === 'delay') {
             if (isset($this->job)) {
                 $this->release(now()->addMilliseconds($gate['delayMs']));
+
                 return;
             }
             throw new TelegramOutgoingRateLimited($this->botId, $gate['delayMs']);
@@ -55,7 +56,7 @@ final class SendTelegramMethodJob implements ShouldQueue
         $rateLimiter = App::make(OutgoingRateLimiterInterface::class);
         $decision = $rateLimiter->acquire($this->botId, $this->priority);
 
-        if (!$decision->allowNow) {
+        if (! $decision->allowNow) {
             // Do not block a worker; reschedule the job for when a slot is expected to be available.
             if (isset($this->job)) {
                 $this->fifoGateExit();
@@ -78,12 +79,12 @@ final class SendTelegramMethodJob implements ShouldQueue
                 // IMPORTANT: always advance FIFO pointer, otherwise a single 400 will block the whole queue.
                 $this->fifoGateAdvance();
 
-
                 $error = TelegramRequestError::fromFailResult($result);
 
                 // In real queue mode: mark as failed (visible in worker logs) without retries.
                 if (isset($this->job)) {
                     $this->fail($error);
+
                     return;
                 }
 
@@ -219,7 +220,8 @@ final class SendTelegramMethodJob implements ShouldQueue
 
     /**
      * @template T
-     * @param \Closure():T $fn
+     *
+     * @param  \Closure():T  $fn
      * @return T
      */
     private function withFifoLock(\Closure $fn): mixed
@@ -245,6 +247,7 @@ final class SendTelegramMethodJob implements ShouldQueue
             foreach ($value as $key => $item) {
                 $this->checkForNonSerializable($item, "{$context}.{$key}");
             }
+
             return;
         }
 
@@ -253,8 +256,8 @@ final class SendTelegramMethodJob implements ShouldQueue
             if ($value instanceof \Phptg\BotApi\Type\InputFile) {
                 if (is_resource($value->resource)) {
                     throw new \RuntimeException(
-                        "Method '{$context}' contains InputFile with resource stream, which cannot be queued. " .
-                        "Use sync mode (disable queue) or convert file to file path before queuing."
+                        "Method '{$context}' contains InputFile with resource stream, which cannot be queued. ".
+                        'Use sync mode (disable queue) or convert file to file path before queuing.'
                     );
                 }
             }
@@ -273,4 +276,3 @@ final class SendTelegramMethodJob implements ShouldQueue
         }
     }
 }
-

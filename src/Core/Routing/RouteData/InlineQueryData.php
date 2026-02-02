@@ -17,4 +17,3 @@ final readonly class InlineQueryData extends AbstractRouteData
         parent::__construct($update, $botId);
     }
 }
-

@@ -4,11 +4,7 @@ declare(strict_types=1);
 
 namespace HybridGram\Core\Routing;
 
-use Illuminate\Support\Facades\App;
 use InvalidArgumentException;
-use HybridGram\Core\Routing\RouteOptions\DocumentOptions;
-use HybridGram\Core\Routing\RouteOptions\PollOptions;
-use HybridGram\Telegram\Document\MimeType;
 
 final class RouteGroup
 {
@@ -44,13 +40,13 @@ final class RouteGroup
 
         if (isset($attributes['chat_type'])) {
             $chatType = $attributes['chat_type'];
-            if (!($chatType instanceof ChatType)
-                && !is_array($chatType)) {
+            if (! ($chatType instanceof ChatType)
+                && ! is_array($chatType)) {
                 throw new InvalidArgumentException('chat_type should be instance of '.ChatType::class.', array of '.ChatType::class.', or null');
             }
             if (is_array($chatType)) {
                 foreach ($chatType as $type) {
-                    if (!($type instanceof ChatType)) {
+                    if (! ($type instanceof ChatType)) {
                         throw new InvalidArgumentException('chat_type array must contain only instances of '.ChatType::class);
                     }
                 }

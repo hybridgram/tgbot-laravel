@@ -17,5 +17,3 @@ final readonly class ReplyToStoryData extends AbstractRouteData
         parent::__construct($update, $botId);
     }
 }
-
-

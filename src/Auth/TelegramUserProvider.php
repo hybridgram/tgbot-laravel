@@ -11,8 +11,11 @@ use Phptg\BotApi\Type\Update\Update;
 final class TelegramUserProvider implements UserProvider
 {
     private string $model;
+
     private string $telegramIdColumn;
+
     private bool $autoCreateUser;
+
     private ?\Closure $userCreationCallback = null;
 
     public function __construct(
@@ -26,18 +29,14 @@ final class TelegramUserProvider implements UserProvider
         $this->autoCreateUser = $autoCreateUser;
     }
 
-
-
     /**
      * Retrieve a user by the given credentials.
      *
-     * @param array<string, mixed> $credentials
-     * @param Update|null $update
-     * @return Authenticatable|null
+     * @param  array<string, mixed>  $credentials
      */
     public function retrieveByCredentials(array $credentials, ?Update $update = null): ?Authenticatable
     {
-        if (!isset($credentials[$this->telegramIdColumn])) {
+        if (! isset($credentials[$this->telegramIdColumn])) {
             return null;
         }
 
@@ -58,13 +57,11 @@ final class TelegramUserProvider implements UserProvider
     /**
      * Validate a user against the given credentials.
      *
-     * @param Authenticatable $user
-     * @param array<string, mixed> $credentials
-     * @return bool
+     * @param  array<string, mixed>  $credentials
      */
     public function validateCredentials(Authenticatable $user, array $credentials): bool
     {
-        if (!isset($credentials[$this->telegramIdColumn])) {
+        if (! isset($credentials[$this->telegramIdColumn])) {
             return false;
         }
 
@@ -76,12 +73,10 @@ final class TelegramUserProvider implements UserProvider
 
     /**
      * Create a new user instance.
-     *
-     * @return Authenticatable
      */
     private function createModel(): Authenticatable
     {
-        $class = '\\' . ltrim($this->model, '\\');
+        $class = '\\'.mb_ltrim($this->model, '\\');
 
         return new $class;
     }
@@ -89,9 +84,7 @@ final class TelegramUserProvider implements UserProvider
     /**
      * Create a new user with the given Telegram ID.
      *
-     * @param int|string $telegramId
-     * @param Update|null $update
-     * @return Authenticatable|null
+     * @param  int|string  $telegramId
      */
     private function createUser($telegramId, ?Update $update = null): ?Authenticatable
     {
@@ -133,9 +126,6 @@ final class TelegramUserProvider implements UserProvider
 
     /**
      * Get Telegram ID from user model.
-     *
-     * @param Authenticatable $user
-     * @return int|string|null
      */
     private function getUserTelegramId(Authenticatable $user): int|string|null
     {
@@ -150,8 +140,7 @@ final class TelegramUserProvider implements UserProvider
         return null;
     }
 
-    public function rehashPasswordIfRequired(Authenticatable $user, #[\SensitiveParameter] array $credentials, bool $force = false)
-    {}
+    public function rehashPasswordIfRequired(Authenticatable $user, #[\SensitiveParameter] array $credentials, bool $force = false) {}
 
     public function retrieveById($identifier): ?Authenticatable
     {
@@ -163,7 +152,5 @@ final class TelegramUserProvider implements UserProvider
         return null;
     }
 
-    public function updateRememberToken(Authenticatable $user, $token): void
-    {}
+    public function updateRememberToken(Authenticatable $user, $token): void {}
 }
-

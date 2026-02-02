@@ -12,7 +12,9 @@ use Phptg\BotApi\Type\Update\Update;
 final class TelegramGuard implements Guard
 {
     private ?Authenticatable $user = null;
+
     private ?Update $update = null;
+
     private TelegramUserProvider $provider;
 
     public function __construct(TelegramUserProvider $provider)
@@ -22,8 +24,6 @@ final class TelegramGuard implements Guard
 
     /**
      * Determine if the current user is authenticated.
-     *
-     * @return bool
      */
     public function check(): bool
     {
@@ -32,18 +32,14 @@ final class TelegramGuard implements Guard
 
     /**
      * Determine if the current user is a guest.
-     *
-     * @return bool
      */
     public function guest(): bool
     {
-        return !$this->check();
+        return ! $this->check();
     }
 
     /**
      * Get the currently authenticated user.
-     *
-     * @return Authenticatable|null
      */
     public function user(): ?Authenticatable
     {
@@ -79,8 +75,6 @@ final class TelegramGuard implements Guard
 
     /**
      * Get the ID for the currently authenticated user.
-     *
-     * @return int|string|null
      */
     public function id(): int|string|null
     {
@@ -92,8 +86,7 @@ final class TelegramGuard implements Guard
     /**
      * Validate a user's credentials.
      *
-     * @param array<string, mixed> $credentials
-     * @return bool
+     * @param  array<string, mixed>  $credentials
      */
     public function validate(array $credentials = []): bool
     {
@@ -108,9 +101,6 @@ final class TelegramGuard implements Guard
 
     /**
      * Set the current user.
-     *
-     * @param Authenticatable|null $user
-     * @return void
      */
     public function setUser(?Authenticatable $user): void
     {
@@ -120,9 +110,6 @@ final class TelegramGuard implements Guard
     /**
      * Set the current Update object.
      * This should be called before user() to authenticate based on the Update.
-     *
-     * @param Update $update
-     * @return void
      */
     public function setUpdate(Update $update): void
     {
@@ -135,4 +122,3 @@ final class TelegramGuard implements Guard
         return $this->user !== null;
     }
 }
-

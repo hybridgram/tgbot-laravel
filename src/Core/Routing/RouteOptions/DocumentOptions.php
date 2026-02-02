@@ -6,14 +6,12 @@ namespace HybridGram\Core\Routing\RouteOptions;
 
 use HybridGram\Telegram\Document\MimeType;
 
-readonly class DocumentOptions
+final readonly class DocumentOptions
 {
     /**
-     * @param array<MimeType|string> $mimeTypes
+     * @param  array<MimeType|string>  $mimeTypes
      */
     public function __construct(
         public array $mimeTypes,
-    )
-    {
-    }
+    ) {}
 }

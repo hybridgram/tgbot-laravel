@@ -10,11 +10,10 @@ use Phptg\BotApi\Type\Voice;
 final readonly class VoiceData extends AbstractRouteData
 {
     public function __construct(
-        Update       $update,
+        Update $update,
         public Voice $voice,
-        string       $botId,
+        string $botId,
     ) {
         parent::__construct($update, $botId);
     }
 }
-

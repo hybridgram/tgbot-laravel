@@ -17,4 +17,3 @@ final readonly class ChecklistData extends AbstractRouteData
         parent::__construct($update, $botId);
     }
 }
-

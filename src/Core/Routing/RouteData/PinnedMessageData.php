@@ -18,5 +18,3 @@ final readonly class PinnedMessageData extends AbstractRouteData
         parent::__construct($update, $botId);
     }
 }
-
-

@@ -17,5 +17,3 @@ final readonly class AutoDeleteTimerChangedData extends AbstractRouteData
         parent::__construct($update, $botId);
     }
 }
-
-

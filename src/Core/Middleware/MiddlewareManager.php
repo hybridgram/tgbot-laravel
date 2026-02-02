@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 namespace HybridGram\Core\Middleware;
 
-
 final class MiddlewareManager
 {
-    /** @var array<TelegramRouteMiddlewareInterface>  */
+    /** @var array<TelegramRouteMiddlewareInterface> */
     private array $globalMiddlewares = [];
 
     /**
@@ -16,6 +15,7 @@ final class MiddlewareManager
     public function registerGlobalMiddleware(TelegramRouteMiddlewareInterface ...$middleware): MiddlewareManager
     {
         $this->globalMiddlewares = $middleware;
+
         return $this;
     }
 

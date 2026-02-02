@@ -8,6 +8,8 @@ use DateTimeImmutable;
 use DateTimeInterface;
 use HybridGram\Exceptions\Telegram\TelegramRequestError;
 use HybridGram\Telegram\Sender\OutgoingDispatcherInterface;
+use Phptg\BotApi\FailResult;
+use Phptg\BotApi\Method\AnswerCallbackQuery;
 use Phptg\BotApi\Method\ApproveChatJoinRequest;
 use Phptg\BotApi\Method\ApproveSuggestedPost;
 use Phptg\BotApi\Method\BanChatMember;
@@ -35,6 +37,7 @@ use Phptg\BotApi\Method\EditGeneralForumTopic;
 use Phptg\BotApi\Method\EditMessageChecklist;
 use Phptg\BotApi\Method\EditStory;
 use Phptg\BotApi\Method\ExportChatInviteLink;
+use Phptg\BotApi\Method\ForwardMessage;
 use Phptg\BotApi\Method\ForwardMessages;
 use Phptg\BotApi\Method\Game\GetGameHighScores;
 use Phptg\BotApi\Method\Game\SendGame;
@@ -60,10 +63,14 @@ use Phptg\BotApi\Method\GetUserChatBoosts;
 use Phptg\BotApi\Method\GetUserProfilePhotos;
 use Phptg\BotApi\Method\GiftPremiumSubscription;
 use Phptg\BotApi\Method\HideGeneralForumTopic;
+use Phptg\BotApi\Method\Inline\AnswerInlineQuery;
+use Phptg\BotApi\Method\Inline\AnswerWebAppQuery;
 use Phptg\BotApi\Method\Inline\SavePreparedInlineMessage;
 use Phptg\BotApi\Method\LeaveChat;
 use Phptg\BotApi\Method\LogOut;
 use Phptg\BotApi\Method\Passport\SetPassportDataErrors;
+use Phptg\BotApi\Method\Payment\AnswerPreCheckoutQuery;
+use Phptg\BotApi\Method\Payment\AnswerShippingQuery;
 use Phptg\BotApi\Method\Payment\CreateInvoiceLink;
 use Phptg\BotApi\Method\Payment\EditUserStarSubscription;
 use Phptg\BotApi\Method\Payment\GetStarTransactions;
@@ -88,6 +95,7 @@ use Phptg\BotApi\Method\SendDice;
 use Phptg\BotApi\Method\SendDocument;
 use Phptg\BotApi\Method\SendLocation;
 use Phptg\BotApi\Method\SendMediaGroup;
+use Phptg\BotApi\Method\SendMessage;
 use Phptg\BotApi\Method\SendPaidMedia;
 use Phptg\BotApi\Method\SendPhoto;
 use Phptg\BotApi\Method\SendPoll;
@@ -146,17 +154,21 @@ use Phptg\BotApi\Method\Update\GetUpdates;
 use Phptg\BotApi\Method\Update\GetWebhookInfo;
 use Phptg\BotApi\Method\Update\SetWebhook;
 use Phptg\BotApi\Method\UpdatingMessage\DeleteBusinessMessages;
+use Phptg\BotApi\Method\UpdatingMessage\DeleteMessage;
 use Phptg\BotApi\Method\UpdatingMessage\DeleteMessages;
+use Phptg\BotApi\Method\UpdatingMessage\EditMessageCaption;
 use Phptg\BotApi\Method\UpdatingMessage\EditMessageLiveLocation;
 use Phptg\BotApi\Method\UpdatingMessage\EditMessageMedia;
+use Phptg\BotApi\Method\UpdatingMessage\EditMessageReplyMarkup;
+use Phptg\BotApi\Method\UpdatingMessage\EditMessageText;
 use Phptg\BotApi\Method\UpdatingMessage\ReadBusinessMessage;
 use Phptg\BotApi\Method\UpdatingMessage\StopMessageLiveLocation;
 use Phptg\BotApi\Method\UpdatingMessage\StopPoll;
 use Phptg\BotApi\Method\UpgradeGift;
 use Phptg\BotApi\Method\VerifyChat;
 use Phptg\BotApi\Method\VerifyUser;
-use Phptg\BotApi\Transport\DownloadFileException;
-use Phptg\BotApi\Transport\SaveFileException;
+use Phptg\BotApi\MethodInterface;
+use Phptg\BotApi\TelegramBotApi as VjikTelegramBotApi;
 use Phptg\BotApi\Type\AcceptedGiftTypes;
 use Phptg\BotApi\Type\BotCommand;
 use Phptg\BotApi\Type\BotCommandScope;
@@ -170,9 +182,14 @@ use Phptg\BotApi\Type\ChatInviteLink;
 use Phptg\BotApi\Type\ChatMember;
 use Phptg\BotApi\Type\ChatPermissions;
 use Phptg\BotApi\Type\File;
+use Phptg\BotApi\Type\ForceReply;
 use Phptg\BotApi\Type\ForumTopic;
 use Phptg\BotApi\Type\Game\GameHighScore;
+use Phptg\BotApi\Type\Inline\InlineQueryResult;
+use Phptg\BotApi\Type\Inline\InlineQueryResultsButton;
 use Phptg\BotApi\Type\Inline\PreparedInlineMessage;
+use Phptg\BotApi\Type\Inline\SentWebAppMessage;
+use Phptg\BotApi\Type\InlineKeyboardMarkup;
 use Phptg\BotApi\Type\InputChecklist;
 use Phptg\BotApi\Type\InputFile;
 use Phptg\BotApi\Type\InputMedia;
@@ -184,14 +201,21 @@ use Phptg\BotApi\Type\InputPaidMedia;
 use Phptg\BotApi\Type\InputPollOption;
 use Phptg\BotApi\Type\InputProfilePhoto;
 use Phptg\BotApi\Type\InputStoryContent;
+use Phptg\BotApi\Type\LinkPreviewOptions;
 use Phptg\BotApi\Type\MenuButton;
+use Phptg\BotApi\Type\Message;
+use Phptg\BotApi\Type\MessageEntity;
 use Phptg\BotApi\Type\MessageId;
 use Phptg\BotApi\Type\OwnedGifts;
 use Phptg\BotApi\Type\Passport\PassportElementError;
 use Phptg\BotApi\Type\Payment\LabeledPrice;
+use Phptg\BotApi\Type\Payment\ShippingOption;
 use Phptg\BotApi\Type\Payment\StarTransactions;
 use Phptg\BotApi\Type\Poll;
 use Phptg\BotApi\Type\ReactionType;
+use Phptg\BotApi\Type\ReplyKeyboardMarkup;
+use Phptg\BotApi\Type\ReplyKeyboardRemove;
+use Phptg\BotApi\Type\ReplyParameters;
 use Phptg\BotApi\Type\StarAmount;
 use Phptg\BotApi\Type\Sticker\Gifts;
 use Phptg\BotApi\Type\Sticker\InputSticker;
@@ -200,6 +224,7 @@ use Phptg\BotApi\Type\Sticker\Sticker;
 use Phptg\BotApi\Type\Sticker\StickerSet;
 use Phptg\BotApi\Type\Story;
 use Phptg\BotApi\Type\StoryArea;
+use Phptg\BotApi\Type\SuggestedPostParameters;
 use Phptg\BotApi\Type\Update\Update;
 use Phptg\BotApi\Type\Update\WebhookInfo;
 use Phptg\BotApi\Type\User;
@@ -207,50 +232,26 @@ use Phptg\BotApi\Type\UserChatBoosts;
 use Phptg\BotApi\Type\UserProfilePhotos;
 use Psr\Log\LoggerInterface;
 use SensitiveParameter;
-use Phptg\BotApi\FailResult;
-use Phptg\BotApi\MethodInterface;
-use Phptg\BotApi\TelegramBotApi as VjikTelegramBotApi;
-use Phptg\BotApi\Method\SendMessage;
-use Phptg\BotApi\Method\AnswerCallbackQuery;
-use Phptg\BotApi\Method\Inline\AnswerInlineQuery;
-use Phptg\BotApi\Method\Payment\AnswerPreCheckoutQuery;
-use Phptg\BotApi\Method\Payment\AnswerShippingQuery;
-use Phptg\BotApi\Method\Inline\AnswerWebAppQuery;
-use Phptg\BotApi\Method\UpdatingMessage\EditMessageText;
-use Phptg\BotApi\Method\UpdatingMessage\EditMessageCaption;
-use Phptg\BotApi\Method\UpdatingMessage\EditMessageReplyMarkup;
-use Phptg\BotApi\Method\UpdatingMessage\DeleteMessage;
-use Phptg\BotApi\Method\ForwardMessage;
-use Phptg\BotApi\Type\LinkPreviewOptions;
-use Phptg\BotApi\Type\Message;
-use Phptg\BotApi\Type\MessageEntity;
-use Phptg\BotApi\Type\ReplyParameters;
-use Phptg\BotApi\Type\Inline\InlineQueryResult;
-use Phptg\BotApi\Type\Inline\InlineQueryResultsButton;
-use Phptg\BotApi\Type\Payment\ShippingOption;
-use Phptg\BotApi\Type\Inline\SentWebAppMessage;
-use Phptg\BotApi\Type\InlineKeyboardMarkup;
-use Phptg\BotApi\Type\ReplyKeyboardMarkup;
-use Phptg\BotApi\Type\ReplyKeyboardRemove;
-use Phptg\BotApi\Type\ForceReply;
-use Phptg\BotApi\Type\SuggestedPostParameters;
 
 /**
  * Enhanced Telegram Bot API client with queue support and rate limiting.
- * 
+ *
  * This is a wrapper around Phptg\BotApi\TelegramBotApi that adds:
  * - Outgoing request dispatcher (sync/queue based on configuration)
  * - Rate limiting per bot
  * - Priority support for requests
  * - Automatic routing: outgoing methods go through dispatcher, service methods go directly
- * 
+ *
  * @api
  */
 final class TelegramBotApi
 {
     private readonly VjikTelegramBotApi $originalClient;
+
     private ?OutgoingDispatcherInterface $dispatcher = null;
+
     private ?string $botId = null;
+
     private Priority $priority = Priority::HIGH;
 
     /**
@@ -301,7 +302,7 @@ final class TelegramBotApi
         ?OutgoingDispatcherInterface $dispatcher = null,
         ?LoggerInterface $logger = null,
     ) {
-        $this->originalClient = $originalClient ?? new VjikTelegramBotApi($token, $baseUrl, null, $logger);
+        $this->originalClient = $originalClient ?? new VjikTelegramBotApi($this->token, $this->baseUrl, null, $logger);
         $this->dispatcher = $dispatcher;
     }
 
@@ -313,19 +314,21 @@ final class TelegramBotApi
     {
         $new = clone $this;
         $new->priority = $priority;
+
         return $new;
     }
 
     /**
      * Set bot ID for dispatcher context.
      * Internal use only.
-     * 
+     *
      * @internal
      */
     public function withBotId(string $botId): self
     {
         $new = clone $this;
         $new->botId = $botId;
+
         return $new;
     }
 
@@ -333,7 +336,9 @@ final class TelegramBotApi
      * @see https://core.telegram.org/bots/api#making-requests
      *
      * @psalm-template TValue
+     *
      * @psalm-param MethodInterface<TValue> $method
+     *
      * @psalm-return TValue|FailResult
      */
     public function call(MethodInterface $method): mixed
@@ -380,19 +385,23 @@ final class TelegramBotApi
         logger()->error('Telegram outgoing request failed', $context);
     }
 
+    /**
+     * @param  MethodInterface<mixed>  $method
+     */
     private function isServiceMethod(MethodInterface $method): bool
     {
         $apiMethod = $method->getApiMethod();
+
         return in_array($apiMethod, self::SERVICE_METHODS, true);
     }
 
     /**
      * Make a file URL on Telegram servers.
      * Delegates to original client.
-     * 
+     *
      * @see VjikTelegramBotApi::makeFileUrl()
      */
-    public function makeFileUrl(string|\Phptg\BotApi\Type\File $file): string
+    public function makeFileUrl(string|File $file): string
     {
         return $this->originalClient->makeFileUrl($file);
     }
@@ -400,10 +409,10 @@ final class TelegramBotApi
     /**
      * Downloads a file from the Telegram servers and returns its content.
      * Delegates to original client.
-     * 
+     *
      * @see VjikTelegramBotApi::downloadFile()
      */
-    public function downloadFile(string|\Phptg\BotApi\Type\File $file): string
+    public function downloadFile(string|File $file): string
     {
         return $this->originalClient->downloadFile($file);
     }
@@ -411,17 +420,17 @@ final class TelegramBotApi
     /**
      * Downloads a file from the Telegram servers and saves it to a file.
      * Delegates to original client.
-     * 
+     *
      * @see VjikTelegramBotApi::downloadFileTo()
      */
-    public function downloadFileTo(string|\Phptg\BotApi\Type\File $file, string $savePath): void
+    public function downloadFileTo(string|File $file, string $savePath): void
     {
         $this->originalClient->downloadFileTo($file, $savePath);
     }
 
     /**
      * @see https://core.telegram.org/bots/api#sendmessage
-     * 
+     *
      * Overridden to route through dispatcher.
      */
     public function sendMessage(
@@ -464,7 +473,7 @@ final class TelegramBotApi
 
     /**
      * @see https://core.telegram.org/bots/api#answercallbackquery
-     * 
+     *
      * Overridden to route through dispatcher.
      */
     public function answerCallbackQuery(
@@ -481,7 +490,7 @@ final class TelegramBotApi
 
     /**
      * @see https://core.telegram.org/bots/api#answerinlinequery
-     * 
+     *
      * Overridden to route through dispatcher.
      */
     public function answerInlineQuery(
@@ -499,7 +508,7 @@ final class TelegramBotApi
 
     /**
      * @see https://core.telegram.org/bots/api#editmessagetext
-     * 
+     *
      * Overridden to route through dispatcher.
      */
     public function editMessageText(
@@ -530,7 +539,7 @@ final class TelegramBotApi
 
     /**
      * @see https://core.telegram.org/bots/api#deletemessage
-     * 
+     *
      * Overridden to route through dispatcher.
      */
     public function deleteMessage(int|string $chatId, int $messageId): FailResult|true
@@ -541,7 +550,7 @@ final class TelegramBotApi
     /**
      * Delegate all other convenience methods to original client.
      * Note: These will bypass dispatcher. For dispatcher support, use call() directly.
-     * 
+     *
      * @see self::call() for dispatcher-enabled method calls
      */
     public function __call(string $method, array $arguments): mixed
@@ -550,7 +559,7 @@ final class TelegramBotApi
             $result = $this->originalClient->$method(...$arguments);
 
             // Even if the method bypasses dispatcher (by design), do not silently ignore Telegram failures.
-            if ($result instanceof FailResult && !in_array($method, self::SERVICE_METHODS, true)) {
+            if ($result instanceof FailResult && ! in_array($method, self::SERVICE_METHODS, true)) {
                 $this->reportOutgoingFailResult($result);
                 throw TelegramRequestError::fromFailResult($result);
             }
@@ -558,7 +567,7 @@ final class TelegramBotApi
             return $result;
         }
 
-        throw new \BadMethodCallException("Method '{$method}' does not exist on " . self::class);
+        throw new \BadMethodCallException("Method '{$method}' does not exist on ".self::class);
     }
 
     /**
@@ -587,7 +596,7 @@ final class TelegramBotApi
     /**
      * @see https://core.telegram.org/bots/api#answershippingquery
      *
-     * @param ShippingOption[]|null $shippingOptions
+     * @param  ShippingOption[]|null  $shippingOptions
      */
     public function answerShippingQuery(
         string $shippingQueryId,
@@ -659,7 +668,7 @@ final class TelegramBotApi
      */
     public function close(): FailResult|true
     {
-        return $this->call(new Close());
+        return $this->call(new Close);
     }
 
     /**
@@ -693,7 +702,7 @@ final class TelegramBotApi
     /**
      * @see https://core.telegram.org/bots/api#copymessage
      *
-     * @param MessageEntity[]|null $captionEntities
+     * @param  MessageEntity[]|null  $captionEntities
      */
     public function copyMessage(
         int|string $chatId,
@@ -738,7 +747,7 @@ final class TelegramBotApi
     /**
      * @see https://core.telegram.org/bots/api#copymessages
      *
-     * @param int[] $messageIds
+     * @param  int[]  $messageIds
      * @return FailResult|MessageId[]
      */
     public function copyMessages(
@@ -811,8 +820,8 @@ final class TelegramBotApi
     /**
      * @see https://core.telegram.org/bots/api#createinvoicelink
      *
-     * @param LabeledPrice[] $prices
-     * @param int[]|null $suggestedTipAmounts
+     * @param  LabeledPrice[]  $prices
+     * @param  int[]|null  $suggestedTipAmounts
      */
     public function createInvoiceLink(
         string $title,
@@ -870,7 +879,7 @@ final class TelegramBotApi
     /**
      * @see https://core.telegram.org/bots/api#createnewstickerset
      *
-     * @param InputSticker[] $stickers
+     * @param  InputSticker[]  $stickers
      */
     public function createNewStickerSet(
         int $userId,
@@ -908,7 +917,7 @@ final class TelegramBotApi
     /**
      * @see https://core.telegram.org/bots/api#deletebusinessmessages
      *
-     * @param int[] $messageIds
+     * @param  int[]  $messageIds
      */
     public function deleteBusinessMessages(
         string $businessConnectionId,
@@ -950,7 +959,7 @@ final class TelegramBotApi
     /**
      * @see https://core.telegram.org/bots/api#deletemessages
      *
-     * @param int[] $messageIds
+     * @param  int[]  $messageIds
      */
     public function deleteMessages(int|string $chatId, array $messageIds): FailResult|true
     {
@@ -1039,7 +1048,7 @@ final class TelegramBotApi
     /**
      * @see https://core.telegram.org/bots/api#editmessagecaption
      *
-     * @param MessageEntity[]|null $captionEntities
+     * @param  MessageEntity[]|null  $captionEntities
      */
     public function editMessageCaption(
         ?string $businessConnectionId = null,
@@ -1168,8 +1177,8 @@ final class TelegramBotApi
     /**
      * @see https://core.telegram.org/bots/api#editstory
      *
-     * @param MessageEntity[]|null $captionEntities
-     * @param StoryArea[]|null $areas
+     * @param  MessageEntity[]|null  $captionEntities
+     * @param  StoryArea[]|null  $areas
      */
     public function editStory(
         string $businessConnectionId,
@@ -1250,7 +1259,7 @@ final class TelegramBotApi
     }
 
     /**
-     * @param int[] $messageIds
+     * @param  int[]  $messageIds
      * @return FailResult|MessageId[]
      *
      * @see https://core.telegram.org/bots/api#forwardmessages
@@ -1300,7 +1309,7 @@ final class TelegramBotApi
      */
     public function getAvailableGifts(): FailResult|Gifts
     {
-        return $this->call(new GetAvailableGifts());
+        return $this->call(new GetAvailableGifts);
     }
 
     /**
@@ -1395,7 +1404,7 @@ final class TelegramBotApi
     /**
      * @see https://core.telegram.org/bots/api#getcustomemojistickers
      *
-     * @param string[] $customEmojiIds
+     * @param  string[]  $customEmojiIds
      * @return FailResult|Sticker[]
      */
     public function getCustomEmojiStickers(array $customEmojiIds): FailResult|array
@@ -1418,7 +1427,7 @@ final class TelegramBotApi
      */
     public function getForumTopicIconStickers(): FailResult|array
     {
-        return $this->call(new GetForumTopicIconStickers());
+        return $this->call(new GetForumTopicIconStickers);
     }
 
     /**
@@ -1442,7 +1451,7 @@ final class TelegramBotApi
      */
     public function getMe(): FailResult|User
     {
-        return $this->call(new GetMe());
+        return $this->call(new GetMe);
     }
 
     /**
@@ -1490,7 +1499,7 @@ final class TelegramBotApi
      */
     public function getMyStarBalance(): FailResult|StarAmount
     {
-        return $this->call(new GetMyStarBalance());
+        return $this->call(new GetMyStarBalance);
     }
 
     /**
@@ -1516,7 +1525,7 @@ final class TelegramBotApi
     /**
      * @see https://core.telegram.org/bots/api#getupdates
      *
-     * @param string[]|null $allowedUpdates
+     * @param  string[]|null  $allowedUpdates
      * @return FailResult|Update[]
      */
     public function getUpdates(
@@ -1556,13 +1565,13 @@ final class TelegramBotApi
      */
     public function getWebhookInfo(): FailResult|WebhookInfo
     {
-        return $this->call(new GetWebhookInfo());
+        return $this->call(new GetWebhookInfo);
     }
 
     /**
      * @see https://core.telegram.org/bots/api#giftpremiumsubscription
      *
-     * @param MessageEntity[]|null $textEntities
+     * @param  MessageEntity[]|null  $textEntities
      */
     public function giftPremiumSubscription(
         int $userId,
@@ -1609,7 +1618,7 @@ final class TelegramBotApi
      */
     public function logOut(): FailResult|true
     {
-        return $this->call(new LogOut());
+        return $this->call(new LogOut);
     }
 
     /**
@@ -1628,8 +1637,8 @@ final class TelegramBotApi
     /**
      * @see https://core.telegram.org/bots/api#poststory
      *
-     * @param MessageEntity[]|null $captionEntities
-     * @param StoryArea[]|null $areas
+     * @param  MessageEntity[]|null  $captionEntities
+     * @param  StoryArea[]|null  $areas
      */
     public function postStory(
         string $businessConnectionId,
@@ -1842,7 +1851,7 @@ final class TelegramBotApi
     }
 
     /**
-     * @param MessageEntity[]|null $captionEntities
+     * @param  MessageEntity[]|null  $captionEntities
      *
      * @see https://core.telegram.org/bots/api#sendanimation
      */
@@ -1897,7 +1906,7 @@ final class TelegramBotApi
     }
 
     /**
-     * @param MessageEntity[]|null $captionEntities
+     * @param  MessageEntity[]|null  $captionEntities
      *
      * @see https://core.telegram.org/bots/api#sendaudio
      */
@@ -2070,7 +2079,7 @@ final class TelegramBotApi
     }
 
     /**
-     * @param MessageEntity[]|null $captionEntities
+     * @param  MessageEntity[]|null  $captionEntities
      *
      * @see https://core.telegram.org/bots/api#senddocument
      */
@@ -2150,7 +2159,7 @@ final class TelegramBotApi
     /**
      * @see https://core.telegram.org/bots/api#sendgift
      *
-     * @param MessageEntity[]|null $textEntities
+     * @param  MessageEntity[]|null  $textEntities
      */
     public function sendGift(
         int $userId,
@@ -2177,8 +2186,8 @@ final class TelegramBotApi
     /**
      * @see https://core.telegram.org/bots/api#sendinvoice
      *
-     * @param LabeledPrice[] $prices
-     * @param int[]|null $suggestedTipAmounts
+     * @param  LabeledPrice[]  $prices
+     * @param  int[]|null  $suggestedTipAmounts
      */
     public function sendInvoice(
         int|string $chatId,
@@ -2299,7 +2308,7 @@ final class TelegramBotApi
     /**
      * @see https://core.telegram.org/bots/api#sendmediagroup
      *
-     * @param InputMediaAudio[]|InputMediaDocument[]|InputMediaPhoto[]|InputMediaVideo[] $media
+     * @param  InputMediaAudio[]|InputMediaDocument[]|InputMediaPhoto[]|InputMediaVideo[]  $media
      * @return FailResult|Message[]
      */
     public function sendMediaGroup(
@@ -2333,8 +2342,8 @@ final class TelegramBotApi
     /**
      * @see https://core.telegram.org/bots/api#sendpaidmedia
      *
-     * @param InputPaidMedia[] $media
-     * @param MessageEntity[]|null $captionEntities
+     * @param  InputPaidMedia[]  $media
+     * @param  MessageEntity[]|null  $captionEntities
      */
     public function sendPaidMedia(
         int|string $chatId,
@@ -2379,7 +2388,7 @@ final class TelegramBotApi
     }
 
     /**
-     * @param MessageEntity[]|null $captionEntities
+     * @param  MessageEntity[]|null  $captionEntities
      *
      * @see https://core.telegram.org/bots/api#sendphoto
      */
@@ -2426,9 +2435,9 @@ final class TelegramBotApi
     }
 
     /**
-     * @param InputPollOption[] $options
-     * @param MessageEntity[]|null $questionEntities
-     * @param MessageEntity[]|null $explanationEntities
+     * @param  InputPollOption[]  $options
+     * @param  MessageEntity[]|null  $questionEntities
+     * @param  MessageEntity[]|null  $explanationEntities
      *
      * @see https://core.telegram.org/bots/api#sendpoll
      */
@@ -2573,7 +2582,7 @@ final class TelegramBotApi
     }
 
     /**
-     * @param MessageEntity[]|null $captionEntities
+     * @param  MessageEntity[]|null  $captionEntities
      *
      * @see https://core.telegram.org/bots/api#sendvideo
      */
@@ -2675,7 +2684,7 @@ final class TelegramBotApi
     }
 
     /**
-     * @param MessageEntity[]|null $captionEntities
+     * @param  MessageEntity[]|null  $captionEntities
      *
      * @see https://core.telegram.org/bots/api#sendvoice
      */
@@ -2892,7 +2901,7 @@ final class TelegramBotApi
     /**
      * @see https://core.telegram.org/bots/api#setmessagereaction
      *
-     * @param ReactionType[]|null $reaction
+     * @param  ReactionType[]|null  $reaction
      */
     public function setMessageReaction(
         int|string $chatId,
@@ -2906,7 +2915,7 @@ final class TelegramBotApi
     }
 
     /**
-     * @param BotCommand[] $commands
+     * @param  BotCommand[]  $commands
      *
      * @see https://core.telegram.org/bots/api#setmycommands
      */
@@ -2957,7 +2966,7 @@ final class TelegramBotApi
     /**
      * @see https://core.telegram.org/bots/api#setpassportdataerrors
      *
-     * @param PassportElementError[] $errors
+     * @param  PassportElementError[]  $errors
      */
     public function setPassportDataErrors(int $userId, array $errors): FailResult|true
     {
@@ -2967,7 +2976,7 @@ final class TelegramBotApi
     /**
      * @see https://core.telegram.org/bots/api#setstickeremojilist
      *
-     * @param string[] $emojiList
+     * @param  string[]  $emojiList
      */
     public function setStickerEmojiList(string $sticker, array $emojiList): FailResult|true
     {
@@ -2977,7 +2986,7 @@ final class TelegramBotApi
     /**
      * @see https://core.telegram.org/bots/api#setstickerkeywords
      *
-     * @param string[]|null $keywords
+     * @param  string[]|null  $keywords
      */
     public function setStickerKeywords(string $sticker, ?array $keywords = null): FailResult|true
     {
@@ -3252,4 +3261,3 @@ final class TelegramBotApi
         );
     }
 }
-

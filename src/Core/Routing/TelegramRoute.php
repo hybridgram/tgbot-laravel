@@ -25,17 +25,16 @@ use HybridGram\Core\Routing\RouteData\DiceData;
 use HybridGram\Core\Routing\RouteData\DocumentData;
 use HybridGram\Core\Routing\RouteData\ExternalReplyData;
 use HybridGram\Core\Routing\RouteData\FallbackData;
-use HybridGram\Core\Routing\RouteData\ForumTopicEventData;
+use HybridGram\Core\Routing\RouteData\ForumTopicClosedData;
 use HybridGram\Core\Routing\RouteData\ForumTopicCreatedData;
 use HybridGram\Core\Routing\RouteData\ForumTopicEditedData;
-use HybridGram\Core\Routing\RouteData\ForumTopicClosedData;
+use HybridGram\Core\Routing\RouteData\ForumTopicEventData;
 use HybridGram\Core\Routing\RouteData\ForumTopicReopenedData;
 use HybridGram\Core\Routing\RouteData\GameData;
 use HybridGram\Core\Routing\RouteData\GeneralForumTopicEventData;
 use HybridGram\Core\Routing\RouteData\InlineQueryData;
 use HybridGram\Core\Routing\RouteData\InvoiceData;
 use HybridGram\Core\Routing\RouteData\LocationData;
-use HybridGram\Core\Routing\RouteData\TextMessageData;
 use HybridGram\Core\Routing\RouteData\NewChatPhotoData;
 use HybridGram\Core\Routing\RouteData\NewChatTitleData;
 use HybridGram\Core\Routing\RouteData\PaidMediaData;
@@ -53,6 +52,7 @@ use HybridGram\Core\Routing\RouteData\RouteDataInterface;
 use HybridGram\Core\Routing\RouteData\StickerData;
 use HybridGram\Core\Routing\RouteData\StoryData;
 use HybridGram\Core\Routing\RouteData\SuccessfulPaymentData;
+use HybridGram\Core\Routing\RouteData\TextMessageData;
 use HybridGram\Core\Routing\RouteData\VenueData;
 use HybridGram\Core\Routing\RouteData\VideoNoteData;
 use HybridGram\Core\Routing\RouteData\VoiceData;
@@ -72,30 +72,31 @@ use Phptg\BotApi\Type\Update\Update;
 final class TelegramRoute
 {
     protected ?TelegramRouter $router = null;
+
     // todo заюзать хуки публично на чтение приватно на запись
     public function __construct(
         public RouteType $type = RouteType::ANY,
-        public string            $botId = '*',
+        public string $botId = '*',
         public string|array|\Closure|null $action = null,
-        public \Closure|string|null          $pattern = null,
-        public array             $middlewares = [],
+        public \Closure|string|null $pattern = null,
+        public array $middlewares = [],
         public string|array|null $fromChatState = null,
         public string|array|null $fromUserState = null,
         public string|array|null $exceptChatState = null,
         public string|array|null $exceptUserState = null,
-        public ?string           $toState = null,
+        public ?string $toState = null,
         /** @var ChatType[]|null $chatTypes null означает все типы чатов, по умолчанию [ChatType::PRIVATE] */
-        public ?array            $chatTypes = [ChatType::PRIVATE],
-        public ?ActionType       $actionType = null,
-        public ?int              $actionTimeout = null,
-        public ?int              $cacheTtl = null,
-        public ?string           $cacheKey = null,
-        public ?PollOptions      $pollOptions = null,
-        public ?array            $documentOptions = null,
-        public ?\HybridGram\Core\Routing\RouteOptions\ChatMemberOptions $chatMemberOptions = null,
-        public ?RouteDataInterface        $data = null,
+        public ?array $chatTypes = [ChatType::PRIVATE],
+        public ?ActionType $actionType = null,
+        public ?int $actionTimeout = null,
+        public ?int $cacheTtl = null,
+        public ?string $cacheKey = null,
+        public ?PollOptions $pollOptions = null,
+        public ?array $documentOptions = null,
+        public ?RouteOptions\ChatMemberOptions $chatMemberOptions = null,
+        public ?RouteDataInterface $data = null,
         /** @var array<int, QueryParamInterface>|null */
-        public ?array            $callbackQueryOptions = null,
+        public ?array $callbackQueryOptions = null,
         public ?\Closure $commandParamOptions = null,
     ) {
         $this->router = App::get(TelegramRouter::class);
@@ -206,13 +207,14 @@ final class TelegramRoute
         }
 
         if (is_callable($this->pattern)) {
-            if (!call_user_func($this->pattern, $update)) {
+            if (! call_user_func($this->pattern, $update)) {
                 return null;
             }
+
             return new AnimationData($update, $update->message->animation, $this->botId);
         }
 
-        if (!is_null($update->message?->caption) && $update->message->caption === $this->pattern) {
+        if (! is_null($update->message?->caption) && $update->message->caption === $this->pattern) {
             return new AnimationData($update, $update->message->animation, $this->botId);
         }
 
@@ -234,13 +236,14 @@ final class TelegramRoute
         }
 
         if (is_callable($this->pattern)) {
-            if (!call_user_func($this->pattern, $update)) {
+            if (! call_user_func($this->pattern, $update)) {
                 return null;
             }
+
             return new AudioData($update, $update->message->audio, $this->botId);
         }
 
-        if (!is_null($update->message?->caption) && $update->message->caption === $this->pattern) {
+        if (! is_null($update->message?->caption) && $update->message->caption === $this->pattern) {
             return new AudioData($update, $update->message->audio, $this->botId);
         }
 
@@ -262,13 +265,14 @@ final class TelegramRoute
         }
 
         if (is_callable($this->pattern)) {
-            if (!call_user_func($this->pattern, $update)) {
+            if (! call_user_func($this->pattern, $update)) {
                 return null;
             }
+
             return new StickerData($update, $update->message->sticker, $this->botId);
         }
 
-        if (!is_null($update->message?->caption) && $update->message->caption === $this->pattern) {
+        if (! is_null($update->message?->caption) && $update->message->caption === $this->pattern) {
             return new StickerData($update, $update->message->sticker, $this->botId);
         }
 
@@ -290,13 +294,14 @@ final class TelegramRoute
         }
 
         if (is_callable($this->pattern)) {
-            if (!call_user_func($this->pattern, $update)) {
+            if (! call_user_func($this->pattern, $update)) {
                 return null;
             }
+
             return new VideoNoteData($update, $update->message->videoNote, $this->botId);
         }
 
-        if (!is_null($update->message?->caption) && $update->message->caption === $this->pattern) {
+        if (! is_null($update->message?->caption) && $update->message->caption === $this->pattern) {
             return new VideoNoteData($update, $update->message->videoNote, $this->botId);
         }
 
@@ -318,13 +323,14 @@ final class TelegramRoute
         }
 
         if (is_callable($this->pattern)) {
-            if (!call_user_func($this->pattern, $update)) {
+            if (! call_user_func($this->pattern, $update)) {
                 return null;
             }
+
             return new VoiceData($update, $update->message->voice, $this->botId);
         }
 
-        if (!is_null($update->message?->caption) && $update->message->caption === $this->pattern) {
+        if (! is_null($update->message?->caption) && $update->message->caption === $this->pattern) {
             return new VoiceData($update, $update->message->voice, $this->botId);
         }
 
@@ -346,13 +352,14 @@ final class TelegramRoute
         }
 
         if (is_callable($this->pattern)) {
-            if (!call_user_func($this->pattern, $update)) {
+            if (! call_user_func($this->pattern, $update)) {
                 return null;
             }
+
             return new StoryData($update, $update->message->story, $this->botId);
         }
 
-        if (!is_null($update->message?->caption) && $update->message->caption === $this->pattern) {
+        if (! is_null($update->message?->caption) && $update->message->caption === $this->pattern) {
             return new StoryData($update, $update->message->story, $this->botId);
         }
 
@@ -374,13 +381,14 @@ final class TelegramRoute
         }
 
         if (is_callable($this->pattern)) {
-            if (!call_user_func($this->pattern, $update)) {
+            if (! call_user_func($this->pattern, $update)) {
                 return null;
             }
+
             return new PaidMediaData($update, $update->message->paidMedia, $this->botId);
         }
 
-        if (!is_null($update->message?->caption) && $update->message->caption === $this->pattern) {
+        if (! is_null($update->message?->caption) && $update->message->caption === $this->pattern) {
             return new PaidMediaData($update, $update->message->paidMedia, $this->botId);
         }
 
@@ -498,10 +506,10 @@ final class TelegramRoute
         }
 
         if (is_callable($this->pattern)) {
-           return new ReplyData($update, $update->message->replyToMessage, $this->botId);
+            return new ReplyData($update, $update->message->replyToMessage, $this->botId);
         }
 
-        if (is_string($this->pattern) && !is_null($update->message->text)) {
+        if (is_string($this->pattern) && ! is_null($update->message->text)) {
             if (Str::is($this->pattern, $update->message->text)) {
                 return new ReplyData($update, $update->message->replyToMessage, $this->botId);
             }
@@ -574,7 +582,7 @@ final class TelegramRoute
             return new ReplyToStoryData($update, $update->message->replyToStory, $this->botId);
         }
 
-        if (is_string($this->pattern) && !is_null($update->message->text)) {
+        if (is_string($this->pattern) && ! is_null($update->message->text)) {
             if (Str::is($this->pattern, $update->message->text)) {
                 return new ReplyToStoryData($update, $update->message->replyToStory, $this->botId);
             }
@@ -776,7 +784,7 @@ final class TelegramRoute
             return null;
         }
 
-        if (!is_null($update->message->mediaGroupId)) {
+        if (! is_null($update->message->mediaGroupId)) {
             return null;
         }
 
@@ -785,13 +793,14 @@ final class TelegramRoute
         }
 
         if (is_callable($this->pattern)) {
-            if (!call_user_func($this->pattern, $update)) {
+            if (! call_user_func($this->pattern, $update)) {
                 return null;
             }
+
             return new PhotoData($update, $update->message->photo, $this->botId);
         }
 
-        if (!is_null($update->message?->caption) && $update->message->caption === $this->pattern) {
+        if (! is_null($update->message?->caption) && $update->message->caption === $this->pattern) {
             return new PhotoData($update, $update->message->photo, $this->botId);
         }
 
@@ -811,8 +820,6 @@ final class TelegramRoute
 
         $mediaGroupId = $update->message->mediaGroupId;
 
-
-
         if (is_null($this->pattern) || $this->pattern === '*') {
             $allPhotos = MediaGroupGrouper::getGroupedPhotos($mediaGroupId);
 
@@ -824,23 +831,25 @@ final class TelegramRoute
         }
 
         if (is_callable($this->pattern)) {
-            if (!call_user_func($this->pattern, $update)) {
+            if (! call_user_func($this->pattern, $update)) {
                 return null;
             }
             $allPhotos = MediaGroupGrouper::getGroupedPhotos($mediaGroupId);
             if (empty($allPhotos)) {
                 return null;
             }
+
             return new PhotoMediaGroupData($update, $allPhotos, $this->botId);
         }
 
         $caption = $update->message->caption;
-        if (!is_null($caption) && $caption === $this->pattern) {
+        if (! is_null($caption) && $caption === $this->pattern) {
 
             $allPhotos = MediaGroupGrouper::getGroupedPhotos($mediaGroupId);
             if (empty($allPhotos)) {
                 return null;
             }
+
             return new PhotoMediaGroupData($update, $allPhotos, $this->botId);
         }
 
@@ -860,9 +869,10 @@ final class TelegramRoute
         }
 
         if (is_callable($this->pattern)) {
-            if (!call_user_func($this->pattern, $update)) {
+            if (! call_user_func($this->pattern, $update)) {
                 return null;
             }
+
             return new TextMessageData($update, $update->message, $text, $this->botId);
         }
 
@@ -890,9 +900,10 @@ final class TelegramRoute
         }
 
         if (is_callable($this->pattern)) {
-            if (!call_user_func($this->pattern, $update)) {
+            if (! call_user_func($this->pattern, $update)) {
                 return null;
             }
+
             return new BusinessMessageTextData($update, $text, $this->botId);
         }
 
@@ -934,13 +945,14 @@ final class TelegramRoute
         }
 
         // Нормализуем паттерн (убираем '/' если есть)
-        $pattern = is_string($this->pattern) ? ltrim($this->pattern, '/') : $this->pattern;
+        $pattern = is_string($this->pattern) ? mb_ltrim($this->pattern, '/') : $this->pattern;
 
         // Если паттерн - замыкание, проверяем через него
         if (is_callable($pattern)) {
             if (! call_user_func($pattern, $update)) {
                 return null;
             }
+
             return new CommandData($update, $command, $this->botId, $this->extractCommandArguments($text));
         }
 
@@ -957,7 +969,7 @@ final class TelegramRoute
                     return $result;
                 }
             }
-            
+
             return new CommandData($update, $command, $this->botId, $this->extractCommandArguments($text));
         }
 
@@ -966,14 +978,14 @@ final class TelegramRoute
 
     protected function matchesDocument(Update $update): ?DocumentData
     {
-        if (!isset($update->message->document)) {
+        if (! isset($update->message->document)) {
             return null;
         }
 
         if (! is_null($this->documentOptions)) {
             $mimeType = $update->message->document->mimeType;
             $matches = false;
-            
+
             foreach ($this->documentOptions as $allowedType) {
                 if ($allowedType instanceof MimeType) {
                     if ($allowedType->value === $mimeType) {
@@ -987,8 +999,8 @@ final class TelegramRoute
                     }
                 }
             }
-            
-            if (!$matches) {
+
+            if (! $matches) {
                 return null;
             }
         }
@@ -998,9 +1010,10 @@ final class TelegramRoute
         }
 
         if (is_callable($this->pattern)) {
-            if (!call_user_func($this->pattern, $update)) {
+            if (! call_user_func($this->pattern, $update)) {
                 return null;
             }
+
             return new DocumentData($update, $update->message->document, $this->botId);
         }
 
@@ -1078,7 +1091,7 @@ final class TelegramRoute
             return null;
         }
 
-        if (!is_null($this->pattern) && $this->pattern !== '*' && $this->pattern !== $parsed->action) {
+        if (! is_null($this->pattern) && $this->pattern !== '*' && $this->pattern !== $parsed->action) {
             return null;
         }
 
@@ -1088,6 +1101,7 @@ final class TelegramRoute
                     return new CallbackQueryData($update, $parsed->action, $parsed->params, $update->callbackQuery, $this->botId);
                 }
             }
+
             return null;
         }
 
@@ -1143,7 +1157,7 @@ final class TelegramRoute
         $chatMemberUpdated = $update->myChatMember;
 
         // Фильтр по allowedStatuses для newChatMember
-        if ($this->chatMemberOptions !== null && $this->chatMemberOptions->allowedStatuses !== null && !empty($this->chatMemberOptions->allowedStatuses)) {
+        if ($this->chatMemberOptions !== null && $this->chatMemberOptions->allowedStatuses !== null && ! empty($this->chatMemberOptions->allowedStatuses)) {
             $newStatus = $chatMemberUpdated->newChatMember->getStatus();
             $allowed = false;
             foreach ($this->chatMemberOptions->allowedStatuses as $allowedStatus) {
@@ -1152,7 +1166,7 @@ final class TelegramRoute
                     break;
                 }
             }
-            if (!$allowed) {
+            if (! $allowed) {
                 return null;
             }
         }
@@ -1174,7 +1188,7 @@ final class TelegramRoute
             }
         }
 
-        if ($this->chatMemberOptions !== null && $this->chatMemberOptions->allowedStatuses !== null && !empty($this->chatMemberOptions->allowedStatuses)) {
+        if ($this->chatMemberOptions !== null && $this->chatMemberOptions->allowedStatuses !== null && ! empty($this->chatMemberOptions->allowedStatuses)) {
             $newStatus = $chatMemberUpdated->newChatMember->getStatus();
             $allowed = false;
             foreach ($this->chatMemberOptions->allowedStatuses as $allowedStatus) {
@@ -1183,7 +1197,7 @@ final class TelegramRoute
                     break;
                 }
             }
-            if (!$allowed) {
+            if (! $allowed) {
                 return null;
             }
         }
@@ -1199,15 +1213,15 @@ final class TelegramRoute
     public function executeWithMiddleware(Update $update, callable $finalHandler): mixed
     {
         $manager = App::get(MiddlewareManager::class);
-        $pipeline = new MiddlewarePipeline();
+        $pipeline = new MiddlewarePipeline;
 
         $pipeline->addMany($manager->getGlobalMiddlewares());
 
-        $routeMiddlewares = array_filter($this->middlewares, function($middleware) {
+        $routeMiddlewares = array_filter($this->middlewares, function ($middleware) {
             return $middleware instanceof TelegramRouteMiddlewareInterface;
         });
         $pipeline->addMany($routeMiddlewares);
-        
+
         return $pipeline->process($update, $finalHandler);
     }
 }

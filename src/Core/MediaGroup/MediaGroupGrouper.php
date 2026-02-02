@@ -21,7 +21,7 @@ final class MediaGroupGrouper
         foreach ($updates as $update) {
             if ($update->message?->mediaGroupId !== null) {
                 $mediaGroupId = $update->message->mediaGroupId;
-                if (!isset($groups[$mediaGroupId])) {
+                if (! isset($groups[$mediaGroupId])) {
                     $groups[$mediaGroupId] = [];
                 }
                 $groups[$mediaGroupId][] = $update;
@@ -36,9 +36,9 @@ final class MediaGroupGrouper
             if (count($groupUpdates) > 1) {
                 $firstUpdate = $groupUpdates[0];
 
-                if ($firstUpdate->message?->photo !== null && !empty($firstUpdate->message->photo)) {
+                if ($firstUpdate->message?->photo !== null && ! empty($firstUpdate->message->photo)) {
                     $extractedPhotos = self::extractPhotosFromGroup($groupUpdates);
-                    if (!empty($extractedPhotos)) {
+                    if (! empty($extractedPhotos)) {
                         $cacheKey = "media_group_items_{$mediaGroupId}";
                         Cache::put($cacheKey, $extractedPhotos, 10);
                     }
@@ -83,12 +83,14 @@ final class MediaGroupGrouper
                 $photos[] = $photo;
             }
         }
+
         return $photos;
     }
 
     public static function getGroupedPhotos(string $mediaGroupId): ?array
     {
         $cacheKey = "media_group_items_{$mediaGroupId}";
+
         return Cache::get($cacheKey);
     }
 
@@ -97,7 +99,7 @@ final class MediaGroupGrouper
         $cacheKey = "media_group_items_{$mediaGroupId}";
         $items = self::getGroupedPhotos($mediaGroupId) ?? [];
         Cache::forget($cacheKey);
+
         return count($items);
     }
 }
-

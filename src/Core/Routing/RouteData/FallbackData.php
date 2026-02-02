@@ -9,10 +9,9 @@ use Phptg\BotApi\Type\Update\Update;
 final readonly class FallbackData extends AbstractRouteData
 {
     public function __construct(
-        Update           $update,
-        string           $botId,
+        Update $update,
+        string $botId,
     ) {
         parent::__construct($update, $botId);
     }
 }
-

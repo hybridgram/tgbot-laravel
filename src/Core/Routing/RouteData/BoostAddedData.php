@@ -18,5 +18,3 @@ final readonly class BoostAddedData extends AbstractRouteData
         parent::__construct($update, $botId);
     }
 }
-
-

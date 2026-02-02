@@ -17,5 +17,3 @@ final readonly class LeftChatMemberData extends AbstractRouteData
         parent::__construct($update, $botId);
     }
 }
-
-

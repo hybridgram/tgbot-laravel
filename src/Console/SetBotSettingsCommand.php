@@ -184,7 +184,7 @@ final class SetBotSettingsCommand extends Command
     }
 
     /**
-     * @param array<string, array{success: bool, error: ?string}> $results
+     * @param  array<string, array{success: bool, error: ?string}>  $results
      */
     private function displayResults(array $results): void
     {

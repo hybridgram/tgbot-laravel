@@ -17,5 +17,3 @@ final readonly class QuoteData extends AbstractRouteData
         parent::__construct($update, $botId);
     }
 }
-
-

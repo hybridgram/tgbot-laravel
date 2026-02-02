@@ -86,5 +86,3 @@ it('applies reserved capacity for low priority', function () {
     $high = $limiter->check('bot', Priority::HIGH);
     expect($high->allowNow)->toBeTrue();
 });
-
-

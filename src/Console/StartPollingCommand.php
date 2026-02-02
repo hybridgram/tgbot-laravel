@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace HybridGram\Console;
 
-use Illuminate\Console\Command;
 use HybridGram\Core\HybridGramBotManager;
+use Illuminate\Console\Command;
 use Symfony\Component\Process\Process;
 
 final class StartPollingCommand extends Command
@@ -24,6 +24,7 @@ final class StartPollingCommand extends Command
     {
         if ((bool) $this->option('hot-reload')) {
             $this->runWithHotReload();
+
             return;
         }
 
@@ -35,8 +36,9 @@ final class StartPollingCommand extends Command
     private function runWithHotReload(): void
     {
         $artisan = base_path('artisan');
-        if (!is_file($artisan)) {
+        if (! is_file($artisan)) {
             $this->error("Cannot use --hot-reload: artisan not found at '{$artisan}'.");
+
             return;
         }
 
@@ -44,8 +46,8 @@ final class StartPollingCommand extends Command
         $intervalSeconds = $this->resolveWatchIntervalSeconds();
 
         $this->info('Starting polling in hot-reload mode...');
-        $this->line('<fg=gray>Watching:</fg=gray> ' . implode(', ', $watchPaths));
-        $this->line('<fg=gray>Scan interval:</fg=gray> ' . rtrim(rtrim((string) $intervalSeconds, '0'), '.') . 's');
+        $this->line('<fg=gray>Watching:</fg=gray> '.implode(', ', $watchPaths));
+        $this->line('<fg=gray>Scan interval:</fg=gray> '.mb_rtrim(mb_rtrim((string) $intervalSeconds, '0'), '.').'s');
 
         $stopRequested = false;
         if (function_exists('pcntl_signal')) {
@@ -68,6 +70,7 @@ final class StartPollingCommand extends Command
 
             if ($stopRequested) {
                 $this->info('Stopping...');
+
                 return;
             }
 
@@ -83,6 +86,7 @@ final class StartPollingCommand extends Command
                 if ($stopRequested) {
                     $this->stopChildProcess($process);
                     $this->info('Stopped.');
+
                     return;
                 }
 
@@ -98,7 +102,7 @@ final class StartPollingCommand extends Command
             }
 
             // If child exited on its own, restart it (but avoid tight loops)
-            if (!$stopRequested && !$process->isRunning()) {
+            if (! $stopRequested && ! $process->isRunning()) {
                 $exitCode = $process->getExitCode();
                 $timeSinceRestart = microtime(true) - $lastRestartAt;
                 if ($timeSinceRestart < 0.5) {
@@ -145,9 +149,10 @@ final class StartPollingCommand extends Command
     {
         $raw = (string) ($this->option('watch-interval') ?? '1');
         $value = (float) $raw;
-        if (!is_finite($value) || $value <= 0) {
+        if (! is_finite($value) || $value <= 0) {
             return 1.0;
         }
+
         return min(max($value, 0.1), 10.0);
     }
 
@@ -175,7 +180,7 @@ final class StartPollingCommand extends Command
         $extPattern = '/\.(php|env|json|ya?ml)$/i';
 
         foreach ($paths as $path) {
-            if (!file_exists($path)) {
+            if (! file_exists($path)) {
                 continue;
             }
 
@@ -185,6 +190,7 @@ final class StartPollingCommand extends Command
                     $mtime = @filemtime($path) ?: 0;
                     $latest = max($latest, (int) $mtime);
                 }
+
                 continue;
             }
 
@@ -197,19 +203,19 @@ final class StartPollingCommand extends Command
 
             /** @var \SplFileInfo $file */
             foreach ($it as $file) {
-                if (!$file->isFile()) {
+                if (! $file->isFile()) {
                     continue;
                 }
 
                 $pathname = $file->getPathname();
-                if (str_contains($pathname, DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR)) {
+                if (str_contains($pathname, DIRECTORY_SEPARATOR.'vendor'.DIRECTORY_SEPARATOR)) {
                     continue;
                 }
-                if (str_contains($pathname, DIRECTORY_SEPARATOR . '.git' . DIRECTORY_SEPARATOR)) {
+                if (str_contains($pathname, DIRECTORY_SEPARATOR.'.git'.DIRECTORY_SEPARATOR)) {
                     continue;
                 }
 
-                if (!preg_match($extPattern, $file->getFilename())) {
+                if (! preg_match($extPattern, $file->getFilename())) {
                     continue;
                 }
 
@@ -269,7 +275,7 @@ final class StartPollingCommand extends Command
 
     private function stopChildProcess(Process $process): void
     {
-        if (!$process->isRunning()) {
+        if (! $process->isRunning()) {
             return;
         }
 

@@ -36,4 +36,3 @@ abstract readonly class AbstractRouteData implements RouteDataInterface
         return UpdateHelper::getUserFromUpdate($this->update);
     }
 }
-

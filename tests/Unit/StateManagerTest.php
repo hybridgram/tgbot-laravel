@@ -8,14 +8,14 @@ use Phptg\BotApi\Type\Chat;
 use Phptg\BotApi\Type\User;
 
 beforeEach(function () {
-    $this->stateManager = new StateManager();
+    $this->stateManager = new StateManager;
     $this->chat = new Chat(id: 123, type: 'private');
     $this->user = new User(id: 456, isBot: false, firstName: 'Test');
 });
 
 it('can set and get state for chat', function () {
     $this->stateManager->setChatState($this->chat, 'test_state');
-    
+
     $state = $this->stateManager->getChatState($this->chat);
     expect($state)->toBeInstanceOf(State::class);
     expect($state->getName())->toBe('test_state');
@@ -26,7 +26,7 @@ it('can set and get state for chat', function () {
 
 it('can set and get state for user in chat', function () {
     $this->stateManager->setUserState($this->chat, $this->user, 'user_state');
-    
+
     $state = $this->stateManager->getUserState($this->chat, $this->user);
     expect($state)->toBeInstanceOf(State::class);
     expect($state->getName())->toBe('user_state');
@@ -38,20 +38,20 @@ it('can set and get state for user in chat', function () {
 it('can clear state for chat', function () {
     $this->stateManager->setChatState($this->chat, 'test_state');
     $this->stateManager->clearChatState($this->chat);
-    
+
     expect($this->stateManager->getChatState($this->chat))->toBeNull();
 });
 
 it('can clear state for user in chat', function () {
     $this->stateManager->setUserState($this->chat, $this->user, 'user_state');
     $this->stateManager->clearUserState($this->chat, $this->user);
-    
+
     expect($this->stateManager->getUserState($this->chat, $this->user))->toBeNull();
 });
 
 it('can set state with custom ttl', function () {
     $this->stateManager->setChatState($this->chat, 'test_state', 3600);
-    
+
     $state = $this->stateManager->getChatState($this->chat);
     expect($state)->toBeInstanceOf(State::class);
     expect($state->getName())->toBe('test_state');
@@ -59,7 +59,7 @@ it('can set state with custom ttl', function () {
 
 it('can set user state with custom ttl', function () {
     $this->stateManager->setUserState($this->chat, $this->user, 'user_state', 1800);
-    
+
     $state = $this->stateManager->getUserState($this->chat, $this->user);
     expect($state)->toBeInstanceOf(State::class);
     expect($state->getName())->toBe('user_state');
@@ -67,7 +67,7 @@ it('can set user state with custom ttl', function () {
 
 it('can set state with data', function () {
     $this->stateManager->setChatState($this->chat, 'create_quiz', null, 5);
-    
+
     $state = $this->stateManager->getChatState($this->chat);
     expect($state)->toBeInstanceOf(State::class);
     expect($state->getName())->toBe('create_quiz');
@@ -77,7 +77,7 @@ it('can set state with data', function () {
 
 it('can set user state with data', function () {
     $this->stateManager->setUserState($this->chat, $this->user, 'create_quiz', null, ['quiz_id' => 5]);
-    
+
     $state = $this->stateManager->getUserState($this->chat, $this->user);
     expect($state)->toBeInstanceOf(State::class);
     expect($state->getName())->toBe('create_quiz');

@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 namespace HybridGram\Core\State;
+
 /**
  * @property array<string,mixed> $data
  */
@@ -33,4 +34,3 @@ final readonly class State
         return $this->data[$key] ?? null;
     }
 }
-

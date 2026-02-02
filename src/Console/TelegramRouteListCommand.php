@@ -15,6 +15,7 @@ use Symfony\Component\Console\Terminal;
 final class TelegramRouteListCommand extends Command
 {
     protected $signature = 'hybridgram:route:list';
+
     protected $description = 'List all registered Telegram routes';
 
     /**
@@ -63,6 +64,7 @@ final class TelegramRouteListCommand extends Command
         $bots = config('hybridgram.bots', config('bot.bots', []));
         if (empty($bots)) {
             $this->error('No bots configured. Please check your hybridgram configuration.');
+
             return self::FAILURE;
         }
 
@@ -76,6 +78,7 @@ final class TelegramRouteListCommand extends Command
 
         if (empty($routes)) {
             $this->error('No Telegram routes found.');
+
             return self::FAILURE;
         }
 
@@ -87,7 +90,6 @@ final class TelegramRouteListCommand extends Command
     /**
      * Get all routes from router and flatten them.
      *
-     * @param TelegramRouter $router
      * @return array<string, array<int, array<string, mixed>>>
      */
     protected function getRoutes(TelegramRouter $router): array
@@ -114,6 +116,7 @@ final class TelegramRouteListCommand extends Command
             if ($typeCompare !== 0) {
                 return $typeCompare;
             }
+
             return strcmp($a['pattern'], $b['pattern']);
         });
 
@@ -121,7 +124,7 @@ final class TelegramRouteListCommand extends Command
         $groupedRoutes = [];
         foreach ($flattenedRoutes as $route) {
             $botId = $route['bot_id'];
-            if (!isset($groupedRoutes[$botId])) {
+            if (! isset($groupedRoutes[$botId])) {
                 $groupedRoutes[$botId] = [];
             }
             $groupedRoutes[$botId][] = $route;
@@ -133,7 +136,6 @@ final class TelegramRouteListCommand extends Command
     /**
      * Get the route information for a given route.
      *
-     * @param TelegramRoute $route
      * @return array<string, mixed>
      */
     protected function getRouteInformation(TelegramRoute $route): array
@@ -153,9 +155,6 @@ final class TelegramRouteListCommand extends Command
 
     /**
      * Format pattern for display.
-     *
-     * @param Closure|string|null $pattern
-     * @return string
      */
     protected function formatPattern(Closure|string|null $pattern): string
     {
@@ -168,9 +167,6 @@ final class TelegramRouteListCommand extends Command
 
     /**
      * Format action for display.
-     *
-     * @param Closure|string|array|null $action
-     * @return string
      */
     protected function formatAction(Closure|string|array|null $action): string
     {
@@ -180,8 +176,9 @@ final class TelegramRouteListCommand extends Command
 
         if (is_array($action)) {
             if (count($action) === 2 && is_string($action[0]) && is_string($action[1])) {
-                return $action[0] . '@' . $action[1];
+                return $action[0].'@'.$action[1];
             }
+
             return 'Array';
         }
 
@@ -190,9 +187,6 @@ final class TelegramRouteListCommand extends Command
 
     /**
      * Format state for display.
-     *
-     * @param string|array|null $state
-     * @return string
      */
     protected function formatState(string|array|null $state): string
     {
@@ -210,8 +204,7 @@ final class TelegramRouteListCommand extends Command
     /**
      * Format chat types for display.
      *
-     * @param ChatType[]|null $chatTypes
-     * @return string
+     * @param  ChatType[]|null  $chatTypes
      */
     protected function formatChatTypes(?array $chatTypes): string
     {
@@ -223,14 +216,11 @@ final class TelegramRouteListCommand extends Command
             return '*';
         }
 
-        return implode(', ', array_map(fn(ChatType $type) => $type->name, $chatTypes));
+        return implode(', ', array_map(fn (ChatType $type) => $type->name, $chatTypes));
     }
 
     /**
      * Format middleware for display.
-     *
-     * @param array $middlewares
-     * @return string
      */
     protected function formatMiddleware(array $middlewares): string
     {
@@ -255,8 +245,7 @@ final class TelegramRouteListCommand extends Command
     /**
      * Format query params for display.
      *
-     * @param array<string, string|null>|array<int, \HybridGram\Core\Routing\RouteOptions\QueryParams\QueryParamInterface>|null $queryParams
-     * @return string
+     * @param  array<string, string|null>|array<int, \HybridGram\Core\Routing\RouteOptions\QueryParams\QueryParamInterface>|null  $queryParams
      */
     protected function formatQueryParams(?array $queryParams): string
     {
@@ -267,20 +256,20 @@ final class TelegramRouteListCommand extends Command
         $params = [];
         // Check if array is associative (has string keys) or indexed (has numeric keys)
         $keys = array_keys($queryParams);
-        $isAssociative = !empty($keys) && !is_int($keys[0]);
-        
+        $isAssociative = ! empty($keys) && ! is_int($keys[0]);
+
         foreach ($queryParams as $key => $item) {
             // Если это объект QueryParamInterface
             if ($item instanceof \HybridGram\Core\Routing\RouteOptions\QueryParams\QueryParamInterface) {
                 $paramKey = $item->getKey();
                 if ($item instanceof \HybridGram\Core\Routing\RouteOptions\QueryParams\Exist) {
-                    $params[] = $paramKey . ' (exist)';
+                    $params[] = $paramKey.' (exist)';
                 } elseif ($item instanceof \HybridGram\Core\Routing\RouteOptions\QueryParams\Value) {
                     $reflection = new \ReflectionClass($item);
                     $property = $reflection->getProperty('expectedValue');
                     $property->setAccessible(true);
                     $expectedValue = $property->getValue($item);
-                    
+
                     if (is_callable($expectedValue)) {
                         $params[] = sprintf('%s (callable)', $paramKey);
                     } else {
@@ -309,8 +298,7 @@ final class TelegramRouteListCommand extends Command
     /**
      * Display the route information on the console.
      *
-     * @param array<string, array<int, array<string, mixed>>> $groupedRoutes
-     * @return void
+     * @param  array<string, array<int, array<string, mixed>>>  $groupedRoutes
      */
     protected function displayRoutes(array $groupedRoutes): void
     {
@@ -319,7 +307,7 @@ final class TelegramRouteListCommand extends Command
 
         foreach ($groupedRoutes as $botId => $routes) {
             $totalRoutes += count($routes);
-            
+
             $this->line('');
             $this->line(sprintf('<fg=white;options=bold>Bot ID: %s</>', $botId));
             $this->line('');
@@ -334,15 +322,14 @@ final class TelegramRouteListCommand extends Command
         $routeCountText = sprintf('Showing [%d] routes', $totalRoutes);
         $offset = $terminalWidth - mb_strlen($routeCountText) - 2;
         $spaces = str_repeat(' ', max($offset, 0));
-        $this->line($spaces . '<fg=blue;options=bold>' . $routeCountText . '</>');
+        $this->line($spaces.'<fg=blue;options=bold>'.$routeCountText.'</>');
         $this->line('');
     }
 
     /**
      * Format routes for CLI output.
      *
-     * @param array<int, array<string, mixed>> $routes
-     * @param int $terminalWidth
+     * @param  array<int, array<string, mixed>>  $routes
      * @return array<int, string>
      */
     protected function formatRoutesForCli(array $routes, int $terminalWidth): array
@@ -402,13 +389,13 @@ final class TelegramRouteListCommand extends Command
 
             // Combine action, state and query params
             $parts = array_filter([$actionPart, $statePart, $queryParamsPart]);
-            $combinedAction = trim(implode(' ', $parts));
+            $combinedAction = mb_trim(implode(' ', $parts));
 
             // Smart truncation: prioritize important information
             // Try to keep queryParams and state visible, truncate action if needed
             $mainLineLength = mb_strlen(strip_tags($coloredType)) + mb_strlen($typeSpaces) + mb_strlen($patternWithBot);
             $maxCombinedLength = $terminalWidth - $mainLineLength - 6; // Reserve space for formatting
-            
+
             if ($combinedAction && mb_strlen($combinedAction) > $maxCombinedLength) {
                 // Build parts in priority order: queryParams > state > action
                 $priorityParts = [];
@@ -418,27 +405,27 @@ final class TelegramRouteListCommand extends Command
                 if ($statePart) {
                     $priorityParts[] = $statePart;
                 }
-                
+
                 // Calculate space needed for priority parts
                 $priorityLength = $priorityParts ? mb_strlen(implode(' ', $priorityParts)) : 0;
-                
+
                 // If we can fit priority parts, add truncated action
                 if ($maxCombinedLength >= $priorityLength) {
                     $actionLength = $maxCombinedLength - $priorityLength - ($priorityParts ? 1 : 0);
                     if ($actionLength > 15) { // Minimum 15 chars for action to be useful
-                        $truncatedAction = mb_substr($actionPart, 0, $actionLength) . '…';
+                        $truncatedAction = mb_substr($actionPart, 0, $actionLength).'…';
                         $priorityParts[] = $truncatedAction;
                     }
-                    $combinedAction = trim(implode(' ', $priorityParts));
+                    $combinedAction = mb_trim(implode(' ', $priorityParts));
                 } else {
                     // Not enough space, show only priority parts (queryParams and state)
-                    $combinedAction = trim(implode(' ', $priorityParts));
+                    $combinedAction = mb_trim(implode(' ', $priorityParts));
                 }
             }
 
             // Calculate dots after truncation
             $dotsLength = max($terminalWidth - $mainLineLength - mb_strlen($combinedAction) - 6 - ($combinedAction ? 1 : 0), 0);
-            $dots = $dotsLength > 0 ? ' ' . str_repeat('.', $dotsLength) : '';
+            $dots = $dotsLength > 0 ? ' '.str_repeat('.', $dotsLength) : '';
 
             // Format pattern with yellow for placeholders (if any)
             $formattedPattern = preg_replace('#(\{[^}]+\})#', '<fg=yellow>$1</>', $patternWithBot);
@@ -471,12 +458,9 @@ final class TelegramRouteListCommand extends Command
 
     /**
      * Get the terminal width.
-     *
-     * @return int
      */
     protected function getTerminalWidth(): int
     {
         return (new Terminal)->getWidth();
     }
 }
-

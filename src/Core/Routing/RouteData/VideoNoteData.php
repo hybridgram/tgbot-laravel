@@ -10,11 +10,10 @@ use Phptg\BotApi\Type\VideoNote;
 final readonly class VideoNoteData extends AbstractRouteData
 {
     public function __construct(
-        Update       $update,
+        Update $update,
         public VideoNote $videoNote,
-        string       $botId,
+        string $botId,
     ) {
         parent::__construct($update, $botId);
     }
 }
-

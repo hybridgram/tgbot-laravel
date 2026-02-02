@@ -17,5 +17,3 @@ final readonly class ExternalReplyData extends AbstractRouteData
         parent::__construct($update, $botId);
     }
 }
-
-

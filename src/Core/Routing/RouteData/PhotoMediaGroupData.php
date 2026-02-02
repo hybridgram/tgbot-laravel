@@ -13,14 +13,12 @@ use Phptg\BotApi\Type\Update\Update;
 final readonly class PhotoMediaGroupData extends AbstractRouteData
 {
     /**
-     * @param Update $update
-     * @param array<array<PhotoSize>> $photoSizes Массив массивов PhotoSize для всех фото в медиа-группе
-     * @param string $botId
+     * @param  array<array<PhotoSize>>  $photoSizes  Массив массивов PhotoSize для всех фото в медиа-группе
      */
     public function __construct(
-        Update       $update,
+        Update $update,
         public array $photoSizes,
-        string       $botId,
+        string $botId,
     ) {
         parent::__construct($update, $botId);
     }

@@ -75,8 +75,8 @@ final class BotSettings
      * The description is shown in the chat with the bot if the chat is empty.
      * Maximum 512 characters.
      *
-     * @param string $description The description text
-     * @param string|null $languageCode ISO 639-1 language code. Null for default (all users without dedicated description).
+     * @param  string  $description  The description text
+     * @param  string|null  $languageCode  ISO 639-1 language code. Null for default (all users without dedicated description).
      *
      * @see https://core.telegram.org/bots/api#setmydescription
      */
@@ -93,8 +93,8 @@ final class BotSettings
      * The short description is shown on the bot's profile page and is sent together
      * with the link when users share the bot. Maximum 120 characters.
      *
-     * @param string $shortDescription The short description text
-     * @param string|null $languageCode ISO 639-1 language code. Null for default.
+     * @param  string  $shortDescription  The short description text
+     * @param  string|null  $languageCode  ISO 639-1 language code. Null for default.
      *
      * @see https://core.telegram.org/bots/api#setmyshortdescription
      */
@@ -110,8 +110,8 @@ final class BotSettings
      *
      * Maximum 64 characters.
      *
-     * @param string $name The bot name
-     * @param string|null $languageCode ISO 639-1 language code. Null for default.
+     * @param  string  $name  The bot name
+     * @param  string|null  $languageCode  ISO 639-1 language code. Null for default.
      *
      * @see https://core.telegram.org/bots/api#setmyname
      */
@@ -127,7 +127,7 @@ final class BotSettings
      *
      * This button appears in private chats with the bot.
      *
-     * @param MenuButton $menuButton The menu button configuration
+     * @param  MenuButton  $menuButton  The menu button configuration
      *
      * @see https://core.telegram.org/bots/api#setchatmenubutton
      */
@@ -143,7 +143,7 @@ final class BotSettings
      *
      * These rights will be suggested to users when adding the bot as an administrator.
      *
-     * @param ChatAdministratorRights $rights The administrator rights
+     * @param  ChatAdministratorRights  $rights  The administrator rights
      *
      * @see https://core.telegram.org/bots/api#setmydefaultadministratorrights
      */
@@ -159,7 +159,7 @@ final class BotSettings
      *
      * These rights will be suggested to users when adding the bot as an administrator to channels.
      *
-     * @param ChatAdministratorRights $rights The administrator rights
+     * @param  ChatAdministratorRights  $rights  The administrator rights
      *
      * @see https://core.telegram.org/bots/api#setmydefaultadministratorrights
      */
@@ -173,9 +173,9 @@ final class BotSettings
     /**
      * Set bot commands for a specific scope and language.
      *
-     * @param BotCommand[] $commands List of bot commands
-     * @param BotCommandScope|null $scope Scope of users for which the commands are relevant
-     * @param string|null $languageCode ISO 639-1 language code. Null for all users.
+     * @param  BotCommand[]  $commands  List of bot commands
+     * @param  BotCommandScope|null  $scope  Scope of users for which the commands are relevant
+     * @param  string|null  $languageCode  ISO 639-1 language code. Null for all users.
      *
      * @see https://core.telegram.org/bots/api#setmycommands
      */
