@@ -9,14 +9,13 @@ use Phptg\BotApi\Type\Update\Update;
 
 class RateLimitTelegramRouteMiddleware implements TelegramRouteMiddlewareInterface
 {
+    /**
+     * @var array<string, int[]>
+     */
     private array $userRequests = [];
-    private int $maxRequests;
-    private int $timeWindow;
     
-    public function __construct(int $maxRequests = 10, int $timeWindow = 60)
+    public function __construct(private readonly int $maxRequests = 10, private readonly int $timeWindow = 60)
     {
-        $this->maxRequests = $maxRequests;
-        $this->timeWindow = $timeWindow;
     }
     
     public function handle(Update $update, callable $next): mixed
@@ -33,7 +32,7 @@ class RateLimitTelegramRouteMiddleware implements TelegramRouteMiddlewareInterfa
         if (isset($this->userRequests[$userKey])) {
             $this->userRequests[$userKey] = array_filter(
                 $this->userRequests[$userKey],
-                fn($timestamp) => $now - $timestamp < $this->timeWindow
+                static fn(int $timestamp) => $now - $timestamp < $this->timeWindow
             );
         } else {
             $this->userRequests[$userKey] = [];

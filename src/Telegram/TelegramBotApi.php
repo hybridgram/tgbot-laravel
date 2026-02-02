@@ -301,7 +301,7 @@ final class TelegramBotApi
         ?OutgoingDispatcherInterface $dispatcher = null,
         ?LoggerInterface $logger = null,
     ) {
-        $this->originalClient = $originalClient ?? new VjikTelegramBotApi($token, $baseUrl, null, $logger);
+        $this->originalClient = $originalClient ?? new VjikTelegramBotApi($this->token, $this->baseUrl, null, $logger);
         $this->dispatcher = $dispatcher;
     }
 
@@ -380,6 +380,9 @@ final class TelegramBotApi
         logger()->error('Telegram outgoing request failed', $context);
     }
 
+    /**
+     * @param MethodInterface<mixed> $method
+     */
     private function isServiceMethod(MethodInterface $method): bool
     {
         $apiMethod = $method->getApiMethod();

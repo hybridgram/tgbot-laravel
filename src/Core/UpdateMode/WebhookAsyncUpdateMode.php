@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace HybridGram\Core\UpdateMode;
 
 use HybridGram\Core\MediaGroup\MediaGroupGrouper;
-use HybridGram\Models\TelegramUpdate;
 use Illuminate\Support\Facades\Cache;
 use Phptg\BotApi\Type\Update\Update;
 
