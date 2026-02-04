@@ -12,11 +12,11 @@ final class StartPollingCommand extends Command
 {
     protected $signature = 'hybridgram:polling
                             {botId? : Bot id from config (default: all polling bots)}
-                            {--log-updates : Print a one-line summary for every received update}
-                            {--full : Print full update payload as pretty JSON (implies --log-updates)}
-                            {--hot-reload : Dev-only. Auto-restart polling on code changes (no manual restart)}
-                            {--watch= : Comma-separated paths to watch for changes (relative to base_path). Default: app,routes,config,src}
-                            {--watch-interval=1 : Seconds between file scans in --hot-reload mode}';
+                            {--L|log-updates : Print a one-line summary for every received update}
+                            {--F|full : Print full update payload as pretty JSON (implies --log-updates)}
+                            {--R|hot-reload : Dev-only. Auto-restart polling on code changes (no manual restart)}
+                            {--W|watch= : Comma-separated paths to watch for changes (relative to base_path). Default: app,routes,config,src}
+                            {--I|watch-interval=1 : Seconds between file scans in --hot-reload mode}';
 
     protected $description = 'Polling telegram updates';
 
@@ -246,10 +246,10 @@ final class StartPollingCommand extends Command
             $args[] = (string) $botId;
         }
 
-        if ((bool) $this->option('log-updates')) {
+        if ($this->option('log-updates')) {
             $args[] = '--log-updates';
         }
-        if ((bool) $this->option('full')) {
+        if ($this->option('full')) {
             $args[] = '--full';
         }
 

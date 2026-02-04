@@ -25,7 +25,8 @@
         "php-http/multipart-stream-builder": "^1.4",
         "symfony/console": "^6.0|^7.0",
         "symfony/process": "^6.4|^7.0",
-        "phptg/bot-api": "dev-master"
+        "phptg/bot-api": "dev-master",
+      "ext-pcntl": "*"
     },
     "require-dev": {
         "larastan/larastan": "^3.0",

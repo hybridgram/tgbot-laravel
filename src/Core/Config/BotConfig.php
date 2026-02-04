@@ -46,15 +46,19 @@ final class BotConfig
 
         foreach ($bots as $bot) {
             if ($bot['bot_id'] === $botId) {
-                $pollingConfig = $bot['update_mode'] === UpdateModeEnum::POLLING
+                $updateMode = $bot['update_mode'] instanceof UpdateModeEnum
+                    ? $bot['update_mode']
+                    : UpdateModeEnum::from($bot['update_mode']);
+
+                $pollingConfig = $updateMode === UpdateModeEnum::POLLING
                     ? new PollingModeConfig(
                         $bot['polling_limit'],
                         $bot['allowed_updates'],
                         $bot['polling_timeout'],
                     ) : null;
-                $webhookConfig = in_array($bot['update_mode'], [UpdateModeEnum::WEBHOOK, UpdateModeEnum::WEBHOOK_ASYNC], true)
+                $webhookConfig = in_array($updateMode, [UpdateModeEnum::WEBHOOK, UpdateModeEnum::WEBHOOK_ASYNC], true)
                     ? new WebhookModeConfig(
-                        $bot['update_mode'] === UpdateModeEnum::WEBHOOK_ASYNC ? $bot['webhook_url'] : route('telegram.bot.webhook', ['botId' => $botId]),
+                        $updateMode === UpdateModeEnum::WEBHOOK_ASYNC ? $bot['webhook_url'] : route('telegram.bot.webhook', ['botId' => $botId]),
                         $bot['webhook_port'],
                         $bot['certificate_path'],
                         $bot['ip_address'],
@@ -66,7 +70,7 @@ final class BotConfig
                 return new BotConfig(
                     $bot['token'],
                     $bot['bot_id'],
-                    $bot['update_mode'],
+                    $updateMode,
                     $bot['routes_file'],
                     $pollingConfig,
                     $webhookConfig,
