@@ -7,7 +7,6 @@ namespace HybridGram\Core;
 use HybridGram\Core\Config\BotConfig;
 use HybridGram\Core\UpdateMode\PollingUpdateMode;
 use HybridGram\Core\UpdateMode\UpdateModeEnum;
-use HybridGram\Core\UpdateMode\WebhookUpdateMode;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\App;
 use Phptg\BotApi\FailResult;
@@ -36,25 +35,31 @@ final class HybridGramBotManager
                 $pollingMode->run();
             }
 
-            // todo кидать эксепшен что не надена подходящая конфигурация
-            return;
-        }
-
-        $this->initializeBots();
-
-        foreach ($this->botConfigs as $botConfig) {
-            if ($botConfig->getUpdateMode() === UpdateModeEnum::POLLING) {
-                $this->checkWebhookBeforePolling($botConfig);
-                $pollingMode = new PollingUpdateMode($botConfig);
-                $pollingMode->setCommand($this->command);
-                $pollingMode->run(); // todo тут проблема скорее всего при более 1 конфига другие не будут полится, нужно сбапроцессы делать
+            if ($botConfig === null) {
+                throw new \RuntimeException("No bot configuration found for bot id '{$botId}'. Check hybridgram.bots config.");
             }
 
-            if ($botConfig->getUpdateMode() === UpdateModeEnum::WEBHOOK) {
-                new WebhookUpdateMode($botConfig)->run(); // todo аналогично
-            }
+            throw new \RuntimeException(
+                "Bot '{$botId}' is not configured for polling (update_mode is not 'polling'). ".
+                'To use polling, set update_mode to "polling" in config.'
+            );
         }
 
+    }
+
+    public function getPollingRunStrategy(): PollingRunStrategy
+    {
+        $configs = $this->getPollingBotConfigs();
+
+        if ($configs === []) {
+            return PollingRunStrategy::none();
+        }
+
+        if (count($configs) === 1) {
+            return PollingRunStrategy::single($configs[0]);
+        }
+
+        return PollingRunStrategy::multiple($configs);
     }
 
     /**
@@ -98,6 +103,22 @@ final class HybridGramBotManager
     public function getBotConfigs(): array
     {
         return $this->botConfigs;
+    }
+
+    /**
+     * Initializes from config and returns only bot configs with POLLING mode.
+     * Used by the polling command to decide single process vs multiple subprocesses.
+     *
+     * @return BotConfig[]
+     */
+    public function getPollingBotConfigs(): array
+    {
+        $this->initializeBots();
+
+        return array_values(array_filter(
+            $this->botConfigs,
+            fn (BotConfig $c) => $c->getUpdateMode() === UpdateModeEnum::POLLING
+        ));
     }
 
     private function initializeBots(): void

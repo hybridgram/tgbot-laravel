@@ -87,10 +87,10 @@ it('sets state for user with custom ttl', function () {
 
 it('sets state for chat with data', function () {
     $this->stateManager->shouldReceive('setChatState')
-        ->with($this->chat, 'new_state', null, 5)
+        ->with($this->chat, 'new_state', null, ['state'])
         ->once();
 
-    $middleware = new SetStateTelegramRouteMiddleware('new_state', ttl: null, useUserState: false, data: 5);
+    $middleware = new SetStateTelegramRouteMiddleware('new_state', ttl: null, useUserState: false, data: ['state']);
     $next = function ($update) {
         return 'processed';
     };

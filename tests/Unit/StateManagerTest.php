@@ -17,22 +17,22 @@ it('can set and get state for chat', function () {
     $this->stateManager->setChatState($this->chat, 'test_state');
 
     $state = $this->stateManager->getChatState($this->chat);
-    expect($state)->toBeInstanceOf(State::class);
-    expect($state->getName())->toBe('test_state');
-    expect($state->hasData())->toBeFalse();
-    expect($this->stateManager->isChatInState($this->chat, 'test_state'))->toBeTrue();
-    expect($this->stateManager->isChatInState($this->chat, 'other_state'))->toBeFalse();
+    expect($state)->toBeInstanceOf(State::class)
+        ->and($state->getName())->toBe('test_state')
+        ->and($state->hasData())->toBeFalse()
+        ->and($this->stateManager->isChatInState($this->chat, 'test_state'))->toBeTrue()
+        ->and($this->stateManager->isChatInState($this->chat, 'other_state'))->toBeFalse();
 });
 
 it('can set and get state for user in chat', function () {
     $this->stateManager->setUserState($this->chat, $this->user, 'user_state');
 
     $state = $this->stateManager->getUserState($this->chat, $this->user);
-    expect($state)->toBeInstanceOf(State::class);
-    expect($state->getName())->toBe('user_state');
-    expect($state->hasData())->toBeFalse();
-    expect($this->stateManager->isUserInState($this->chat, $this->user, 'user_state'))->toBeTrue();
-    expect($this->stateManager->isUserInState($this->chat, $this->user, 'other_state'))->toBeFalse();
+    expect($state)->toBeInstanceOf(State::class)
+        ->and($state->getName())->toBe('user_state')
+        ->and($state->hasData())->toBeFalse()
+        ->and($this->stateManager->isUserInState($this->chat, $this->user, 'user_state'))->toBeTrue()
+        ->and($this->stateManager->isUserInState($this->chat, $this->user, 'other_state'))->toBeFalse();
 });
 
 it('can clear state for chat', function () {
@@ -53,34 +53,34 @@ it('can set state with custom ttl', function () {
     $this->stateManager->setChatState($this->chat, 'test_state', 3600);
 
     $state = $this->stateManager->getChatState($this->chat);
-    expect($state)->toBeInstanceOf(State::class);
-    expect($state->getName())->toBe('test_state');
+    expect($state)->toBeInstanceOf(State::class)
+        ->and($state->getName())->toBe('test_state');
 });
 
 it('can set user state with custom ttl', function () {
     $this->stateManager->setUserState($this->chat, $this->user, 'user_state', 1800);
 
     $state = $this->stateManager->getUserState($this->chat, $this->user);
-    expect($state)->toBeInstanceOf(State::class);
-    expect($state->getName())->toBe('user_state');
+    expect($state)->toBeInstanceOf(State::class)
+        ->and($state->getName())->toBe('user_state');
 });
 
 it('can set state with data', function () {
-    $this->stateManager->setChatState($this->chat, 'create_quiz', null, 5);
+    $this->stateManager->setChatState($this->chat, 'create_quiz', null, [5]);
 
     $state = $this->stateManager->getChatState($this->chat);
-    expect($state)->toBeInstanceOf(State::class);
-    expect($state->getName())->toBe('create_quiz');
-    expect($state->hasData())->toBeTrue();
-    expect($state->getData())->toBe(5);
+    expect($state)->toBeInstanceOf(State::class)
+        ->and($state->getName())->toBe('create_quiz')
+        ->and($state->hasData())->toBeTrue()
+        ->and($state->getData())->toBe([5]);
 });
 
 it('can set user state with data', function () {
     $this->stateManager->setUserState($this->chat, $this->user, 'create_quiz', null, ['quiz_id' => 5]);
 
     $state = $this->stateManager->getUserState($this->chat, $this->user);
-    expect($state)->toBeInstanceOf(State::class);
-    expect($state->getName())->toBe('create_quiz');
-    expect($state->hasData())->toBeTrue();
-    expect($state->getData())->toBe(['quiz_id' => 5]);
+    expect($state)->toBeInstanceOf(State::class)
+        ->and($state->getName())->toBe('create_quiz')
+        ->and($state->hasData())->toBeTrue()
+        ->and($state->getData())->toBe(['quiz_id' => 5]);
 });

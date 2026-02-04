@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace HybridGram\Core\Routing\RouteData;
 
+use HybridGram\Core\Routing\TelegramRoute;
 use HybridGram\Core\UpdateHelper;
 use Phptg\BotApi\Type\Chat;
 use Phptg\BotApi\Type\Update\Update;
@@ -34,5 +35,10 @@ abstract readonly class AbstractRouteData implements RouteDataInterface
     public function getUser(): ?User
     {
         return UpdateHelper::getUserFromUpdate($this->update);
+    }
+
+    public static function match(Update $update, TelegramRoute $route): ?RouteDataInterface
+    {
+        return null;
     }
 }

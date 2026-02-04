@@ -11,18 +11,20 @@ it('can cache routes with closures using SerializableClosure', function () {
 
     $router = new TelegramRouter;
 
-    // Add routes with string actions
-    $router->onCommand('test_bot', 'start', 'TestController@start');
-    $router->onMessage('test_bot', 'hello', 'TestController@hello');
+    $this->app->instance(TelegramRouter::class, $router);
+
+    // Add routes with string actions (action, botId, pattern)
+    $router->onCommand('TestController@start', 'test_bot', 'start');
+    $router->onMessage('TestController@hello', 'test_bot', 'hello');
 
     // Add routes with closures (should now be cached with SerializableClosure)
-    $router->onCommand('test_bot', 'closure', function () {
+    $router->onCommand(function () {
         return 'This is a closure';
-    });
+    }, 'test_bot', 'closure');
 
-    $router->onMessage('test_bot', 'closure_pattern', function () {
+    $router->onMessage(function () {
         return 'This is also a closure';
-    });
+    }, 'test_bot', 'closure_pattern');
 
     // Cache routes - should not throw serialization error
     expect(fn () => $router->cacheRoutes())->not->toThrow(Exception::class);
@@ -37,30 +39,32 @@ it('can cache routes with closures using SerializableClosure', function () {
 
     // Verify all routes were cached (including closures)
     $routes = $router->routes->getRoutes();
+
     expect($routes)->toHaveKey('COMMAND');
-    expect($routes)->toHaveKey('MESSAGE');
+    expect($routes)->toHaveKey('TEXT_MESSAGE');
 
     // Should have routes for 'test_bot'
     expect($routes['COMMAND'])->toHaveKey('test_bot');
-    expect($routes['MESSAGE'])->toHaveKey('test_bot');
+    expect($routes['TEXT_MESSAGE'])->toHaveKey('test_bot');
 
     // Should have all routes including closures
     expect(count($routes['COMMAND']['test_bot']))->toBe(2); // start + closure
-    expect(count($routes['MESSAGE']['test_bot']))->toBe(2); // hello + closure_pattern
+    expect(count($routes['TEXT_MESSAGE']['test_bot']))->toBe(2); // hello + closure_pattern
 
     // Verify closures are still callable after restoration
     $closureCommand = $routes['COMMAND']['test_bot'][1];
     expect($closureCommand->action)->toBeInstanceOf(Closure::class);
 
-    $closureMessage = $routes['MESSAGE']['test_bot'][1];
+    $closureMessage = $routes['TEXT_MESSAGE']['test_bot'][1];
     expect($closureMessage->action)->toBeInstanceOf(Closure::class);
 });
 
 it('can clear routes cache', function () {
     $router = new TelegramRouter;
 
-    // Add some routes
-    $router->onCommand('test_bot', 'start', 'TestController@start');
+    $this->app->instance(TelegramRouter::class, $router);
+
+    $router->onCommand('TestController@start', 'test_bot', 'start');
 
     // Cache routes
     $router->cacheRoutes();

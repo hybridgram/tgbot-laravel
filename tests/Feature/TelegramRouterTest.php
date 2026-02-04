@@ -48,7 +48,7 @@ test('add route registered in router', function () {
         ->sendAction(ActionType::UPLOAD_DOCUMENT, 5)
         ->toChatState('new_state')
         ->onCommand(function (CommandData $commandData) {
-            logger()->info("hello $commandData->command", $commandData->commandParams);
+            logger()->info("hello $commandData->command", $commandData->arguments);
         }, 'start');
 
     $user = new User(1, false, 'TestUser');
@@ -782,40 +782,6 @@ test('onPinnedMessage routes correctly', function () {
     expect($route->type)->toBe(RouteType::PINNED_MESSAGE);
 });
 
-test('onForumTopicEvent routes correctly', function () {
-    TelegramRouter::forBot('main_bot')
-        ->chatType(ChatType::GROUP)
-        ->onForumTopicEvent(function (HybridGram\Core\Routing\RouteData\ForumTopicEventData $data) {
-            return 'forum_topic_event_handler';
-        });
-
-    $actor = new User(1, false, 'Actor');
-    $chat = new Chat(1, 'group');
-
-    $created = new ForumTopicCreated(
-        name: 'Topic name',
-        iconColor: 0x6FB9F0,
-        iconCustomEmojiId: null,
-    );
-
-    $message = new Message(
-        messageId: 1,
-        date: new DateTimeImmutable,
-        chat: $chat,
-        from: $actor,
-        forumTopicCreated: $created,
-    );
-
-    $update = new Update(
-        updateId: 1,
-        message: $message
-    );
-
-    $route = app(HybridGram\Core\Routing\TelegramRouter::class)->resolveActionsByUpdate($update, 'main_bot');
-    expect($route)->toBeInstanceOf(TelegramRoute::class);
-    expect($route->type)->toBe(RouteType::FORUM_TOPIC_EVENT);
-});
-
 test('onForumTopicCreated routes correctly', function () {
     TelegramRouter::forBot('main_bot')
         ->chatType(ChatType::GROUP)
@@ -846,8 +812,8 @@ test('onForumTopicCreated routes correctly', function () {
     );
 
     $route = app(HybridGram\Core\Routing\TelegramRouter::class)->resolveActionsByUpdate($update, 'main_bot');
-    expect($route)->toBeInstanceOf(TelegramRoute::class);
-    expect($route->type)->toBe(RouteType::FORUM_TOPIC_CREATED);
+    expect($route)->toBeInstanceOf(TelegramRoute::class)
+        ->and($route->type)->toBe(RouteType::FORUM_TOPIC_CREATED);
 });
 
 test('onForumTopicEdited routes correctly', function () {

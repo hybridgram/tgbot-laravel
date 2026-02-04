@@ -269,7 +269,7 @@ final class TelegramRouter
             exceptChatState: $routeData['exceptChatState'] ?? null,
             exceptUserState: $routeData['exceptUserState'] ?? null,
             toState: $routeData['toState'],
-            chatTypes: $routeData['chatType'],
+            chatTypes: $routeData['chatTypes'],
             actionType: $routeData['actionType'],
             actionTimeout: $routeData['actionTimeout'],
             cacheTtl: $routeData['cacheTtl'],
@@ -293,8 +293,12 @@ final class TelegramRouter
             ->onBusinessMessageText($action, $pattern);
     }
 
-    public function onCommand(callable|string|array $action, string $botId = '*', string|callable|null $pattern = null, ?Closure $commandParamOptions = null): void
-    {
+    public function onCommand(
+        callable|string|array $action,
+        string $botId = '*',
+        string|callable|null $pattern = null,
+        ?Closure $commandParamOptions = null,
+    ): void {
         new TelegramRouteBuilder()
             ->forBot($botId)
             ->onCommand($action, $pattern, $commandParamOptions);
@@ -525,13 +529,6 @@ final class TelegramRouter
         new TelegramRouteBuilder()
             ->forBot($botId)
             ->onPinnedMessage($action);
-    }
-
-    public function onForumTopicEvent(callable|string|array $action, string $botId = '*'): void
-    {
-        new TelegramRouteBuilder()
-            ->forBot($botId)
-            ->onForumTopicEvent($action);
     }
 
     public function onGeneralForumTopicEvent(callable|string|array $action, string $botId = '*'): void

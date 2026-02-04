@@ -17,7 +17,7 @@ final readonly class SetStateTelegramRouteMiddleware implements TelegramRouteMid
         private ?string $newState,
         private ?int $ttl = null,
         private bool $useUserState = false,
-        private mixed $data = null
+        private array $data = []
     ) {}
 
     public function handle(Update $update, callable $next): mixed

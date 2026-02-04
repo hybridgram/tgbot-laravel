@@ -43,7 +43,6 @@ enum RouteType
     case DELETE_CHAT_PHOTO;
     case AUTO_DELETE_TIMER_CHANGED;
     case PINNED_MESSAGE;
-    case FORUM_TOPIC_EVENT;
     case FORUM_TOPIC_CREATED;
     case FORUM_TOPIC_EDITED;
     case FORUM_TOPIC_CLOSED;

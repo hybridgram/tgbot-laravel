@@ -32,11 +32,11 @@ it('enforces telegram callback_data 1..64 bytes limit', function () {
         ->toString();
 })->throws(InvalidArgumentException::class);
 
-it('TelegramRoute::matchesCallbackQuery returns null on invalid callback_data', function () {
+it('TelegramRoute::matches returns null on invalid callback_data for CALLBACK_QUERY route', function () {
     $from = new User(id: 1, isBot: false, firstName: 'Test');
     $query = new CallbackQuery(id: 'cq1', from: $from, chatInstance: 'ci1', data: '');
     $update = new Update(updateId: 1, callbackQuery: $query);
 
     $route = new TelegramRoute(type: RouteType::CALLBACK_QUERY, pattern: '*');
-    expect($route->matchesCallbackQuery($update))->toBeNull();
+    expect($route->matches($update))->toBeNull();
 });

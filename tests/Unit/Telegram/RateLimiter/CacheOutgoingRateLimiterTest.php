@@ -69,16 +69,17 @@ it('applies reserved capacity for low priority', function () {
     $limiter = new CacheOutgoingRateLimiter(
         rateLimitPerMinute: 10,
         reserveHighPerMinute: 3, // LOW effective limit = 7
-        nowMs: fn (): int => $t,
+        nowMs: function () use (&$t): int {
+            return $t;
+        },
     );
 
     for ($i = 0; $i < 7; $i++) {
-        $t = $i * 1000;
         $limiter->record('bot');
     }
 
-    $t = 7000;
-
+    // At t=7s we're at LOW limit (7); must wait until oldest (0) leaves at 60s → 53s delay
+    $t = 7_000;
     $low = $limiter->check('bot', Priority::LOW);
     expect($low->allowNow)->toBeFalse();
     expect($low->delayMilliseconds)->toBe(53_000);
