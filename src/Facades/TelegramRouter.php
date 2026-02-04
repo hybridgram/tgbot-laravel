@@ -49,7 +49,6 @@ use Illuminate\Support\Facades\Facade;
  * @method static void onDeleteChatPhoto(array|string|\Closure $action, string $botId = '*')
  * @method static void onMessageAutoDeleteTimerChanged(array|string|\Closure $action, string $botId = '*')
  * @method static void onPinnedMessage(array|string|\Closure $action, string $botId = '*')
- * @method static void onForumTopicEvent(array|string|\Closure $action, string $botId = '*')
  * @method static void onForumTopicCreated(array|string|\Closure $action, string $botId = '*')
  * @method static void onForumTopicEdited(array|string|\Closure $action, string $botId = '*')
  * @method static void onForumTopicClosed(array|string|\Closure $action, string $botId = '*')

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace HybridGram\Core\Routing\RouteData;
 
+use HybridGram\Core\Routing\TelegramRoute;
+use Illuminate\Support\Str;
 use Phptg\BotApi\Type\Message;
 use Phptg\BotApi\Type\Update\Update;
 
@@ -16,5 +18,32 @@ final readonly class TextMessageData extends AbstractRouteData
         string $botId,
     ) {
         parent::__construct($update, $botId);
+    }
+
+    public static function match(Update $update, TelegramRoute $route): ?TextMessageData
+    {
+        if (! isset($update->message->text)) {
+            return null;
+        }
+
+        $text = $update->message->text;
+
+        if ($route->pattern === null || $route->pattern === '*') {
+            return new TextMessageData($update, $update->message, $text, $route->botId);
+        }
+
+        if ($route->pattern instanceof \Closure) {
+            if (! call_user_func($route->pattern, $update)) {
+                return null;
+            }
+
+            return new TextMessageData($update, $update->message, $text, $route->botId);
+        }
+
+        if (Str::is($route->pattern, $text)) {
+            return new TextMessageData($update, $update->message, $text, $route->botId);
+        }
+
+        return null;
     }
 }

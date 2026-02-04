@@ -4,31 +4,31 @@ declare(strict_types=1);
 
 use HybridGram\Core\Config\BotSettings\BotSettings;
 use Phptg\BotApi\Type\BotCommand;
-use Phptg\BotApi\Type\BotCommandScope\BotCommandScopeAllPrivateChats;
+use Phptg\BotApi\Type\BotCommandScopeAllPrivateChats;
 use Phptg\BotApi\Type\ChatAdministratorRights;
-use Phptg\BotApi\Type\MenuButton\MenuButtonCommands;
-use Phptg\BotApi\Type\MenuButton\MenuButtonDefault;
+use Phptg\BotApi\Type\MenuButtonCommands;
+use Phptg\BotApi\Type\MenuButtonDefault;
 
 it('creates empty settings', function () {
     $settings = BotSettings::create();
 
-    expect($settings->isEmpty())->toBeTrue();
-    expect($settings->getDescriptions()->isEmpty())->toBeTrue();
-    expect($settings->getShortDescriptions()->isEmpty())->toBeTrue();
-    expect($settings->getNames()->isEmpty())->toBeTrue();
-    expect($settings->getMenuButton())->toBeNull();
-    expect($settings->getDefaultAdministratorRights())->toBeNull();
-    expect($settings->getDefaultAdministratorRightsForChannels())->toBeNull();
-    expect($settings->getCommands())->toBeEmpty();
+    expect($settings->isEmpty())->toBeTrue()
+        ->and($settings->getDescriptions()->isEmpty())->toBeTrue()
+        ->and($settings->getShortDescriptions()->isEmpty())->toBeTrue()
+        ->and($settings->getNames()->isEmpty())->toBeTrue()
+        ->and($settings->getMenuButton())->toBeNull()
+        ->and($settings->getDefaultAdministratorRights())->toBeNull()
+        ->and($settings->getDefaultAdministratorRightsForChannels())->toBeNull()
+        ->and($settings->getCommands())->toBeEmpty();
 });
 
 it('sets description for default language', function () {
     $settings = BotSettings::create()
         ->description('Default description');
 
-    expect($settings->isEmpty())->toBeFalse();
-    expect($settings->getDescriptions()->get())->toBe('Default description');
-    expect($settings->getDescriptions()->get(null))->toBe('Default description');
+    expect($settings->isEmpty())->toBeFalse()
+        ->and($settings->getDescriptions()->get())->toBe('Default description')
+        ->and($settings->getDescriptions()->get(null))->toBe('Default description');
 });
 
 it('sets description for multiple languages', function () {
@@ -37,10 +37,10 @@ it('sets description for multiple languages', function () {
         ->description('Описание бота', 'ru')
         ->description('Bot-Beschreibung', 'de');
 
-    expect($settings->getDescriptions()->get())->toBe('Default description');
-    expect($settings->getDescriptions()->get('ru'))->toBe('Описание бота');
-    expect($settings->getDescriptions()->get('de'))->toBe('Bot-Beschreibung');
-    expect($settings->getDescriptions()->get('fr'))->toBeNull();
+    expect($settings->getDescriptions()->get())->toBe('Default description')
+        ->and($settings->getDescriptions()->get('ru'))->toBe('Описание бота')
+        ->and($settings->getDescriptions()->get('de'))->toBe('Bot-Beschreibung')
+        ->and($settings->getDescriptions()->get('fr'))->toBeNull();
 });
 
 it('sets short description for multiple languages', function () {
@@ -48,8 +48,8 @@ it('sets short description for multiple languages', function () {
         ->shortDescription('Short desc')
         ->shortDescription('Короткое описание', 'ru');
 
-    expect($settings->getShortDescriptions()->get())->toBe('Short desc');
-    expect($settings->getShortDescriptions()->get('ru'))->toBe('Короткое описание');
+    expect($settings->getShortDescriptions()->get())->toBe('Short desc')
+        ->and($settings->getShortDescriptions()->get('ru'))->toBe('Короткое описание');
 });
 
 it('sets name for multiple languages', function () {
@@ -58,9 +58,9 @@ it('sets name for multiple languages', function () {
         ->name('Мой Бот', 'ru')
         ->name('Mein Bot', 'de');
 
-    expect($settings->getNames()->get())->toBe('My Bot');
-    expect($settings->getNames()->get('ru'))->toBe('Мой Бот');
-    expect($settings->getNames()->get('de'))->toBe('Mein Bot');
+    expect($settings->getNames()->get())->toBe('My Bot')
+        ->and($settings->getNames()->get('ru'))->toBe('Мой Бот')
+        ->and($settings->getNames()->get('de'))->toBe('Mein Bot');
 });
 
 it('sets menu button', function () {
@@ -89,8 +89,8 @@ it('sets default administrator rights for groups', function () {
     $settings = BotSettings::create()
         ->defaultAdministratorRights($rights);
 
-    expect($settings->getDefaultAdministratorRights())->toBe($rights);
-    expect($settings->getDefaultAdministratorRightsForChannels())->toBeNull();
+    expect($settings->getDefaultAdministratorRights())->toBe($rights)
+        ->and($settings->getDefaultAdministratorRightsForChannels())->toBeNull();
 });
 
 it('sets default administrator rights for channels', function () {
@@ -111,8 +111,8 @@ it('sets default administrator rights for channels', function () {
     $settings = BotSettings::create()
         ->defaultAdministratorRightsForChannels($rights);
 
-    expect($settings->getDefaultAdministratorRights())->toBeNull();
-    expect($settings->getDefaultAdministratorRightsForChannels())->toBe($rights);
+    expect($settings->getDefaultAdministratorRights())->toBeNull()
+        ->and($settings->getDefaultAdministratorRightsForChannels())->toBe($rights);
 });
 
 it('sets commands with scope and language', function () {
@@ -132,19 +132,17 @@ it('sets commands with scope and language', function () {
         ->commands($commands, $scope);
 
     $allCommands = $settings->getCommands();
-    expect($allCommands)->toHaveCount(3);
+    expect($allCommands)->toHaveCount(3)
+        ->and($allCommands[0]['commands'])->toBe($commands)
+        ->and($allCommands[0]['scope'])->toBeNull()
+        ->and($allCommands[0]['languageCode'])->toBeNull()
+        ->and($allCommands[1]['commands'])->toBe($commandsRu)
+        ->and($allCommands[1]['scope'])->toBeNull()
+        ->and($allCommands[1]['languageCode'])->toBe('ru')
+        ->and($allCommands[2]['commands'])->toBe($commands)
+        ->and($allCommands[2]['scope'])->toBe($scope)
+        ->and($allCommands[2]['languageCode'])->toBeNull();
 
-    expect($allCommands[0]['commands'])->toBe($commands);
-    expect($allCommands[0]['scope'])->toBeNull();
-    expect($allCommands[0]['languageCode'])->toBeNull();
-
-    expect($allCommands[1]['commands'])->toBe($commandsRu);
-    expect($allCommands[1]['scope'])->toBeNull();
-    expect($allCommands[1]['languageCode'])->toBe('ru');
-
-    expect($allCommands[2]['commands'])->toBe($commands);
-    expect($allCommands[2]['scope'])->toBe($scope);
-    expect($allCommands[2]['languageCode'])->toBeNull();
 });
 
 it('supports fluent chaining for all settings', function () {
@@ -190,12 +188,12 @@ it('supports fluent chaining for all settings', function () {
         ->commands($commands)
         ->commands($commands, null, 'ru');
 
-    expect($settings->isEmpty())->toBeFalse();
-    expect($settings->getDescriptions()->all())->toHaveCount(2);
-    expect($settings->getShortDescriptions()->all())->toHaveCount(2);
-    expect($settings->getNames()->all())->toHaveCount(2);
-    expect($settings->getMenuButton())->toBe($menuButton);
-    expect($settings->getDefaultAdministratorRights())->toBe($groupRights);
-    expect($settings->getDefaultAdministratorRightsForChannels())->toBe($channelRights);
-    expect($settings->getCommands())->toHaveCount(2);
+    expect($settings->isEmpty())->toBeFalse()
+        ->and($settings->getDescriptions()->all())->toHaveCount(2)
+        ->and($settings->getShortDescriptions()->all())->toHaveCount(2)
+        ->and($settings->getNames()->all())->toHaveCount(2)
+        ->and($settings->getMenuButton())->toBe($menuButton)
+        ->and($settings->getDefaultAdministratorRights())->toBe($groupRights)
+        ->and($settings->getDefaultAdministratorRightsForChannels())->toBe($channelRights)
+        ->and($settings->getCommands())->toHaveCount(2);
 });

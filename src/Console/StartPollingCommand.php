@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace HybridGram\Console;
 
+use HybridGram\Core\Config\BotConfig;
 use HybridGram\Core\HybridGramBotManager;
+use HybridGram\Core\PollingRunStrategy;
 use Illuminate\Console\Command;
 use Symfony\Component\Process\Process;
 
@@ -30,7 +32,88 @@ final class StartPollingCommand extends Command
 
         $this->info('Starting polling...');
         $botManager->setCommand($this);
-        $botManager->run($this->argument('botId'));
+        $botIdArg = $this->argument('botId');
+
+        if ($botIdArg !== null && $botIdArg !== '') {
+            $botManager->run((string) $botIdArg);
+
+            return;
+        }
+
+        $strategy = $botManager->getPollingRunStrategy();
+
+        if ($strategy->type === PollingRunStrategy::NONE) {
+            $this->warn('No polling bots configured.');
+
+            return;
+        }
+
+        if ($strategy->type === PollingRunStrategy::SINGLE) {
+            $botManager->run($strategy->config->botId);
+
+            return;
+        }
+
+        $this->runMultiplePollingProcesses($strategy->configs);
+    }
+
+    /**
+     * @param  BotConfig[]  $pollingConfigs
+     */
+    private function runMultiplePollingProcesses(array $pollingConfigs): void
+    {
+        $artisan = base_path('artisan');
+        if (! is_file($artisan)) {
+            $this->error("Cannot start multiple polling processes: artisan not found at '{$artisan}'.");
+
+            return;
+        }
+
+        $this->info('Starting '.count($pollingConfigs).' polling process(es) (one per bot)...');
+
+        $processes = [];
+        foreach ($pollingConfigs as $config) {
+            $processes[] = $this->startChildPollingProcess(PHP_BINARY, $artisan, $config->botId);
+        }
+
+        $stopRequested = false;
+        if (function_exists('pcntl_signal')) {
+            pcntl_signal(SIGINT, function () use (&$stopRequested) {
+                $stopRequested = true;
+            });
+            pcntl_signal(SIGTERM, function () use (&$stopRequested) {
+                $stopRequested = true;
+            });
+        }
+
+        while (true) {
+            if (function_exists('pcntl_signal_dispatch')) {
+                pcntl_signal_dispatch();
+            }
+
+            if ($stopRequested) {
+                $this->info('Stopping all polling processes...');
+                foreach ($processes as $process) {
+                    $this->stopChildProcess($process);
+                }
+
+                return;
+            }
+
+            $allStopped = true;
+            foreach ($processes as $process) {
+                if ($process->isRunning()) {
+                    $allStopped = false;
+                    break;
+                }
+            }
+
+            if ($allStopped) {
+                break;
+            }
+
+            usleep(100_000);
+        }
     }
 
     private function runWithHotReload(): void
@@ -226,7 +309,7 @@ final class StartPollingCommand extends Command
         return $latest;
     }
 
-    private function startChildPollingProcess(string $phpBinary, string $artisanPath): Process
+    private function startChildPollingProcess(string $phpBinary, string $artisanPath, ?string $botIdOverride = null): Process
     {
         $args = [
             $phpBinary,
@@ -241,7 +324,7 @@ final class StartPollingCommand extends Command
             'hybridgram:polling',
         ];
 
-        $botId = $this->argument('botId');
+        $botId = $botIdOverride ?? $this->argument('botId');
         if ($botId !== null && $botId !== '') {
             $args[] = (string) $botId;
         }

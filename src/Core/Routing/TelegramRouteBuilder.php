@@ -133,7 +133,7 @@ final class TelegramRouteBuilder
         }, $states);
     }
 
-    public function toChatState(string|\BackedEnum|null $state, ?int $ttl = null, mixed $data = null): self
+    public function toChatState(string|\BackedEnum|null $state, ?int $ttl = null, array $data = []): self
     {
         if ($state === null) {
             $this->route->toState = null;
@@ -148,7 +148,7 @@ final class TelegramRouteBuilder
         return $this;
     }
 
-    public function toUserState(string|\BackedEnum|null $state, ?int $ttl = null, mixed $data = null): self
+    public function toUserState(string|\BackedEnum|null $state, ?int $ttl = null, array $data = []): self
     {
         if ($state === null) {
             $this->route->toState = null;
@@ -215,7 +215,11 @@ final class TelegramRouteBuilder
      *                                             Если возвращает false или null, маршрут не матчится
      *                                             Если возвращает CommandData, используется он
      */
-    public function onCommand(callable|string|array $action, Closure|string|null $pattern = null, ?Closure $commandParamOptions = null): void
+    public function onCommand(
+        callable|string|array $action,
+        Closure|string|null $pattern = null,
+        ?Closure $commandParamOptions = null,
+    ): void
     {
         $this->route->type = RouteType::COMMAND;
         $this->route->action = $action;
@@ -542,17 +546,6 @@ final class TelegramRouteBuilder
     public function onPinnedMessage(callable|string|array $action): void
     {
         $this->route->type = RouteType::PINNED_MESSAGE;
-        $this->route->action = $action;
-        if ($this->route->chatTypes === [ChatType::PRIVATE]) {
-            $this->route->chatTypes = null;
-        }
-
-        $this->register();
-    }
-
-    public function onForumTopicEvent(callable|string|array $action): void
-    {
-        $this->route->type = RouteType::FORUM_TOPIC_EVENT;
         $this->route->action = $action;
         if ($this->route->chatTypes === [ChatType::PRIVATE]) {
             $this->route->chatTypes = null;

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace HybridGram\Core\Routing\RouteData;
 
+use HybridGram\Core\Routing\TelegramRoute;
 use Phptg\BotApi\Type\Game\Game;
 use Phptg\BotApi\Type\Update\Update;
 
@@ -15,5 +16,18 @@ final readonly class GameData extends AbstractRouteData
         string $botId,
     ) {
         parent::__construct($update, $botId);
+    }
+
+    public static function match(Update $update, TelegramRoute $route): ?GameData
+    {
+        if ($update->message === null) {
+            return null;
+        }
+
+        if (empty($update->message->game)) {
+            return null;
+        }
+
+        return new GameData($update, $update->message->game, $route->botId);
     }
 }
