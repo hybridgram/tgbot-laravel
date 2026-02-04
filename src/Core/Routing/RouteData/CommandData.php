@@ -92,7 +92,7 @@ final readonly class CommandData extends AbstractRouteData
 
         $spaceParts = explode(' ', $withoutSlash, 2);
         $firstToken = $spaceParts[0] ?? '';
-        $rest = isset($spaceParts[1]) ? trim($spaceParts[1]) : '';
+        $rest = isset($spaceParts[1]) ? mb_trim($spaceParts[1]) : '';
 
         if ($firstToken === '') {
             return null;

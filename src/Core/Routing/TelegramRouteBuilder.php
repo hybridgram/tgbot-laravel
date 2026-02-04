@@ -219,8 +219,7 @@ final class TelegramRouteBuilder
         callable|string|array $action,
         Closure|string|null $pattern = null,
         ?Closure $commandParamOptions = null,
-    ): void
-    {
+    ): void {
         $this->route->type = RouteType::COMMAND;
         $this->route->action = $action;
         $this->pattern($pattern);

@@ -298,8 +298,7 @@ final class TelegramRouter
         string $botId = '*',
         string|callable|null $pattern = null,
         ?Closure $commandParamOptions = null,
-    ): void
-    {
+    ): void {
         new TelegramRouteBuilder()
             ->forBot($botId)
             ->onCommand($action, $pattern, $commandParamOptions);

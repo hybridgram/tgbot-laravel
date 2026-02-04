@@ -69,7 +69,9 @@ it('applies reserved capacity for low priority', function () {
     $limiter = new CacheOutgoingRateLimiter(
         rateLimitPerMinute: 10,
         reserveHighPerMinute: 3, // LOW effective limit = 7
-        nowMs: function () use (&$t): int { return $t; },
+        nowMs: function () use (&$t): int {
+            return $t;
+        },
     );
 
     for ($i = 0; $i < 7; $i++) {

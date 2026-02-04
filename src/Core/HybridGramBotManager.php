@@ -7,7 +7,6 @@ namespace HybridGram\Core;
 use HybridGram\Core\Config\BotConfig;
 use HybridGram\Core\UpdateMode\PollingUpdateMode;
 use HybridGram\Core\UpdateMode\UpdateModeEnum;
-use HybridGram\Core\UpdateMode\WebhookUpdateMode;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\App;
 use Phptg\BotApi\FailResult;

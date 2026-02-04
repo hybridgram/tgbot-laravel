@@ -14,7 +14,7 @@ final readonly class CommandHelper implements \Stringable
 {
     private function __construct(
         private string $name,
-        private array  $args,
+        private array $args,
     ) {
         if ($this->name === '') {
             throw new \InvalidArgumentException('Command name must not be empty.');
@@ -52,6 +52,7 @@ final readonly class CommandHelper implements \Stringable
         if ($this->args === []) {
             return $base;
         }
+
         return $base.'_'.implode('_', $this->args);
     }
 }
