@@ -25,7 +25,7 @@ final class SendTelegramMethodJob implements ShouldQueue
 
     /**
      * @param  string  $botId  Bot identifier
-     * @param  MethodInterface  $method  Telegram API method (must be serializable, no InputFile with resource)
+     * @param  MethodInterface<mixed>  $method  Telegram API method (must be serializable, no InputFile with resource)
      * @param  Priority  $priority  Request priority
      */
     public function __construct(
@@ -235,6 +235,9 @@ final class SendTelegramMethodJob implements ShouldQueue
         return $fn();
     }
 
+    /**
+     * @param MethodInterface<mixed> $method
+     */
     private function validateMethod(MethodInterface $method): void
     {
         $data = $method->getData();

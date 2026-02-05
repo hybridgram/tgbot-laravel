@@ -9,13 +9,16 @@ use HybridGram\Telegram\Priority;
 use HybridGram\Telegram\RateLimiter\OutgoingRateLimiterInterface;
 use Phptg\BotApi\MethodInterface;
 
-final class SyncOutgoingDispatcher implements OutgoingDispatcherInterface
+final readonly class SyncOutgoingDispatcher implements OutgoingDispatcherInterface
 {
     public function __construct(
-        private readonly OutgoingRateLimiterInterface $rateLimiter,
-        private readonly int $maxWaitMs,
+        private OutgoingRateLimiterInterface $rateLimiter,
+        private int                          $maxWaitMs,
     ) {}
 
+    /**
+     * @param MethodInterface<mixed> $method
+     */
     public function dispatch(string $botId, MethodInterface $method, Priority $priority): mixed
     {
         $deadlineMs = $this->nowMs() + $this->maxWaitMs;
@@ -29,11 +32,9 @@ final class SyncOutgoingDispatcher implements OutgoingDispatcherInterface
             $this->waitOrThrow($botId, $decision->delayMilliseconds, $deadlineMs);
         }
 
-        // Use the original Vjik client for actual HTTP call
         $client = new \Phptg\BotApi\TelegramBotApi($this->getTokenForBot($botId));
         $result = $client->call($method);
 
-        // Record successful send
         $this->rateLimiter->record($botId);
 
         return $result;

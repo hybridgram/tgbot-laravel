@@ -93,6 +93,9 @@ final class TelegramBindingsServiceProvider extends ServiceProvider
         });
     }
 
+    /**
+     * @return string[]
+     */
     public function provides(): array
     {
         return [
