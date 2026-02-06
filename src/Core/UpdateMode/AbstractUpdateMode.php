@@ -29,8 +29,9 @@ abstract class AbstractUpdateMode implements UpdateModeInterface
             /** @var TelegramRouter $telegramRouter */
             $telegramRouter = App::get(TelegramRouter::class);
             $telegramRouter->registerRoutes($this->botConfig->routesPath); // todo вытащить в мидлварь?
-            $routeWithParams = $telegramRouter->resolveActionsByUpdate($update, $this->botConfig->botId);
-            $botId = $routeWithParams->data?->botId ?? $this->botConfig->botId;
+            $botId = $routeWithParams->data->botId ?? $this->botConfig->botId;
+            $routeWithParams = $telegramRouter->resolveActionsByUpdate($update, $botId);
+
             App::instance('telegram.botId', $botId);
 
             $finalHandler = function (Update $update) use ($routeWithParams) {

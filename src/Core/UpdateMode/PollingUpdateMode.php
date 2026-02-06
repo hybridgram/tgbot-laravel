@@ -75,7 +75,6 @@ final class PollingUpdateMode extends AbstractUpdateMode
 
         }
 
-        /** @var Update[] $updates */
         $groupedUpdates = MediaGroupGrouper::groupUpdates($updates);
 
         foreach ($groupedUpdates as $update) {
@@ -203,7 +202,7 @@ final class PollingUpdateMode extends AbstractUpdateMode
 
         $chat = UpdateHelper::getChatFromUpdate($update);
         $chatId = $chat?->id;
-        $chatType = $chat?->type ?? '-';
+        $chatType = $chat->type ?? '-';
         $userId = UpdateHelper::getUserFromUpdate($update)?->id;
 
         $summary = $this->extractUpdateSummary($update);

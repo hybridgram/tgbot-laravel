@@ -35,7 +35,7 @@ final readonly class InlineQueryData extends AbstractRouteData
             return new InlineQueryData($update, $update->inlineQuery, $route->botId);
         }
 
-        if (is_string($route->pattern) && Str::is($route->pattern, $query)) {
+        if (Str::is($route->pattern, $query)) {
             return new InlineQueryData($update, $update->inlineQuery, $route->botId);
         }
 

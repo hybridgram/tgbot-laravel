@@ -11,11 +11,9 @@ use HybridGram\Core\UpdateHelper;
 use Illuminate\Support\Facades\App;
 use Phptg\BotApi\Type\Update\Update;
 
-/**
- * @property array<int|string, mixed> $data
- */
 final readonly class SetStateTelegramRouteMiddleware implements TelegramRouteMiddlewareInterface
 {
+    /** @param array<int|string, mixed> $data */
     public function __construct(
         private ?string $newState,
         private ?int $ttl = null,

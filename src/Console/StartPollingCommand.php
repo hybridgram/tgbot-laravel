@@ -144,17 +144,10 @@ final class StartPollingCommand extends Command
 
         $lastMTime = $this->scanLatestMTime($watchPaths);
         $restartCount = 0;
-        $lastRestartAt = 0.0;
 
         while (true) {
             if (function_exists('pcntl_signal_dispatch')) {
                 pcntl_signal_dispatch();
-            }
-
-            if ($stopRequested) {
-                $this->info('Stopping...');
-
-                return;
             }
 
             $process = $this->startChildPollingProcess(PHP_BINARY, $artisan);

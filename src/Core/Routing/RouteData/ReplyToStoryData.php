@@ -37,7 +37,7 @@ final readonly class ReplyToStoryData extends AbstractRouteData
             return new ReplyToStoryData($update, $update->message->replyToStory, $route->botId);
         }
 
-        if (is_string($route->pattern) && $update->message->text !== null) {
+        if ($update->message->text !== null) {
             if (Str::is($route->pattern, $update->message->text)) {
                 return new ReplyToStoryData($update, $update->message->replyToStory, $route->botId);
             }

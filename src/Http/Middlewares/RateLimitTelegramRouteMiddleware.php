@@ -30,7 +30,7 @@ final class RateLimitTelegramRouteMiddleware implements TelegramRouteMiddlewareI
         if (isset($this->userRequests[$userKey])) {
             $this->userRequests[$userKey] = array_filter(
                 $this->userRequests[$userKey],
-                static fn (int $timestamp) => $now - $timestamp < $this->timeWindow
+                fn (int $timestamp) => $now - $timestamp < $this->timeWindow
             );
         } else {
             $this->userRequests[$userKey] = [];

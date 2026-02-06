@@ -56,16 +56,11 @@ final class TelegramGuard implements Guard
             return null;
         }
 
-        $telegramId = $telegramUser->id;
-        if ($telegramId === null) {
-            return null;
-        }
-
         $authConfig = config('hybridgram.auth', []);
         $telegramIdColumn = $authConfig['telegram_id_column'] ?? 'telegram_id';
 
         $credentials = [
-            $telegramIdColumn => $telegramId,
+            $telegramIdColumn => $telegramUser->id,
         ];
 
         $this->user = $this->provider->retrieveByCredentials($credentials, $this->update);

@@ -16,44 +16,42 @@ final class UpdateHelper
 {
     public static function getChatFromUpdate(Update $update): ?Chat
     {
-        return $update->message?->chat
-            ?? $update->callbackQuery?->message?->chat
-            ?? $update->editedMessage?->chat
-            ?? $update->channelPost?->chat
-            ?? $update->editedChannelPost?->chat
-            ?? $update->businessMessage?->chat
-            ?? $update->editedBusinessMessage?->chat
-            ?? $update->messageReaction?->chat
-            ?? $update->messageReactionCount?->chat
-            ?? $update->chosenInlineResult?->chat
-            ?? $update->shippingQuery?->chat
-            ?? $update->preCheckoutQuery?->chat
-            ?? $update->pollAnswer?->chat
-            ?? $update->myChatMember?->chat
-            ?? $update->chatMember?->chat
-            ?? $update->chatJoinRequest?->chat
-            ?? $update->chatBoost?->chat;
+        return $update->message->chat
+            ?? $update->callbackQuery?->message->chat
+            ?? $update->editedMessage->chat
+            ?? $update->channelPost->chat
+            ?? $update->editedChannelPost->chat
+            ?? $update->businessMessage->chat
+            ?? $update->editedBusinessMessage->chat
+            ?? $update->messageReaction->chat
+            ?? $update->messageReactionCount->chat
+            ?? $update->myChatMember->chat
+            ?? $update->chatMember->chat
+            ?? $update->chatJoinRequest->chat
+            ?? $update->chatBoost->chat
+            ?? null;
     }
 
     public static function getUserFromUpdate(Update $update): ?User
     {
-        return $update->message?->from
-            ?? $update->callbackQuery?->from
-            ?? $update->editedMessage?->from
-            ?? $update->channelPost?->from
-            ?? $update->editedChannelPost?->from
-            ?? $update->businessMessage?->from
-            ?? $update->editedBusinessMessage?->from
-            ?? $update->businessConnection?->user
-            ?? $update->messageReaction?->user
-            ?? $update->inlineQuery?->from
-            ?? $update->chosenInlineResult?->from
-            ?? $update->shippingQuery?->from
-            ?? $update->preCheckoutQuery?->from
-            ?? $update->pollAnswer?->user
-            ?? $update->myChatMember?->from
-            ?? $update->chatMember?->from
-            ?? $update->chatJoinRequest?->from;
+        return $update->message->from
+            ?? $update->callbackQuery->from
+            ?? $update->editedMessage->from
+            ?? $update->channelPost->from
+            ?? $update->editedChannelPost->from
+            ?? $update->businessMessage->from
+            ?? $update->editedBusinessMessage->from
+            ?? $update->businessConnection->user
+            ?? $update->messageReaction->user
+            ?? $update->inlineQuery->from
+            ?? $update->chosenInlineResult->from
+            ?? $update->shippingQuery->from
+            ?? $update->preCheckoutQuery->from
+            ?? $update->pollAnswer->user
+            ?? $update->myChatMember->from
+            ?? $update->chatMember->from
+            ?? $update->chatJoinRequest->from
+            ?? null;
     }
 
     public static function getUpdateTypeEnum(Update $update): UpdateTypeEnum
@@ -145,7 +143,7 @@ final class UpdateHelper
             UpdateTypeEnum::EDITED_CHANNEL_POST => RouteType::EDITED_CHANNEL_POST,
             UpdateTypeEnum::INLINE_QUERY => RouteType::INLINE_QUERY,
             UpdateTypeEnum::BUSINESS_CONNECTION => RouteType::BUSINESS_CONNECTION,
-            UpdateTypeEnum::BUSINESS_MESSAGE => RouteType::BUSINESS_MESSAGE_TEXT,
+            UpdateTypeEnum::BUSINESS_MESSAGE => self::mapBusinessMessageType($update),
             UpdateTypeEnum::EDITED_BUSINESS_MESSAGE => RouteType::EDITED_BUSINESS_MESSAGE,
             UpdateTypeEnum::DELETED_BUSINESS_MESSAGES => RouteType::DELETED_BUSINESS_MESSAGES,
             UpdateTypeEnum::MESSAGE_REACTION => RouteType::MESSAGE_REACTION,
@@ -163,7 +161,6 @@ final class UpdateHelper
             UpdateTypeEnum::MY_CHAT_MEMBER => RouteType::MY_CHAT_MEMBER,
             UpdateTypeEnum::CHAT_BOOST => RouteType::CHAT_BOOST,
             UpdateTypeEnum::REMOVED_CHAT_BOOST => RouteType::REMOVED_CHAT_BOOST,
-            default => RouteType::UNKNOWN,
         };
     }
 
@@ -315,9 +312,9 @@ final class UpdateHelper
         return RouteType::TEXT_MESSAGE;
     }
 
-    private static function mapBusinessMessageType(?Message $message): RouteType
+    private static function mapBusinessMessageType(Update $update): RouteType
     {
-        if ($message->text !== null && str_starts_with($message->text, '/')) {
+        if ($update->businessMessage->text !== null && str_starts_with($update->businessMessage->text, '/')) {
             return RouteType::BUSINESS_MESSAGE_COMMAND;
         }
 

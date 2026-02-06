@@ -16,7 +16,7 @@ final readonly class FallbackData extends AbstractRouteData
         parent::__construct($update, $botId);
     }
 
-    public static function match(Update $update, TelegramRoute $route): ?FallbackData
+    public static function match(Update $update, TelegramRoute $route): FallbackData
     {
         return new FallbackData($update, $route->botId);
     }

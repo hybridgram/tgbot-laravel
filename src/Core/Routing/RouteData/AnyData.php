@@ -16,7 +16,7 @@ final readonly class AnyData extends AbstractRouteData
         parent::__construct($update, $botId);
     }
 
-    public static function match(Update $update, TelegramRoute $route): ?AnyData
+    public static function match(Update $update, TelegramRoute $route): AnyData
     {
         return new AnyData($update, $route->botId);
     }
