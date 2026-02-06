@@ -10,7 +10,7 @@ final class MiddlewareManager
     private array $globalMiddlewares = [];
 
     /**
-     * Регистрация глобальных middleware
+     * Registration of global middlewares
      */
     public function registerGlobalMiddleware(TelegramRouteMiddlewareInterface ...$middleware): MiddlewareManager
     {
@@ -19,6 +19,9 @@ final class MiddlewareManager
         return $this;
     }
 
+    /**
+     * @return array<TelegramRouteMiddlewareInterface>
+     */
     public function getGlobalMiddlewares(): array
     {
         return $this->globalMiddlewares;

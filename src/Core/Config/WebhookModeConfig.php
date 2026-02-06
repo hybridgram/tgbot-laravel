@@ -8,6 +8,9 @@ use SensitiveParameter;
 
 final class WebhookModeConfig
 {
+    /**
+     * @param array<string> $allowedUpdates
+     */
     public function __construct(
         public ?string $url = null,
         public ?int $port = null,

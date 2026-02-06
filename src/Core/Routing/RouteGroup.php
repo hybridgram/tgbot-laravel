@@ -8,12 +8,33 @@ use InvalidArgumentException;
 
 final class RouteGroup
 {
-    private array $attributes = [] {
+    /**
+     * @var array{
+     *     for_bot: string,
+     *     from_state?: list<string>,
+     *     to_state?: string|list<string>|null,
+     *     chat_type?: ChatType|list<ChatType>|null,
+     *     cache_key?: string|list<string>,
+     *     cache_ttl?: int,
+     *     middlewares?: array<int, string|object>,
+     *     send_action?: ActionType } $attributes
+     */
+    private array $attributes {
         get {
             return $this->attributes;
         }
     }
-
+    /**
+     * @param array{
+     *     for_bot?: string,
+     *     from_state?: list<string>,
+     *     to_state?: string|list<string>|null,
+     *     chat_type?: ChatType|list<ChatType>|null,
+     *     cache_key?: string|list<string>,
+     *     cache_ttl?: int,
+     *     middlewares?: array<int, string|object>,
+     *     send_action?: ActionType } $attributes
+     */
     public function __construct(array $attributes = [])
     {
         if (! isset($attributes['for_bot'])) {
@@ -33,7 +54,7 @@ final class RouteGroup
         }
 
         if (isset($attributes['to_state'])) {
-            if (! is_string($attributes['to_state']) && $attributes['to_state'] !== null) {
+            if (! is_string($attributes['to_state'])) {
                 throw new InvalidArgumentException('to_state parameter must be string, null, or array of strings.');
             }
         }
@@ -76,6 +97,8 @@ final class RouteGroup
         if (isset($attributes['send_action']) && ! ($attributes['send_action'] instanceof ActionType)) {
             throw new InvalidArgumentException('action_type should be instance of '.ActionType::class);
         }
+
+        /** @var array{for_bot: string, from_state?: list<string>, to_state?: string|list<string>|null, chat_type?: ChatType|list<ChatType>|null, cache_key?: string|list<string>, cache_ttl?: int, middlewares?: array<int, string|object>, send_action?: ActionType} $attributes */
         $this->attributes = $attributes;
     }
 
@@ -90,14 +113,12 @@ final class RouteGroup
         }
 
         if (isset($this->attributes['to_state'])) {
-            $builder->toUserState($this->attributes['to_state']); // todo разобраться со вторым вариантом метода для чатов
+            $builder->toUserState($this->attributes['to_state']); // todo figure out the second method variant for chats
         }
 
         if (isset($this->attributes['chat_type'])) {
             $chatType = $this->attributes['chat_type'];
-            if ($chatType === null) {
-                $builder->chatTypes(null);
-            } elseif (is_array($chatType)) {
+            if (is_array($chatType)) {
                 $builder->chatTypes($chatType);
             } else {
                 $builder->chatType($chatType);

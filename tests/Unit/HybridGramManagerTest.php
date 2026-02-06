@@ -148,7 +148,7 @@ test('can handle bots with same properties but different instances', function ()
 
     $retrievedConfigs = $manager->getBotConfigs();
 
-    expect($retrievedConfigs)->toHaveCount(1); // Теперь должно быть 1, так как botId одинаковые
+    expect($retrievedConfigs)->toHaveCount(1); // Should be 1 now, since botIds are the same
     expect($retrievedConfigs[0])->toBe($botConfig1);
 });
 
@@ -170,7 +170,7 @@ test('can chain multiple withBot calls', function () {
         ->withBot($botConfig2)
         ->withBot($botConfig3);
 
-    expect($result)->toBe($manager); // Проверяем, что возвращается тот же объект
+    expect($result)->toBe($manager); // Verify that the same object is returned
     expect($manager->getBotConfigs())->toHaveCount(3);
 });
 
@@ -216,7 +216,7 @@ test('can retrieve specific bot config by index', function () {
     expect($configs[1])->toBe($botConfig2);
     expect($configs[2])->toBe($botConfig3);
 
-    // Проверяем порядок добавления
+    // Verify order of addition
     expect($configs[0]->botName)->toBe('FirstBot');
     expect($configs[1]->botName)->toBe('SecondBot');
     expect($configs[2]->botName)->toBe('ThirdBot');

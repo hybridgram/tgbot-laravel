@@ -7,18 +7,23 @@ namespace HybridGram\Core\Routing;
 use HybridGram\Core\UpdateHelper;
 use Illuminate\Support\Facades\App;
 use Phptg\BotApi\Type\Update\Update;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Symfony\Component\Routing\Exception\RouteNotFoundException;
 
 /**
- * @property array $routes An array of the routes keyed by method.
- * @property array $allRoutes A flattened array of all the routes
+ * @property array<string, array<string, list<TelegramRoute>>> $routes An array of the routes keyed by route type and bot ID.
  */
 final class RouteCollection
 {
     public function __construct(
+        /** @var array<string, array<string, list<TelegramRoute>>> */
         protected array $routes = [],
     ) {}
 
+    /**
+     * @return array<string, array<string, list<TelegramRoute>>>
+     */
     public function getRoutes(): array
     {
         return $this->routes;
@@ -111,7 +116,7 @@ final class RouteCollection
         ?ChatType $chatType = null
     ): array {
         return array_filter($prematchRoutes, function (TelegramRoute $route) use ($states, $chatType) {
-            // Если chatTypes === null, разрешаем все типы чатов
+            // If chatTypes === null, allow all chat types
             if ($route->chatTypes !== null) {
                 if ($chatType === null) {
                     return false;

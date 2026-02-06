@@ -8,6 +8,7 @@ use Phptg\BotApi\Type\Update\Update;
 
 final class MiddlewarePipeline
 {
+    /** @var list<TelegramRouteMiddlewareInterface> */
     private array $middlewares = [];
 
     public function __construct() {}
@@ -19,6 +20,7 @@ final class MiddlewarePipeline
         return $this;
     }
 
+    /** @param list<TelegramRouteMiddlewareInterface> $middlewares */
     public function addMany(array $middlewares): self
     {
         foreach ($middlewares as $middleware) {
@@ -42,6 +44,7 @@ final class MiddlewarePipeline
         return $pipeline($update);
     }
 
+    /** @param list<TelegramRouteMiddlewareInterface> $middlewares */
     private function createPipeline(array $middlewares, callable $finalHandler): callable
     {
         $pipeline = $finalHandler;

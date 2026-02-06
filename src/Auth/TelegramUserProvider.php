@@ -27,6 +27,7 @@ final class TelegramUserProvider implements UserProvider
         $this->model = $model;
         $this->telegramIdColumn = $telegramIdColumn;
         $this->autoCreateUser = $autoCreateUser;
+        $this->userCreationCallback = $userCreationCallback;
     }
 
     /**
@@ -128,8 +129,10 @@ final class TelegramUserProvider implements UserProvider
      */
     private function getUserTelegramId(Authenticatable $user): int|string|null
     {
-        if (method_exists($user, 'getAttribute')) {
-            return $user->getAttribute($this->telegramIdColumn);
+        $value = $user->getAttribute($this->telegramIdColumn);
+
+        if ($value !== null) {
+            return $value;
         }
 
         if (property_exists($user, $this->telegramIdColumn)) {
@@ -139,7 +142,10 @@ final class TelegramUserProvider implements UserProvider
         return null;
     }
 
-    public function rehashPasswordIfRequired(Authenticatable $user, #[\SensitiveParameter] array $credentials, bool $force = false) {}
+    /**
+     * @param  array<string, mixed>  $credentials
+     */
+    public function rehashPasswordIfRequired(Authenticatable $user, #[\SensitiveParameter] array $credentials, bool $force = false): void {}
 
     public function retrieveById($identifier): ?Authenticatable
     {

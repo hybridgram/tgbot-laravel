@@ -167,6 +167,8 @@ final class TelegramRouteListCommand extends Command
 
     /**
      * Format action for display.
+     *
+     * @param  Closure|string|array<int, string|object>|null  $action
      */
     protected function formatAction(Closure|string|array|null $action): string
     {
@@ -187,6 +189,8 @@ final class TelegramRouteListCommand extends Command
 
     /**
      * Format state for display.
+     *
+     * @param  string|array<int, string>|null  $state
      */
     protected function formatState(string|array|null $state): string
     {
@@ -221,6 +225,8 @@ final class TelegramRouteListCommand extends Command
 
     /**
      * Format middleware for display.
+     *
+     * @param  array<int, string|object>  $middlewares
      */
     protected function formatMiddleware(array $middlewares): string
     {
@@ -259,7 +265,7 @@ final class TelegramRouteListCommand extends Command
         $isAssociative = ! empty($keys) && ! is_int($keys[0]);
 
         foreach ($queryParams as $key => $item) {
-            // Если это объект QueryParamInterface
+            // If this is a QueryParamInterface object
             if ($item instanceof \HybridGram\Core\Routing\RouteOptions\QueryParams\QueryParamInterface) {
                 $paramKey = $item->getKey();
                 if ($item instanceof \HybridGram\Core\Routing\RouteOptions\QueryParams\Exist) {
@@ -279,7 +285,7 @@ final class TelegramRouteListCommand extends Command
                     $params[] = $paramKey;
                 }
             } elseif ($isAssociative) {
-                // Старый формат: ассоциативный массив ['paramName' => null] or ['paramName' => 'value']
+                // Legacy format: associative array ['paramName' => null] or ['paramName' => 'value']
                 $paramName = is_string($key) ? $key : (string) $key;
                 if ($item === null) {
                     $params[] = $paramName;

@@ -5,20 +5,20 @@ declare(strict_types=1);
 namespace HybridGram\Core\Routing\RouteOptions\QueryParams;
 
 /**
- * Интерфейс для объектов проверки query параметров в callback query
+ * Interface for query parameter validation objects in callback query
  */
 interface QueryParamInterface
 {
     /**
-     * Получить ключ параметра для проверки
+     * Get parameter key for validation
      */
     public function getKey(): string;
 
     /**
-     * Проверить параметр в массиве params
+     * Validate parameter in params array
      *
-     * @param  array<string, string>  $params  Параметры из callback query
-     * @return bool true если проверка прошла успешно
+     * @param  array<string, string>  $params  Parameters from callback query
+     * @return bool true if validation passed successfully
      */
     public function matches(array $params): bool;
 }
