@@ -337,8 +337,7 @@ final class TelegramBotApi
      *
      * @template TValue
      *
-     * @param MethodInterface<TValue> $method
-     *
+     * @param  MethodInterface<TValue>  $method
      * @return TValue|FailResult
      */
     public function call(MethodInterface $method): mixed
@@ -429,7 +428,7 @@ final class TelegramBotApi
     }
 
     /**
-     * @param MessageEntity[]|null $entities
+     * @param  MessageEntity[]|null  $entities
      *
      * @see https://core.telegram.org/bots/api#sendmessage
      */
@@ -473,7 +472,6 @@ final class TelegramBotApi
 
     /**
      * @see https://core.telegram.org/bots/api#answercallbackquery
-     *
      */
     public function answerCallbackQuery(
         string $callbackQueryId,
@@ -490,7 +488,7 @@ final class TelegramBotApi
     /**
      * @see https://core.telegram.org/bots/api#answerinlinequery
      *
-     * @param InlineQueryResult[] $results
+     * @param  InlineQueryResult[]  $results
      */
     public function answerInlineQuery(
         string $inlineQueryId,
@@ -508,7 +506,7 @@ final class TelegramBotApi
     /**
      * @see https://core.telegram.org/bots/api#editmessagetext
      *
-     * @param MessageEntity[]|null $entities
+     * @param  MessageEntity[]|null  $entities
      */
     public function editMessageText(
         string $text,
@@ -536,10 +534,8 @@ final class TelegramBotApi
         );
     }
 
-
     /**
      * @see https://core.telegram.org/bots/api#deletemessage
-     *
      */
     public function deleteMessage(int|string $chatId, int $messageId): FailResult|true
     {
@@ -678,7 +674,7 @@ final class TelegramBotApi
     /**
      * @see https://core.telegram.org/bots/api#copymessage
      *
-     * @param MessageEntity[]|null $captionEntities
+     * @param  MessageEntity[]|null  $captionEntities
      */
     public function copyMessage(
         int|string $chatId,
@@ -1440,6 +1436,7 @@ final class TelegramBotApi
 
     /**
      * @see https://core.telegram.org/bots/api#getmycommands
+     *
      * @return array<BotCommand>
      */
     public function getMyCommands(?BotCommandScope $scope = null, ?string $languageCode = null): FailResult|array
@@ -3040,7 +3037,8 @@ final class TelegramBotApi
 
     /**
      * @see https://core.telegram.org/bots/api#setwebhook
-     * @param string[] $allowUpdates
+     *
+     * @param  string[]  $allowUpdates
      */
     public function setWebhook(
         string $url,
