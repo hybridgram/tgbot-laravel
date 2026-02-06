@@ -335,11 +335,11 @@ final class TelegramBotApi
     /**
      * @see https://core.telegram.org/bots/api#making-requests
      *
-     * @psalm-template TValue
+     * @template TValue
      *
-     * @psalm-param MethodInterface<TValue> $method
+     * @param MethodInterface<TValue> $method
      *
-     * @psalm-return TValue|FailResult
+     * @return TValue|FailResult
      */
     public function call(MethodInterface $method): mixed
     {
@@ -429,9 +429,9 @@ final class TelegramBotApi
     }
 
     /**
-     * @see https://core.telegram.org/bots/api#sendmessage
+     * @param MessageEntity[]|null $entities
      *
-     * Overridden to route through dispatcher.
+     * @see https://core.telegram.org/bots/api#sendmessage
      */
     public function sendMessage(
         int|string $chatId,
@@ -474,7 +474,6 @@ final class TelegramBotApi
     /**
      * @see https://core.telegram.org/bots/api#answercallbackquery
      *
-     * Overridden to route through dispatcher.
      */
     public function answerCallbackQuery(
         string $callbackQueryId,
@@ -491,7 +490,7 @@ final class TelegramBotApi
     /**
      * @see https://core.telegram.org/bots/api#answerinlinequery
      *
-     * Overridden to route through dispatcher.
+     * @param InlineQueryResult[] $results
      */
     public function answerInlineQuery(
         string $inlineQueryId,
@@ -509,7 +508,7 @@ final class TelegramBotApi
     /**
      * @see https://core.telegram.org/bots/api#editmessagetext
      *
-     * Overridden to route through dispatcher.
+     * @param MessageEntity[]|null $entities
      */
     public function editMessageText(
         string $text,
@@ -537,37 +536,14 @@ final class TelegramBotApi
         );
     }
 
+
     /**
      * @see https://core.telegram.org/bots/api#deletemessage
      *
-     * Overridden to route through dispatcher.
      */
     public function deleteMessage(int|string $chatId, int $messageId): FailResult|true
     {
         return $this->call(new DeleteMessage($chatId, $messageId));
-    }
-
-    /**
-     * Delegate all other convenience methods to original client.
-     * Note: These will bypass dispatcher. For dispatcher support, use call() directly.
-     *
-     * @see self::call() for dispatcher-enabled method calls
-     */
-    public function __call(string $method, array $arguments): mixed
-    {
-        if (method_exists($this->originalClient, $method)) {
-            $result = $this->originalClient->$method(...$arguments);
-
-            // Even if the method bypasses dispatcher (by design), do not silently ignore Telegram failures.
-            if ($result instanceof FailResult && ! in_array($method, self::SERVICE_METHODS, true)) {
-                $this->reportOutgoingFailResult($result);
-                throw TelegramRequestError::fromFailResult($result);
-            }
-
-            return $result;
-        }
-
-        throw new \BadMethodCallException("Method '{$method}' does not exist on ".self::class);
     }
 
     /**
@@ -702,7 +678,7 @@ final class TelegramBotApi
     /**
      * @see https://core.telegram.org/bots/api#copymessage
      *
-     * @param  MessageEntity[]|null  $captionEntities
+     * @param MessageEntity[]|null $captionEntities
      */
     public function copyMessage(
         int|string $chatId,
@@ -720,6 +696,7 @@ final class TelegramBotApi
         ?bool $allowPaidBroadcast = null,
         ?int $videoStartTimestamp = null,
         ?int $directMessagesTopicId = null,
+        ?string $messageEffectId = null,
         ?SuggestedPostParameters $suggestedPostParameters = null,
     ): FailResult|MessageId {
         return $this->call(
@@ -739,6 +716,7 @@ final class TelegramBotApi
                 $allowPaidBroadcast,
                 $videoStartTimestamp,
                 $directMessagesTopicId,
+                $messageEffectId,
                 $suggestedPostParameters,
             ),
         );
@@ -1241,6 +1219,7 @@ final class TelegramBotApi
         ?bool $protectContent = null,
         ?int $videoStartTimestamp = null,
         ?int $directMessagesTopicId = null,
+        ?string $messageEffectId = null,
         ?SuggestedPostParameters $suggestedPostParameters = null,
     ): FailResult|Message {
         return $this->call(
@@ -1253,6 +1232,7 @@ final class TelegramBotApi
                 $protectContent,
                 $videoStartTimestamp,
                 $directMessagesTopicId,
+                $messageEffectId,
                 $suggestedPostParameters,
             ),
         );
@@ -1320,8 +1300,10 @@ final class TelegramBotApi
         ?bool $excludeUnsaved = null,
         ?bool $excludeSaved = null,
         ?bool $excludeUnlimited = null,
-        ?bool $excludeLimited = null,
+        ?bool $excludeLimitedUpgradable = null,
+        ?bool $excludeLimitedNonUpgradable = null,
         ?bool $excludeUnique = null,
+        ?bool $excludeFromBlockchain = null,
         ?bool $sortByPrice = null,
         ?string $offset = null,
         ?int $limit = null,
@@ -1332,8 +1314,10 @@ final class TelegramBotApi
                 $excludeUnsaved,
                 $excludeSaved,
                 $excludeUnlimited,
-                $excludeLimited,
+                $excludeLimitedUpgradable,
+                $excludeLimitedNonUpgradable,
                 $excludeUnique,
+                $excludeFromBlockchain,
                 $sortByPrice,
                 $offset,
                 $limit,
@@ -1456,6 +1440,7 @@ final class TelegramBotApi
 
     /**
      * @see https://core.telegram.org/bots/api#getmycommands
+     * @return array<BotCommand>
      */
     public function getMyCommands(?BotCommandScope $scope = null, ?string $languageCode = null): FailResult|array
     {
@@ -3055,6 +3040,7 @@ final class TelegramBotApi
 
     /**
      * @see https://core.telegram.org/bots/api#setwebhook
+     * @param string[] $allowUpdates
      */
     public function setWebhook(
         string $url,

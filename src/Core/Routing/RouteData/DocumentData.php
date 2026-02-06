@@ -60,7 +60,7 @@ final readonly class DocumentData extends AbstractRouteData
             return new DocumentData($update, $update->message->document, $route->botId);
         }
 
-        if (is_string($route->pattern) && $route->pattern !== $update->message->caption) {
+        if ($route->pattern !== $update->message->caption) {
             return null;
         }
 

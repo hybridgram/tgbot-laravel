@@ -37,7 +37,7 @@ final readonly class QuoteData extends AbstractRouteData
             return new QuoteData($update, $update->message->quote, $route->botId);
         }
 
-        if (is_string($route->pattern) && Str::is($route->pattern, $update->message->quote->text)) {
+        if (Str::is($route->pattern, $update->message->quote->text)) {
             return new QuoteData($update, $update->message->quote, $route->botId);
         }
 

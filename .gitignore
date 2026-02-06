@@ -6,5 +6,7 @@ vendor
 starlight-docs/
 go-proxy/
 
+.phpunit.result.cache
+
 bin/go-proxy
 bin/.go-proxy-version

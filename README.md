@@ -1,165 +1,67 @@
-### Hybrybgram - пакет для быстрой разработки теогам ботов с возможностью перенсти обработку запросов от телеграм на go+queue сервис
+# HybridGram
 
+Laravel toolkit for fast Telegram bots creation with Go-powered webhook updating.
 
-publish assets
+## Quick start
+
 ```bash
+composer require hybridgram/tgbot-laravel
 php artisan vendor:publish --provider="HybridGram\Providers\TelegramServiceProvider"
 ```
 
-- **Polling режим (dev hot-reload)**
+Set `BOT_TOKEN` (and optional `BOT_ID`, `BOT_NAME`) in `.env`. Routing defaults to `routes/telegram.php`.
 
-Если вы используете polling, можно включить авто‑перезапуск при изменении кода (удобно в дебаге — не нужно вручную перезапускать команду).
+## Minimal working example 
+
+`routes/telegram.php`
+
+```php
+<?php
+
+use HybridGram\Facades\TelegramRouter;
+use HybridGram\Core\Routing\RouteData\TextMessageData;
+use HybridGram\Core\Routing\RouteData\PollData;
+use HybridGram\Telegram\Poll\PollType;
+use HybridGram\Telegram\TelegramBotApi;
+
+TelegramRouter::group(['for_bot' => 'main'], function (\HybridGram\Core\Routing\TelegramRouteBuilder $builder) {
+    $builder->onTextMessage(function (TextMessageData $message) {
+        $api = app(TelegramBotApi::class);
+        $api->sendMessage($message->getChatId(), "Echo: {$message->text}");
+    });
+    // you can use any of route
+//   $builder->onPoll(function (PollData $poll) {
+//        $api = app(TelegramBotApi::class);
+//        $api->sendMessage(
+//            $poll->getChatId(),
+//            "Poll received ({$poll->poll->type}) with " . count($poll->poll->options) . " options"
+//        );
+//    }, pollType: PollType::REGULAR);
+});
+```
+
+Run polling in dev:
 
 ```bash
-# обычный polling
-php artisan hybridgram:polling
-
-# polling c hot-reload (dev only)
 php artisan hybridgram:polling --hot-reload
-
-# выбор бота + настройка watch путей
-php artisan hybridgram:polling main --hot-reload --watch=app,routes,config,src --watch-interval=1
 ```
 
-- [x] Кеширование и очистка роутов через php artisan optimize 
-- [x] Для контроллера реализовать принуждение к работе через json ответы
-- [ ] Добавить сохранение в базу при полинге
-- [ ] Публикация миграций
-- [x] Реализовать базовую работу через вебхук
-- [x] Удобный интерфейс для отправки асинхронных сообщений с поддержкой очередей
-- [x] Система отслеживания количества запросов в телеграм в минуту через кеш с приоритизацией
-- [ ] Проверить работу мидлварей в клиентском коде и создание своих
-- [ ] Протестировать асинхронную отправку в телеграм
-- [x] Протестировать асинхронное получение данных от телеграма
-- [ ] Написать тесты
-- [ ] Протестировать LoggingTelegramRouteMiddleware::class
-- [ ] Метод автоматически отвечающий телеграму $this->botApi->answerCallbackQuery($data->query->id);
-- [ ] Вебморда которая будет эмулитровать телеграм для тетсировая и сразу тест кейсы можно будет писать еще
-- [x] Удобный инстрмент (скорее всего команда по настроке бота, или в сервис провайдере описание). Установка имени команд и описаний программно на разных языках.
-- [x] Миддлварь для устаовки языка на основе пользовательской локали или модели зера по заданому в конфиге полю
-- [x] Мидлварь для авторизации юзера по указанной в конфиге модели или по гарду
-- [ ] Доработаь мидлварь с логирование
-- [ ] рисовалку стейтов и транзишенов на основе роута
-- [ ] событие вызывать что стейт переключисля чтобы в клиентском коде можно было завязаться и делать какие-то действия нарпимер удалять клавиатуру
-- [ ] \HybridGram\Http\Middlewares\SetStateTelegramRouteMiddleware должен поддерживать еще постустановку стейта
-- [ ] в CommandData надо проверить как с base64url будет работать
-- [ ] CI\CD и авторелизы по тегам
+## Go module (go-proxy) and async updates for production
 
-## Outgoing Message Sending
-
-Пакет поддерживает производительную отправку сообщений с автоматическим управлением rate limiting и приоритизацией.
-
-### Настройка
-
-В файле конфигурации `config/hybridgram.php`:
-
-```php
-'sending' => [
-    // Включить отправку через очереди
-    'queue_enabled' => env('TELEGRAM_QUEUE_ENABLED', false),
-    
-    // Лимит запросов в минуту на бота (по умолчанию 1800 ≈ 30/сек)
-    'rate_limit_per_minute' => env('TELEGRAM_RATE_LIMIT_PER_MINUTE', 1800),
-    
-    // Резерв слотов для HIGH приоритета (ответы на входящие апдейты)
-    'reserve_high_per_minute' => env('TELEGRAM_RESERVE_HIGH_PER_MINUTE', 300),
-    
-    // Максимальное время ожидания в sync режиме (мс)
-    // Note: rate limiting is applied only in queue mode. This option is used by the worker job sender.
-    'sync_max_wait_ms' => env('TELEGRAM_SYNC_MAX_WAIT_MS', 2000),
-    
-    // Имена очередей для разных приоритетов
-    'queues' => [
-        'high' => env('TELEGRAM_QUEUE_HIGH', 'telegram-high'),
-        'low' => env('TELEGRAM_QUEUE_LOW', 'telegram-low'),
-    ],
-],
-```
-
-### Режимы работы
-
-#### Sync режим (queue_enabled = false)
-
-Все запросы отправляются синхронно без rate limiting.
-
-#### Queue режим (queue_enabled = true)
-
-Запросы ставятся в очереди Laravel с приоритетами:
-- HIGH — ответы на входящие апдейты (обрабатываются первыми)
-- LOW — рассылки (заполняют свободные слоты)
-
-**Запуск воркеров:**
+The bundled `./vendor/bin/tgook` script downloads the `go-proxy` binary (from `hybridgram/go-proxy`) and runs it with your `.env` to stream updates via a high-performance Go worker. Use it when you need long-lived, asynchronous update handling without blocking PHP:
 
 ```bash
-# Обработка всех очередей
-php artisan queue:work --queue=telegram-high,telegram-low
-
-# Или отдельно по приоритетам
-php artisan queue:work --queue=telegram-high
-php artisan queue:work --queue=telegram-low
+# install & run go-proxy with your .env
+php ./vendor/bin/tgook
 ```
 
-### Использование
+## Key features
 
-#### В route handlers
+- Typed router covering Telegram updates (`onMessage`, `onPoll`, callbacks, media, etc.).
+- Hot-reload polling for fast local development.
+- Queue-aware outbound sending with rate limiting and HIGH/LOW priorities.
+- Artisan helpers: set/delete webhook, list routes, configure bot settings.
 
-```php
-use HybridGram\Telegram\TelegramBotApi;
-use HybridGram\Telegram\Priority;
+## Docs
 
-TelegramRouter::onCommand('/start', function(CommandData $data) {
-    $telegram = app(TelegramBotApi::class);
-    
-    // Автоматически HIGH приоритет для ответов на входящие
-    $telegram->sendMessage($data->chatId, 'Hello!');
-});
-
-// Или с явным указанием приоритета
-TelegramRouter::onMessage(function(MessageData $data) {
-    $telegram = app(TelegramBotApi::class);
-    
-    // Рассылка с LOW приоритетом
-    $telegram->withPriority(Priority::LOW)
-        ->sendMessage($data->chatId, 'Newsletter message');
-});
-```
-
-#### Прямое использование
-
-```php
-use HybridGram\Telegram\TelegramBotApi;
-use HybridGram\Telegram\Priority;
-
-$telegram = app(TelegramBotApi::class);
-
-// Обычная отправка (приоритет из контекста или DEFAULT)
-$telegram->sendMessage($chatId, 'Message');
-
-// Явный приоритет
-$telegram->withPriority(Priority::LOW)->sendMessage($chatId, 'Low priority');
-
-// Использование call() напрямую (всегда через dispatcher)
-use Phptg\BotApi\Method\SendMessage;
-$telegram->call(new SendMessage($chatId, 'Text'));
-```
-
-### Приоритеты
-
-- **HIGH**: Приоритет по умолчанию (включая ответы на входящие апдейты)
-- **LOW**: Рассылки и фоновые задачи
-
-Низкоприоритетные запросы не могут использовать зарезервированные слоты (`reserve_high_per_minute`), гарантируя что ответы на входящие всегда обрабатываются.
-
-### Rate Limiting
-
-- Лимит считается **per bot** (отдельно для каждого бота)
-- Используется скользящее окно через кеш (60 секунд)
-- В **queue** режиме лимит применяется на воркерах: job будет `release()`-иться обратно в очередь до момента, когда появится слот. Воркеры не блокируются `sleep()`-ом.
-
-### Важные замечания
-
-1. **InputFile с resource**: Методы с `InputFile(resource)` не поддерживаются в queue режиме. Используйте sync режим или конвертируйте файл в путь.
-
-2. **Служебные методы**: Методы типа `getUpdates`, `setWebhook`, `getMe` всегда выполняются синхронно без rate limiting (они не проходят через dispatcher).
-
-3. **Приоритет по умолчанию**: В route handlers автоматически используется HIGH приоритет. Для рассылок явно указывайте LOW.
+- Supported update handlers: `telegram-update-types.md`

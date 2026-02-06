@@ -14,6 +14,9 @@ use Phptg\BotApi\MethodInterface;
  */
 final class DirectOutgoingDispatcher implements OutgoingDispatcherInterface
 {
+    /**
+     * @param MethodInterface<mixed> $method
+     */
     public function dispatch(string $botId, MethodInterface $method, Priority $priority): mixed
     {
         $client = new \Phptg\BotApi\TelegramBotApi($this->getTokenForBot($botId));

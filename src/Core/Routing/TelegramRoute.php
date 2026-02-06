@@ -66,12 +66,18 @@ final class TelegramRoute
     public function __construct(
         public RouteType $type = RouteType::ANY,
         public string $botId = '*',
+        /** @param callable|string|string[] $action */
         public string|array|\Closure|null $action = null,
         public \Closure|string|null $pattern = null,
+        /** @var array<TelegramRouteMiddlewareInterface> */
         public array $middlewares = [],
+        /** @param string|string[]|null $fromChatState */
         public string|array|null $fromChatState = null,
+        /** @param string|string[]|null $fromUserState */
         public string|array|null $fromUserState = null,
+        /** @param string|string[]|null $exceptChatState */
         public string|array|null $exceptChatState = null,
+        /** @param string|string[]|null $exceptUserState */
         public string|array|null $exceptUserState = null,
         public ?string $toState = null,
         /** @var ChatType[]|null $chatTypes null означает все типы чатов, по умолчанию [ChatType::PRIVATE] */

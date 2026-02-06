@@ -184,6 +184,7 @@ final class TelegramRouter
 
     /**
      * Convert a TelegramRoute to serializable format
+     * @return array<string, string|int|float|bool>
      */
     private function convertRouteToSerializable(TelegramRoute $route): array
     {
@@ -279,6 +280,9 @@ final class TelegramRouter
         );
     }
 
+    /**
+     * @param callable|string|string[] $action
+     */
     public function onMessage(callable|string|array $action, string $botId = '*', string|callable|null $pattern = null): void
     {
         new TelegramRouteBuilder()
@@ -286,6 +290,9 @@ final class TelegramRouter
             ->onTextMessage($action, $pattern);
     }
 
+    /**
+     * @param callable|string|string[] $action
+     */
     public function onBusinessMessageText(callable|string|array $action, string $botId = '*', string|callable|null $pattern = null): void
     {
         new TelegramRouteBuilder()
@@ -293,6 +300,9 @@ final class TelegramRouter
             ->onBusinessMessageText($action, $pattern);
     }
 
+    /**
+     * @param callable|string|string[] $action
+     */
     public function onCommand(
         callable|string|array $action,
         string $botId = '*',
@@ -306,6 +316,8 @@ final class TelegramRouter
 
     /**
      * @param  array<MimeType|string>  $documentOptions
+     * @param callable|string|string[] $action
+     * /
      */
     public function onDocument(callable|string|array $action, string $botId = '*', string|callable|null $pattern = null, ?array $documentOptions = null): void
     {
@@ -314,6 +326,9 @@ final class TelegramRouter
             ->onDocument($action, $pattern, $documentOptions);
     }
 
+    /**
+     * @param callable|string|string[] $action
+     */
     public function onPoll(callable|string|array $action, string $botId = '*', ?callable $pattern = null, ?bool $isAnonymous = null, ?PollType $pollType = null): void
     {
         new TelegramRouteBuilder()
@@ -321,6 +336,9 @@ final class TelegramRouter
             ->onPoll($action, new PollOptions($isAnonymous, $pollType));
     }
 
+    /**
+     * @param callable|string|string[] $action
+     */
     public function onPollClosed(callable|string|array $action, string $botId = '*', ?callable $pattern = null, ?bool $isAnonymous = null, ?PollType $pollType = null): void
     {
         new TelegramRouteBuilder()
@@ -328,6 +346,9 @@ final class TelegramRouter
             ->onPollClosed($action, new PollOptions($isAnonymous, $pollType));
     }
 
+    /**
+     * @param callable|string|string[] $action
+     */
     public function onPollAnswered(callable|string|array $action, string $botId = '*', ?callable $pattern = null, ?bool $isAnonymous = null, ?PollType $pollType = null): void
     {
         new TelegramRouteBuilder()
@@ -335,6 +356,9 @@ final class TelegramRouter
             ->onPollAnswered($action, new PollOptions($isAnonymous, $pollType));
     }
 
+    /**
+     * @param callable|string|string[] $action
+     */
     public function onPhoto(callable|string|array $action, string $botId = '*', ?callable $pattern = null): void
     {
         new TelegramRouteBuilder()
@@ -342,6 +366,9 @@ final class TelegramRouter
             ->onPhoto($action, $pattern);
     }
 
+    /**
+     * @param callable|string|string[] $action
+     */
     public function onPhotoMediaGroup(callable|string|array $action, string $botId = '*', string|callable|null $pattern = null): void
     {
         new TelegramRouteBuilder()
@@ -349,6 +376,9 @@ final class TelegramRouter
             ->onPhotoMediaGroup($action, $pattern);
     }
 
+    /**
+     * @param callable|string|string[] $action
+     */
     public function onVenue(callable|string|array $action, string $botId = '*'): void
     {
         new TelegramRouteBuilder()
@@ -356,6 +386,9 @@ final class TelegramRouter
             ->onVenue($action);
     }
 
+    /**
+     * @param callable|string|string[] $action
+     */
     public function onLocation(callable|string|array $action, string $botId = '*'): void
     {
         new TelegramRouteBuilder()
@@ -363,6 +396,9 @@ final class TelegramRouter
             ->onLocation($action);
     }
 
+    /**
+     * @param callable|string|string[] $action
+     */
     public function onAnimation(callable|string|array $action, string $botId = '*', ?callable $pattern = null): void
     {
         new TelegramRouteBuilder()
@@ -370,6 +406,9 @@ final class TelegramRouter
             ->onAnimation($action, $pattern);
     }
 
+    /**
+     * @param callable|string|string[] $action
+     */
     public function onAudio(callable|string|array $action, string $botId = '*', ?callable $pattern = null): void
     {
         new TelegramRouteBuilder()
@@ -377,6 +416,9 @@ final class TelegramRouter
             ->onAudio($action, $pattern);
     }
 
+    /**
+     * @param callable|string|string[] $action
+     */
     public function onSticker(callable|string|array $action, string $botId = '*', ?callable $pattern = null): void
     {
         new TelegramRouteBuilder()
@@ -384,6 +426,9 @@ final class TelegramRouter
             ->onSticker($action, $pattern);
     }
 
+    /**
+     * @param callable|string|string[] $action
+     */
     public function onVideoNote(callable|string|array $action, string $botId = '*', ?callable $pattern = null): void
     {
         new TelegramRouteBuilder()
@@ -391,6 +436,9 @@ final class TelegramRouter
             ->onVideoNote($action, $pattern);
     }
 
+    /**
+     * @param callable|string|string[] $action
+     */
     public function onVoice(callable|string|array $action, string $botId = '*', ?callable $pattern = null): void
     {
         new TelegramRouteBuilder()
@@ -398,6 +446,9 @@ final class TelegramRouter
             ->onVoice($action, $pattern);
     }
 
+    /**
+     * @param callable|string|string[] $action
+     */
     public function onStory(callable|string|array $action, string $botId = '*', ?callable $pattern = null): void
     {
         new TelegramRouteBuilder()
@@ -405,6 +456,9 @@ final class TelegramRouter
             ->onStory($action, $pattern);
     }
 
+    /**
+     * @param callable|string|string[] $action
+     */
     public function onPaidMedia(callable|string|array $action, string $botId = '*', ?callable $pattern = null): void
     {
         new TelegramRouteBuilder()
@@ -412,6 +466,9 @@ final class TelegramRouter
             ->onPaidMedia($action, $pattern);
     }
 
+    /**
+     * @param callable|string|string[] $action
+     */
     public function onContact(callable|string|array $action, string $botId = '*'): void
     {
         new TelegramRouteBuilder()
@@ -419,6 +476,9 @@ final class TelegramRouter
             ->onContact($action);
     }
 
+    /**
+     * @param callable|string|string[] $action
+     */
     public function onChecklist(callable|string|array $action, string $botId = '*'): void
     {
         new TelegramRouteBuilder()
@@ -426,6 +486,9 @@ final class TelegramRouter
             ->onChecklist($action);
     }
 
+    /**
+     * @param callable|string|string[] $action
+     */
     public function onDice(callable|string|array $action, string $botId = '*'): void
     {
         new TelegramRouteBuilder()
@@ -433,6 +496,9 @@ final class TelegramRouter
             ->onDice($action);
     }
 
+    /**
+     * @param callable|string|string[] $action
+     */
     public function onGame(callable|string|array $action, string $botId = '*'): void
     {
         new TelegramRouteBuilder()
@@ -440,6 +506,9 @@ final class TelegramRouter
             ->onGame($action);
     }
 
+    /**
+     * @param callable|string|string[] $action
+     */
     public function onInvoice(callable|string|array $action, string $botId = '*'): void
     {
         new TelegramRouteBuilder()
@@ -447,6 +516,9 @@ final class TelegramRouter
             ->onInvoice($action);
     }
 
+    /**
+     * @param callable|string|string[] $action
+     */
     public function onSuccessfulPayment(callable|string|array $action, string $botId = '*'): void
     {
         new TelegramRouteBuilder()
@@ -454,6 +526,9 @@ final class TelegramRouter
             ->onSuccessfulPayment($action);
     }
 
+    /**
+     * @param callable|string|string[] $action
+     */
     public function onPassportData(callable|string|array $action, string $botId = '*'): void
     {
         new TelegramRouteBuilder()
@@ -461,6 +536,9 @@ final class TelegramRouter
             ->onPassportData($action);
     }
 
+    /**
+     * @param callable|string|string[] $action
+     */
     public function onBusinessConnection(callable|string|array $action, string $botId = '*'): void
     {
         new TelegramRouteBuilder()
@@ -468,6 +546,9 @@ final class TelegramRouter
             ->onBusinessConnection($action);
     }
 
+    /**
+     * @param callable|string|string[] $action
+     */
     public function onReply(callable|string|array $action, string $botId = '*', callable|string|null $pattern = null): void
     {
         new TelegramRouteBuilder()
@@ -475,6 +556,9 @@ final class TelegramRouter
             ->onReply($action, $pattern);
     }
 
+    /**
+     * @param callable|string|string[] $action
+     */
     public function onExternalReply(callable|string|array $action, string $botId = '*', callable|string|null $pattern = null): void
     {
         new TelegramRouteBuilder()
@@ -482,6 +566,9 @@ final class TelegramRouter
             ->onExternalReply($action, $pattern);
     }
 
+    /**
+     * @param callable|string|string[] $action
+     */
     public function onQuote(callable|string|array $action, string $botId = '*', callable|string|null $pattern = null): void
     {
         new TelegramRouteBuilder()
@@ -489,6 +576,9 @@ final class TelegramRouter
             ->onQuote($action, $pattern);
     }
 
+    /**
+     * @param callable|string|string[] $action
+     */
     public function onReplyToStory(callable|string|array $action, string $botId = '*', callable|string|null $pattern = null): void
     {
         new TelegramRouteBuilder()
@@ -496,6 +586,9 @@ final class TelegramRouter
             ->onReplyToStory($action, $pattern);
     }
 
+    /**
+     * @param callable|string|string[] $action
+     */
     public function onNewChatTitle(callable|string|array $action, string $botId = '*'): void
     {
         new TelegramRouteBuilder()
@@ -503,6 +596,9 @@ final class TelegramRouter
             ->onNewChatTitle($action);
     }
 
+    /**
+     * @param callable|string|string[] $action
+     */
     public function onNewChatPhoto(callable|string|array $action, string $botId = '*'): void
     {
         new TelegramRouteBuilder()
@@ -510,6 +606,9 @@ final class TelegramRouter
             ->onNewChatPhoto($action);
     }
 
+    /**
+     * @param callable|string|string[] $action
+     */
     public function onDeleteChatPhoto(callable|string|array $action, string $botId = '*'): void
     {
         new TelegramRouteBuilder()
@@ -517,6 +616,9 @@ final class TelegramRouter
             ->onDeleteChatPhoto($action);
     }
 
+    /**
+     * @param callable|string|string[] $action
+     */
     public function onMessageAutoDeleteTimerChanged(callable|string|array $action, string $botId = '*'): void
     {
         new TelegramRouteBuilder()
@@ -524,6 +626,9 @@ final class TelegramRouter
             ->onMessageAutoDeleteTimerChanged($action);
     }
 
+    /**
+     * @param callable|string|string[] $action
+     */
     public function onPinnedMessage(callable|string|array $action, string $botId = '*'): void
     {
         new TelegramRouteBuilder()
@@ -531,6 +636,9 @@ final class TelegramRouter
             ->onPinnedMessage($action);
     }
 
+    /**
+     * @param callable|string|string[] $action
+     */
     public function onGeneralForumTopicEvent(callable|string|array $action, string $botId = '*'): void
     {
         new TelegramRouteBuilder()
@@ -538,6 +646,9 @@ final class TelegramRouter
             ->onGeneralForumTopicEvent($action);
     }
 
+    /**
+     * @param callable|string|string[] $action
+     */
     public function onBoostAdded(callable|string|array $action, string $botId = '*'): void
     {
         new TelegramRouteBuilder()
@@ -546,6 +657,7 @@ final class TelegramRouter
     }
 
     /**
+     * @param callable|string|string[] $action
      * @param  callable|string|null  $pattern  Паттерн для action
      * @param  array<string, string|null>|array<int, QueryParamInterface>|null  $queryParams  Фильтры по query параметрам: ключ => значение для проверки значения, ключ => null для проверки наличия, или массив объектов QueryParamInterface
      */
@@ -556,6 +668,9 @@ final class TelegramRouter
             ->onCallbackQuery($action, $pattern, $queryParams);
     }
 
+    /**
+     * @param callable|string|string[] $action
+     */
     public function onAny(callable|string|array $action, string $botId = '*'): void
     {
         new TelegramRouteBuilder()
@@ -564,7 +679,8 @@ final class TelegramRouter
     }
 
     /**
-     * @param  array<ChatMemberStatus>|null  $allowedStatuses
+     * @param callable|string|string[] $action
+     * @param array<ChatMemberStatus>|null  $allowedStatuses
      */
     public function onMyChatMember(callable|string|array $action, string $botId = '*', ?bool $isBot = null, ?array $allowedStatuses = null): void
     {
@@ -574,6 +690,7 @@ final class TelegramRouter
     }
 
     /**
+     * @param callable|string|string[] $action
      * @param  array<ChatMemberStatus>|null  $allowedStatuses  Разрешенные статусы для newChatMember. null - любые статусы
      */
     public function onChatMember(callable|string|array $action, string $botId = '*', ?bool $isBot = null, ?array $allowedStatuses = null): void
@@ -583,6 +700,9 @@ final class TelegramRouter
             ->onChatMember($action, new ChatMemberOptions($isBot, $allowedStatuses));
     }
 
+    /**
+     * @param callable|string|string[] $action
+     */
     public function onFallback(callable|string|array $action, string $botId = '*'): void
     {
         new TelegramRouteBuilder()

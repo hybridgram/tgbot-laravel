@@ -20,7 +20,7 @@ final readonly class LocationData extends AbstractRouteData
 
     public static function match(Update $update, TelegramRoute $route): ?LocationData
     {
-        if (empty($update->message?->venue)) {
+        if (empty($update->message->venue)) {
             return null;
         }
 

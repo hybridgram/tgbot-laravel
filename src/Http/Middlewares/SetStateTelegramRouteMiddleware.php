@@ -13,6 +13,7 @@ use Phptg\BotApi\Type\Update\Update;
 
 final readonly class SetStateTelegramRouteMiddleware implements TelegramRouteMiddlewareInterface
 {
+    /** @param array<int|string, mixed> $data */
     public function __construct(
         private ?string $newState,
         private ?int $ttl = null,

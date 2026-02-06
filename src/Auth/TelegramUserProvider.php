@@ -88,7 +88,6 @@ final class TelegramUserProvider implements UserProvider
      */
     private function createUser($telegramId, ?Update $update = null): ?Authenticatable
     {
-        // Если есть callback для создания пользователя, используем его
         if ($this->userCreationCallback !== null && $update !== null) {
             try {
                 $user = ($this->userCreationCallback)($update, $telegramId);

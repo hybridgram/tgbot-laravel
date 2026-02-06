@@ -19,6 +19,9 @@ final class QueueOutgoingDispatcher implements OutgoingDispatcherInterface
         private readonly array $queueNames,
     ) {}
 
+    /**
+     * @param MethodInterface<mixed> $method
+     */
     public function dispatch(string $botId, MethodInterface $method, Priority $priority): void
     {
         $queueName = $this->queueNames[$priority->value] ?? $this->queueNames['high'];

@@ -9,6 +9,10 @@ use Phptg\BotApi\Type\Update\Update;
 
 final class MediaGroupGrouper
 {
+    /**
+     * @param Update[] $updates
+     * @return Update[]
+     */
     public static function groupUpdates(array $updates): array
     {
         if (empty($updates)) {
@@ -51,9 +55,7 @@ final class MediaGroupGrouper
             }
         }
 
-        $result = array_merge($result, $ungrouped);
-
-        return $result;
+        return array_merge($result, $ungrouped);
     }
 
     private static function createGroupedUpdate(array $updates): Update

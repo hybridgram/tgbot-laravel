@@ -11,27 +11,18 @@ use Phptg\BotApi\Type\ResponseParameters;
 
 final class TelegramRequestError extends \Exception
 {
-    private MethodInterface $method;
 
-    private ApiResponse $response;
 
-    private ?string $description;
-
-    private ?ResponseParameters $parameters;
 
     public function __construct(
-        MethodInterface $method,
-        ApiResponse $response,
-        ?string $description = null,
-        ?ResponseParameters $parameters = null,
-        ?int $errorCode = null,
-        ?\Throwable $previous = null
+        /** @var MethodInterface<mixed> */
+        private readonly MethodInterface     $method,
+        private readonly ApiResponse         $response,
+        private readonly ?string             $description = null,
+        private readonly ?ResponseParameters $parameters = null,
+        ?int                                 $errorCode = null,
+        ?\Throwable                          $previous = null
     ) {
-        $this->method = $method;
-        $this->response = $response;
-        $this->description = $description;
-        $this->parameters = $parameters;
-
         $message = $this->buildDetailedMessage(
             $method,
             $response,
@@ -54,6 +45,9 @@ final class TelegramRequestError extends \Exception
         );
     }
 
+    /**
+     * @param MethodInterface<mixed> $method
+     */
     private function buildDetailedMessage(
         MethodInterface $method,
         ApiResponse $response,

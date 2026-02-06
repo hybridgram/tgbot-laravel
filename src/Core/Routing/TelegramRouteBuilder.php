@@ -209,6 +209,7 @@ final class TelegramRouteBuilder
     }
 
     /**
+     * @param callable|string|string[] $action
      * @param  Closure|string|null  $pattern  Паттерн для команды
      * @param  Closure|null  $commandParamOptions  Фильтр по параметрам команды:
      *                                             Пример: function(Update $update, array $args) { return count($args) > 0; }
@@ -228,6 +229,9 @@ final class TelegramRouteBuilder
         $this->register();
     }
 
+    /**
+     * @param callable|string|string[] $action
+     */
     public function onTextMessage(callable|string|array $action, Closure|string|null $pattern = null): void
     {
         $this->route->type = RouteType::TEXT_MESSAGE;
@@ -237,6 +241,9 @@ final class TelegramRouteBuilder
         $this->register();
     }
 
+    /**
+     * @param callable|string|string[] $action
+     */
     public function onBusinessMessageText(callable|string|array $action, Closure|string|null $pattern = null): void
     {
         $this->route->type = RouteType::BUSINESS_MESSAGE_TEXT;
@@ -246,6 +253,9 @@ final class TelegramRouteBuilder
         $this->register();
     }
 
+    /**
+     * @param callable|string|string[] $action
+     */
     public function onPoll(callable|string|array $action, ?PollOptions $pollOptions = null): void
     {
         $this->route->type = RouteType::POLL;
@@ -255,6 +265,9 @@ final class TelegramRouteBuilder
         $this->register();
     }
 
+    /**
+     * @param callable|string|string[] $action
+     */
     public function onPollClosed(callable|string|array $action, ?PollOptions $pollOptions = null): void
     {
         $this->route->type = RouteType::POLL_CLOSED;
@@ -264,6 +277,9 @@ final class TelegramRouteBuilder
         $this->register();
     }
 
+    /**
+     * @param callable|string|string[] $action
+     */
     public function onPollAnswered(callable|string|array $action, ?PollOptions $pollOptions = null): void
     {
         $this->route->type = RouteType::POLL_ANSWER;
@@ -273,6 +289,9 @@ final class TelegramRouteBuilder
         $this->register();
     }
 
+    /**
+     * @param callable|string|string[] $action
+     */
     public function onPhoto(callable|string|array $action, string|Closure|null $pattern = null): void
     {
         $this->route->type = RouteType::PHOTO;
@@ -282,6 +301,9 @@ final class TelegramRouteBuilder
         $this->register();
     }
 
+    /**
+     * @param callable|string|string[] $action
+     */
     public function onPhotoMediaGroup(callable|string|array $action, string|Closure|null $pattern = null): void
     {
         $this->route->type = RouteType::PHOTO_MEDIA_GROUP;
@@ -292,6 +314,7 @@ final class TelegramRouteBuilder
     }
 
     /**
+     * @param callable|string|string[] $action
      * @param  array<MimeType|string>|null  $documentOptions
      */
     public function onDocument(callable|string|array $action, string|Closure|null $pattern = null, ?array $documentOptions = null): void
@@ -304,6 +327,9 @@ final class TelegramRouteBuilder
         $this->register();
     }
 
+    /**
+     * @param callable|string|string[] $action
+     */
     public function onVenue(callable|string|array $action): void
     {
         $this->route->type = RouteType::VENUE;
@@ -312,6 +338,9 @@ final class TelegramRouteBuilder
         $this->register();
     }
 
+    /**
+     * @param callable|string|string[] $action
+     */
     public function onLocation(callable|string|array $action): void
     {
         $this->route->type = RouteType::LOCATION;
@@ -320,6 +349,9 @@ final class TelegramRouteBuilder
         $this->register();
     }
 
+    /**
+     * @param callable|string|string[] $action
+     */
     public function onAnimation(callable|string|array $action, string|Closure|null $pattern = null): void
     {
         $this->route->type = RouteType::ANIMATION;
@@ -329,6 +361,9 @@ final class TelegramRouteBuilder
         $this->register();
     }
 
+    /**
+     * @param callable|string|string[] $action
+     */
     public function onAudio(callable|string|array $action, string|Closure|null $pattern = null): void
     {
         $this->route->type = RouteType::AUDIO;
@@ -338,6 +373,9 @@ final class TelegramRouteBuilder
         $this->register();
     }
 
+    /**
+     * @param callable|string|string[] $action
+     */
     public function onSticker(callable|string|array $action, string|Closure|null $pattern = null): void
     {
         $this->route->type = RouteType::STICKER;
@@ -347,6 +385,9 @@ final class TelegramRouteBuilder
         $this->register();
     }
 
+    /**
+     * @param callable|string|string[] $action
+     */
     public function onVideoNote(callable|string|array $action, string|Closure|null $pattern = null): void
     {
         $this->route->type = RouteType::VIDEO_NOTE;
@@ -356,6 +397,9 @@ final class TelegramRouteBuilder
         $this->register();
     }
 
+    /**
+     * @param callable|string|string[] $action
+     */
     public function onVoice(callable|string|array $action, string|Closure|null $pattern = null): void
     {
         $this->route->type = RouteType::VOICE;
@@ -365,6 +409,9 @@ final class TelegramRouteBuilder
         $this->register();
     }
 
+    /**
+     * @param callable|string|string[] $action
+     */
     public function onStory(callable|string|array $action, string|Closure|null $pattern = null): void
     {
         $this->route->type = RouteType::STORY;
@@ -374,6 +421,9 @@ final class TelegramRouteBuilder
         $this->register();
     }
 
+    /**
+     * @param callable|string|string[] $action
+     */
     public function onPaidMedia(callable|string|array $action, string|Closure|null $pattern = null): void
     {
         $this->route->type = RouteType::PAID_MEDIA;
@@ -383,6 +433,9 @@ final class TelegramRouteBuilder
         $this->register();
     }
 
+    /**
+     * @param callable|string|string[] $action
+     */
     public function onContact(callable|string|array $action): void
     {
         $this->route->type = RouteType::CONTACT;
@@ -391,6 +444,9 @@ final class TelegramRouteBuilder
         $this->register();
     }
 
+    /**
+     * @param callable|string|string[] $action
+     */
     public function onChecklist(callable|string|array $action): void
     {
         $this->route->type = RouteType::CHECKLIST;
@@ -399,6 +455,9 @@ final class TelegramRouteBuilder
         $this->register();
     }
 
+    /**
+     * @param callable|string|string[] $action
+     */
     public function onDice(callable|string|array $action): void
     {
         $this->route->type = RouteType::DICE;
@@ -407,6 +466,9 @@ final class TelegramRouteBuilder
         $this->register();
     }
 
+    /**
+     * @param callable|string|string[] $action
+     */
     public function onGame(callable|string|array $action): void
     {
         $this->route->type = RouteType::GAME;
@@ -415,6 +477,9 @@ final class TelegramRouteBuilder
         $this->register();
     }
 
+    /**
+     * @param callable|string|string[] $action
+     */
     public function onInvoice(callable|string|array $action): void
     {
         $this->route->type = RouteType::INVOICE;
@@ -423,6 +488,9 @@ final class TelegramRouteBuilder
         $this->register();
     }
 
+    /**
+     * @param callable|string|string[] $action
+     */
     public function onSuccessfulPayment(callable|string|array $action): void
     {
         $this->route->type = RouteType::SUCCESSFUL_PAYMENT;
@@ -431,6 +499,9 @@ final class TelegramRouteBuilder
         $this->register();
     }
 
+    /**
+     * @param callable|string|string[] $action
+     */
     public function onPassportData(callable|string|array $action): void
     {
         $this->route->type = RouteType::PASSPORT_DATA;
@@ -439,6 +510,9 @@ final class TelegramRouteBuilder
         $this->register();
     }
 
+    /**
+     * @param callable|string|string[] $action
+     */
     public function onBusinessConnection(callable|string|array $action): void
     {
         $this->route->type = RouteType::BUSINESS_CONNECTION;
@@ -447,6 +521,9 @@ final class TelegramRouteBuilder
         $this->register();
     }
 
+    /**
+     * @param callable|string|string[] $action
+     */
     public function onReply(callable|string|array $action, Closure|string|null $pattern = null): void
     {
         $this->route->type = RouteType::REPLY_TO_MESSAGE;
@@ -456,6 +533,9 @@ final class TelegramRouteBuilder
         $this->register();
     }
 
+    /**
+     * @param callable|string|string[] $action
+     */
     public function onExternalReply(callable|string|array $action, Closure|string|null $pattern = null): void
     {
         $this->route->type = RouteType::EXTERNAL_REPLY_MESSAGE;
@@ -465,6 +545,9 @@ final class TelegramRouteBuilder
         $this->register();
     }
 
+    /**
+     * @param callable|string|string[] $action
+     */
     public function onQuote(callable|string|array $action, Closure|string|null $pattern = null): void
     {
         $this->route->type = RouteType::QUOTED_MESSAGE;
@@ -474,6 +557,9 @@ final class TelegramRouteBuilder
         $this->register();
     }
 
+    /**
+     * @param callable|string|string[] $action
+     */
     public function onReplyToStory(callable|string|array $action, Closure|string|null $pattern = null): void
     {
         $this->route->type = RouteType::REPLY_TO_STORY;
@@ -484,6 +570,7 @@ final class TelegramRouteBuilder
     }
 
     /**
+     * @param callable|string|string[] $action
      * @param  Closure|string|null  $pattern  Паттерн для action
      * @param  array<string, string|null>|array<int, QueryParamInterface>|null  $queryParams  Фильтры по query параметрам:
      *                                                                                        Пример: queryParams: [new Exist('lang'), new Value('some', '12')]
@@ -498,6 +585,9 @@ final class TelegramRouteBuilder
         $this->register();
     }
 
+    /**
+     * @param callable|string|string[] $action
+     */
     public function onNewChatTitle(callable|string|array $action): void
     {
         $this->route->type = RouteType::NEW_CHAT_TITLE;
@@ -509,6 +599,9 @@ final class TelegramRouteBuilder
         $this->register();
     }
 
+    /**
+     * @param callable|string|string[] $action
+     */
     public function onNewChatPhoto(callable|string|array $action): void
     {
         $this->route->type = RouteType::NEW_CHAT_PHOTO;
@@ -520,6 +613,9 @@ final class TelegramRouteBuilder
         $this->register();
     }
 
+    /**
+     * @param callable|string|string[] $action
+     */
     public function onDeleteChatPhoto(callable|string|array $action): void
     {
         $this->route->type = RouteType::DELETE_CHAT_PHOTO;
@@ -531,6 +627,9 @@ final class TelegramRouteBuilder
         $this->register();
     }
 
+    /**
+     * @param callable|string|string[] $action
+     */
     public function onMessageAutoDeleteTimerChanged(callable|string|array $action): void
     {
         $this->route->type = RouteType::AUTO_DELETE_TIMER_CHANGED;
@@ -542,6 +641,9 @@ final class TelegramRouteBuilder
         $this->register();
     }
 
+    /**
+     * @param callable|string|string[] $action
+     */
     public function onPinnedMessage(callable|string|array $action): void
     {
         $this->route->type = RouteType::PINNED_MESSAGE;
@@ -553,6 +655,9 @@ final class TelegramRouteBuilder
         $this->register();
     }
 
+    /**
+     * @param callable|string|string[] $action
+     */
     public function onForumTopicCreated(callable|string|array $action): void
     {
         $this->route->type = RouteType::FORUM_TOPIC_CREATED;
@@ -564,6 +669,9 @@ final class TelegramRouteBuilder
         $this->register();
     }
 
+    /**
+     * @param callable|string|string[] $action
+     */
     public function onForumTopicEdited(callable|string|array $action): void
     {
         $this->route->type = RouteType::FORUM_TOPIC_EDITED;
@@ -575,6 +683,9 @@ final class TelegramRouteBuilder
         $this->register();
     }
 
+    /**
+     * @param callable|string|string[] $action
+     */
     public function onForumTopicClosed(callable|string|array $action): void
     {
         $this->route->type = RouteType::FORUM_TOPIC_CLOSED;
@@ -586,6 +697,9 @@ final class TelegramRouteBuilder
         $this->register();
     }
 
+    /**
+     * @param callable|string|string[] $action
+     */
     public function onForumTopicReopened(callable|string|array $action): void
     {
         $this->route->type = RouteType::FORUM_TOPIC_REOPENED;
@@ -597,6 +711,9 @@ final class TelegramRouteBuilder
         $this->register();
     }
 
+    /**
+     * @param callable|string|string[] $action
+     */
     public function onGeneralForumTopicEvent(callable|string|array $action): void
     {
         $this->route->type = RouteType::GENERAL_FORUM_TOPIC_EVENT;
@@ -608,6 +725,9 @@ final class TelegramRouteBuilder
         $this->register();
     }
 
+    /**
+     * @param callable|string|string[] $action
+     */
     public function onBoostAdded(callable|string|array $action): void
     {
         $this->route->type = RouteType::BOOST_ADDED;
@@ -619,6 +739,9 @@ final class TelegramRouteBuilder
         $this->register();
     }
 
+    /**
+     * @param callable|string|string[] $action
+     */
     public function onAny(callable|string|array $action): void
     {
         $this->route->type = RouteType::ANY;
@@ -627,6 +750,9 @@ final class TelegramRouteBuilder
         $this->register();
     }
 
+    /**
+     * @param callable|string|string[] $action
+     */
     public function onInlineQuery(callable|string|array $action, Closure|string|null $pattern = null): void
     {
         $this->route->type = RouteType::INLINE_QUERY;
@@ -636,6 +762,9 @@ final class TelegramRouteBuilder
         $this->register();
     }
 
+    /**
+     * @param callable|string|string[] $action
+     */
     public function onMyChatMember(callable|string|array $action, ?ChatMemberOptions $chatMemberOptions = null): void
     {
         $this->route->type = RouteType::MY_CHAT_MEMBER;
@@ -649,6 +778,9 @@ final class TelegramRouteBuilder
         $this->register();
     }
 
+    /**
+     * @param callable|string|string[] $action
+     */
     public function onChatMember(callable|string|array $action, ?ChatMemberOptions $chatMemberOptions = null): void
     {
         $this->route->type = RouteType::CHAT_MEMBER;
@@ -662,6 +794,9 @@ final class TelegramRouteBuilder
         $this->register();
     }
 
+    /**
+     * @param callable|string|string[] $action
+     */
     public function onFallback(callable|string|array $action): void
     {
         $this->route->type = RouteType::FALLBACK;
@@ -677,10 +812,8 @@ final class TelegramRouteBuilder
 
         $router->register($this->build());
 
-        // Создаем новый экземпляр маршрута для следующего использования
         $this->route = new TelegramRoute;
 
-        // Если есть callback для восстановления состояния (из группы), применяем его
         if ($this->resetCallback !== null) {
             ($this->resetCallback)($this);
         }
@@ -693,7 +826,6 @@ final class TelegramRouteBuilder
             throw new \Exception;
         }
 
-        // Клонируем маршрут, чтобы избежать проблем с переиспользованием объекта
         return clone $this->route;
     }
 }
