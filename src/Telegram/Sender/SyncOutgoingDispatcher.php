@@ -13,11 +13,11 @@ final readonly class SyncOutgoingDispatcher implements OutgoingDispatcherInterfa
 {
     public function __construct(
         private OutgoingRateLimiterInterface $rateLimiter,
-        private int                          $maxWaitMs,
+        private int $maxWaitMs,
     ) {}
 
     /**
-     * @param MethodInterface<mixed> $method
+     * @param  MethodInterface<mixed>  $method
      */
     public function dispatch(string $botId, MethodInterface $method, Priority $priority): mixed
     {

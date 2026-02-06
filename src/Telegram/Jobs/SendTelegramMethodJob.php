@@ -236,7 +236,7 @@ final class SendTelegramMethodJob implements ShouldQueue
     }
 
     /**
-     * @param MethodInterface<mixed> $method
+     * @param  MethodInterface<mixed>  $method
      */
     private function validateMethod(MethodInterface $method): void
     {

@@ -10,7 +10,7 @@ use Phptg\BotApi\Type\Update\Update;
 final class MediaGroupGrouper
 {
     /**
-     * @param Update[] $updates
+     * @param  Update[]  $updates
      * @return Update[]
      */
     public static function groupUpdates(array $updates): array
