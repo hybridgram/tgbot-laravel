@@ -13,58 +13,65 @@ use Phptg\BotApi\Type\User;
 interface StateManagerInterface
 {
     /**
-     * Получить текущий стейт для чата
+     * Get current state for chat
      */
     public function getChatState(Chat $chat): ?State;
 
     /**
-     * Получить текущий стейт для чата и пользователя
+     * Get current state for chat and user
      */
     public function getUserState(Chat $chat, User $user): ?State;
 
     /**
-     * Установить стейт для чата
+     * Set state for chat
      *
-     * @param  mixed  $data  Опциональные данные стейта
+     * @param  Chat  $chat  Chat for which to set the state
+     * @param  string  $state  State name
+     * @param  int|null  $ttl  TTL in seconds (null — default value, usually 24 hours)
+     * @param  array<string, mixed>|null  $data  Optional state data: associative array with arbitrary values (keys — strings). Stored in {@see State} and accessible via {@see State::getKey()}. Pass null if no data needed
      */
     public function setChatState(Chat $chat, string $state, ?int $ttl = null, ?array $data = null): void;
 
     /**
-     * Установить стейт для чата и пользователя
+     * Set state for chat and user
      *
-     * @param  mixed  $data  Опциональные данные стейта
+     * @param  Chat  $chat  Chat
+     * @param  User  $user  User in chat
+     * @param  string  $state  State name
+     * @param  int|null  $ttl  TTL in seconds (null — default value, usually 24 hours)
+     * @param  array<string, mixed>|null  $data  Optional state data: associative array with arbitrary values (keys — strings). Stored in {@see State} and accessible via {@see State::getKey()}. Pass null if no data needed
      */
     public function setUserState(Chat $chat, User $user, string $state, ?int $ttl = null, ?array $data = null): void;
 
     /**
-     * Очистить стейт для чата
+     * Clear state for chat
      */
     public function clearChatState(Chat $chat): void;
 
     /**
-     * Очистить стейт для чата и пользователя
+     * Clear state for chat and user
      */
     public function clearUserState(Chat $chat, User $user): void;
 
     /**
-     * Проверить, находится ли чат в указанном стейте
+     * Check if chat is in the specified state
      */
     public function isChatInState(Chat $chat, string $state): bool;
 
     /**
-     * Проверить, находится ли пользователь в чате в указанном стейте
+     * Check if user in chat is in the specified state
      */
     public function isUserInState(Chat $chat, User $user, string $state): bool;
 
     /**
-     * Проверить, находится ли чат в одном из указанных стейтов
+     * Check if chat is in one of the specified states
      *
      * @param  array<string>  $states
      */
     public function isChatInAnyState(Chat $chat, array $states): bool;
 
     /**
-     * Проверить, находится ли пользователь в чате в одном из указанных стейтов
+     * Check if user in chat is in one of the specified states
      *
      * @param  array<string>  $states
      */

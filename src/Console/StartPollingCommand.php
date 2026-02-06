@@ -249,6 +249,8 @@ final class StartPollingCommand extends Command
 
     /**
      * Returns latest mtime across watched paths, ignoring vendor/ and .git/.
+     *
+     * @param array<string> $paths
      */
     private function scanLatestMTime(array $paths): int
     {

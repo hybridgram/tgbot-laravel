@@ -14,7 +14,7 @@ final readonly class CheckStateTelegramRouteMiddleware implements TelegramRouteM
 {
     /**
      * @param  array<string>  $requiredStates
-     * @param  bool  $exceptMode  Если true, то маршрут будет работать только если состояние НЕ в списке
+     * @param  bool  $exceptMode  If true, the route will work only if state is NOT in the list
      */
     public function __construct(
         private array $requiredStates,

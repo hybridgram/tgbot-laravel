@@ -16,20 +16,20 @@ use Phptg\BotApi\Type\MenuButton;
  * ```php
  * BotSettings::create()
  *     ->description('Default bot description')
- *     ->description('Описание бота', 'ru')
+ *     ->description('Bot description', 'ru')
  *     ->description('Bot-Beschreibung', 'de')
  *     ->shortDescription('Short description')
- *     ->shortDescription('Короткое описание', 'ru')
+ *     ->shortDescription('Short description', 'ru')
  *     ->name('My Bot')
- *     ->name('Мой Бот', 'ru')
+ *     ->name('My Bot', 'ru')
  *     ->menuButton(new MenuButtonWebApp('Open App', new WebAppInfo('https://example.com')))
  *     ->commands([
  *         new BotCommand('start', 'Start the bot'),
  *         new BotCommand('help', 'Get help'),
  *     ])
  *     ->commands([
- *         new BotCommand('start', 'Запустить бота'),
- *         new BotCommand('help', 'Получить помощь'),
+ *         new BotCommand('start', 'Start the bot'),
+ *         new BotCommand('help', 'Get help'),
  *     ], null, 'ru')
  *     ->defaultAdministratorRights(new ChatAdministratorRights(...))
  *     ->defaultAdministratorRightsForChannels(new ChatAdministratorRights(...));

@@ -14,6 +14,7 @@ final readonly class CommandHelper implements \Stringable
 {
     private function __construct(
         private string $name,
+        /** @var list<string> */
         private array $args,
     ) {
         if ($this->name === '') {
@@ -24,6 +25,7 @@ final readonly class CommandHelper implements \Stringable
         }
     }
 
+    /** @param array<int|string, mixed> $args */
     public static function make(string $name, array $args = []): self
     {
         $normalizedName = mb_strtolower($name);

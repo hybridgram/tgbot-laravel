@@ -5,14 +5,14 @@ declare(strict_types=1);
 namespace HybridGram\Core\Routing\RouteOptions\QueryParams;
 
 /**
- * Проверяет значение ключа в query параметрах
- * Поддерживает проверку по строке, числу или через callable
+ * Checks value of key in query parameters
+ * Supports validation by string, number, or via callable
  */
 final readonly class Value implements QueryParamInterface
 {
     /**
-     * @param  string  $key  Ключ параметра
-     * @param  string|\Closure|int  $expectedValue  Ожидаемое значение или callable для проверки
+     * @param  string  $key  Parameter key
+     * @param  string|\Closure|int  $expectedValue  Expected value or callable for validation
      */
     public function __construct(
         private string $key,
@@ -36,12 +36,12 @@ final readonly class Value implements QueryParamInterface
 
         $actualValue = $params[$this->key];
 
-        // Если ожидаемое значение - callable, вызываем его
+        // If expected value is callable, invoke it
         if (is_callable($this->expectedValue)) {
             return (bool) call_user_func($this->expectedValue, $actualValue);
         }
 
-        // Сравниваем как строки
+        // Compare as strings
         return (string) $this->expectedValue === $actualValue;
     }
 }

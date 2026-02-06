@@ -10,12 +10,12 @@ use Phptg\BotApi\Type\PhotoSize;
 use Phptg\BotApi\Type\Update\Update;
 
 /**
- * @property array<array<PhotoSize>> $photoSizes Массив массивов PhotoSize для всех фото в медиа-группе
+ * @property array<array<PhotoSize>> $photoSizes Array of PhotoSize arrays for all photos in the media group
  */
 final readonly class PhotoMediaGroupData extends AbstractRouteData
 {
     /**
-     * @param  array<array<PhotoSize>>  $photoSizes  Массив массивов PhotoSize для всех фото в медиа-группе
+     * @param  array<array<PhotoSize>>  $photoSizes  Array of PhotoSize arrays for all photos in the media group
      */
     public function __construct(
         Update $update,

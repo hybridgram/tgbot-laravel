@@ -19,9 +19,9 @@ use Closure;
  *     BotSettingsRegistry::forBot('main', function () {
  *         return BotSettings::create()
  *             ->description('My awesome bot')
- *             ->description('Мой крутой бот', 'ru')
+ *             ->description('My awesome bot', 'ru')
  *             ->shortDescription('Best bot ever')
- *             ->shortDescription('Лучший бот', 'ru');
+ *             ->shortDescription('Best bot', 'ru');
  *     });
  * }
  * ```
