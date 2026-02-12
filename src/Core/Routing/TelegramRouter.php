@@ -175,7 +175,7 @@ final class TelegramRouter
      * Prepare routes for serialization by converting closures to SerializableClosure
      *
      * @param  array<string, array<string, list<TelegramRoute>>>  $routesData
-     * @return array<string, array<string, list<array<string, mixed>>>
+     * @return array<string, array<string, list<array<string, mixed>>>>
      */
     private function prepareRoutesForSerialization(array $routesData): array
     {
@@ -340,7 +340,6 @@ final class TelegramRouter
     /**
      * @param  array<MimeType|string>  $documentOptions
      * @param  callable|string|string[]  $action
-     *                                            /
      */
     public function onDocument(callable|string|array $action, string $botId = '*', string|callable|null $pattern = null, ?array $documentOptions = null): void
     {
