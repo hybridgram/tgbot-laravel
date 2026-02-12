@@ -12,17 +12,14 @@ use Phptg\BotApi\Type\Update\Update;
 final readonly class SetLocaleTelegramRouteMiddleware implements TelegramRouteMiddlewareInterface
 {
     /**
-     * @param array<string>|null $supportedLocales List of supported locales. If null, any locale from Telegram will be used.
-     * @param string|null $fallbackLocale Fallback locale if user's locale is not supported or not available.
-     * @param \Closure|string|null $userLocale
+     * @param  array<string>|null  $supportedLocales  List of supported locales. If null, any locale from Telegram will be used.
+     * @param  string|null  $fallbackLocale  Fallback locale if user's locale is not supported or not available.
      */
     public function __construct(
-        private ?array               $supportedLocales = null,
-        private ?string              $fallbackLocale = null,
+        private ?array $supportedLocales = null,
+        private ?string $fallbackLocale = null,
         private \Closure|string|null $userLocale = null
-    )
-    {
-    }
+    ) {}
 
     public function handle(Update $update, callable $next): mixed
     {
