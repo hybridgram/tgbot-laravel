@@ -9,25 +9,37 @@ use HybridGram\Core\UpdateHelper;
 use Illuminate\Support\Facades\App;
 use Phptg\BotApi\Type\Update\Update;
 
-final class SetLocaleTelegramRouteMiddleware implements TelegramRouteMiddlewareInterface
+final readonly class SetLocaleTelegramRouteMiddleware implements TelegramRouteMiddlewareInterface
 {
     /**
-     * @param  array<string>|null  $supportedLocales  List of supported locales. If null, any locale from Telegram will be used.
-     * @param  string|null  $fallbackLocale  Fallback locale if user's locale is not supported or not available.
+     * @param array<string>|null $supportedLocales List of supported locales. If null, any locale from Telegram will be used.
+     * @param string|null $fallbackLocale Fallback locale if user's locale is not supported or not available.
+     * @param \Closure|string|null $userLocale
      */
     public function __construct(
-        private ?array $supportedLocales = null,
-        private ?string $fallbackLocale = null,
-    ) {}
+        private ?array               $supportedLocales = null,
+        private ?string              $fallbackLocale = null,
+        private \Closure|string|null $userLocale = null
+    )
+    {
+    }
 
     public function handle(Update $update, callable $next): mixed
     {
+        $locale = null;
+        if ($this->userLocale instanceof \Closure) {
+            $locale = call_user_func($this->userLocale, $update);
+        }
+
+        if (is_string($this->userLocale)) {
+            $locale = $this->userLocale;
+        }
+
         $user = UpdateHelper::getUserFromUpdate($update);
-        $locale = $user?->languageCode;
+        $locale = $locale ?? $user?->languageCode;
 
         if ($locale !== null) {
             $locale = $this->normalizeLocale($locale);
-
             if ($this->isLocaleSupported($locale)) {
                 App::setLocale($locale);
             } elseif ($this->fallbackLocale !== null) {
