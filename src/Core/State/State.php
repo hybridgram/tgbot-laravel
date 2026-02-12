@@ -10,7 +10,7 @@ namespace HybridGram\Core\State;
 final readonly class State
 {
     /**
-     * @param array<string, mixed>|null $data
+     * @param  array<string, mixed>|null  $data
      */
     public function __construct(
         private string $name,

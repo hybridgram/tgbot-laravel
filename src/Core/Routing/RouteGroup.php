@@ -24,6 +24,7 @@ final class RouteGroup
             return $this->attributes;
         }
     }
+
     /**
      * @param array{
      *     for_bot?: string,

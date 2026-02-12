@@ -60,7 +60,7 @@ final class MediaGroupGrouper
     }
 
     /**
-     * @param list<Update> $updates
+     * @param  list<Update>  $updates
      */
     private static function createGroupedUpdate(array $updates): Update
     {
