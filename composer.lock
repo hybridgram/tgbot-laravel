@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "d4f809bfafd6b14372a909ab6ca0fcbc",
+    "content-hash": "736917bc0581c953f86a85883598b091",
     "packages": [
         {
             "name": "laravel/prompts",
@@ -341,7 +341,7 @@
         },
         {
             "name": "phptg/bot-api",
-            "version": "dev-master",
+            "version": "0.14.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phptg/bot-api.git",
@@ -374,7 +374,6 @@
                 "ext-curl": "To use `CurlTransport`.",
                 "psr/log": "To log requests to Telegram Bot API and response handling errors."
             },
-            "default-branch": true,
             "type": "library",
             "extra": {
                 "bamarni-bin": {
@@ -10173,9 +10172,7 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "phptg/bot-api": 20
-    },
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
