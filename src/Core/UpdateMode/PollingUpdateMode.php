@@ -24,6 +24,7 @@ final class PollingUpdateMode extends AbstractUpdateMode
 
     public function run(?Update $update = null): void
     {
+        /** @phpstan-ignore-next-line while.alwaysTrue (intentional infinite polling loop) */
         while (true) {
             try {
                 $this->startPolling();
@@ -69,7 +70,7 @@ final class PollingUpdateMode extends AbstractUpdateMode
         }
 
         if ($this->offset === 1) {
-            /** @var Update $lastUpdate */
+            /** @var Update $firstUpdate */
             $firstUpdate = $updates[0];
             $this->offset = $firstUpdate->updateId;
 
@@ -195,7 +196,7 @@ final class PollingUpdateMode extends AbstractUpdateMode
 
         $type = UpdateHelper::getUpdateTypeEnum($update)->value ?? 'unknown';
 
-        // Если это сообщение с reply, изменяем тип на message_reply
+        // If this is a message with reply, change type to message_reply
         if ($type === 'message' && $update->message?->replyToMessage !== null) {
             $type = 'message_reply';
         }

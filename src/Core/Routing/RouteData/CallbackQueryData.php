@@ -14,6 +14,7 @@ final readonly class CallbackQueryData extends AbstractRouteData
     public function __construct(
         Update $update,
         public string $action,
+        /** @var array<string, string> */
         public array $params,
         public CallbackQuery $query,
         string $botId,

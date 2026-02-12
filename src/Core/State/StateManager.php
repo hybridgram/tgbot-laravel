@@ -14,7 +14,7 @@ final class StateManager implements StateManagerInterface
 
     private const string CACHE_PREFIX_USER = 'telegram_state_user_';
 
-    private const int CACHE_TTL = 86400; // 24 часа
+    private const int CACHE_TTL = 86400; // 24 hours
 
     public function getChatState(Chat $chat): ?State
     {
@@ -106,6 +106,9 @@ final class StateManager implements StateManagerInterface
         return self::CACHE_PREFIX_USER.$chat->id.'_'.$user->id;
     }
 
+    /**
+     * @return array{name: string, data: array<string, mixed>|null}
+     */
     private function serializeState(State $state): array
     {
         return [

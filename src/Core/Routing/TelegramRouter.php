@@ -26,6 +26,18 @@ final class TelegramRouter
 
     public function __construct(public RouteCollection $routes = new RouteCollection) {}
 
+    /**
+     * @param array{
+     *     for_bot: string,
+     *     from_state?: list<string>,
+     *     to_state?: string|list<string>|null,
+     *     chat_type?: ChatType|list<ChatType>|null,
+     *     cache_key?: string|list<string>,
+     *     cache_ttl?: int,
+     *     middlewares?: array<int, string|object>,
+     *     send_action?: ActionType
+     * } $attributes
+     */
     public function group(array $attributes, callable $callback): void
     {
         $group = new RouteGroup($attributes);
@@ -86,7 +98,7 @@ final class TelegramRouter
         require_once $routesPath;
     }
 
-    public function fallbackRoute(Update $update, string $botId): ?TelegramRoute
+    public function fallbackRoute(Update $update, string $botId): TelegramRoute
     {
         return new TelegramRoute(
             type: RouteType::FALLBACK,
@@ -161,6 +173,9 @@ final class TelegramRouter
 
     /**
      * Prepare routes for serialization by converting closures to SerializableClosure
+     *
+     * @param  array<string, array<string, list<TelegramRoute>>>  $routesData
+     * @return array<string, array<string, list<array<string, mixed>>>
      */
     private function prepareRoutesForSerialization(array $routesData): array
     {
@@ -183,9 +198,11 @@ final class TelegramRouter
     }
 
     /**
-     * Convert a TelegramRoute to serializable format
+     * Convert a TelegramRoute to serializable format.
+     * Keys: type, botId, action, pattern, middlewares, fromChatState, fromUserState, exceptChatState, exceptUserState, chatTypes, toState, actionType, actionTimeout, cacheTtl, cacheKey, pollOptions, data.
+     * Values: RouteType, string, Closure|SerializableClosure, Closure|string|SerializableClosure, array, string|array|null, and other route properties (objects and scalars).
      *
-     * @return array<string, string|int|float|bool>
+     * @return array<string, mixed>
      */
     private function convertRouteToSerializable(TelegramRoute $route): array
     {
@@ -222,7 +239,10 @@ final class TelegramRouter
     }
 
     /**
-     * Restore routes from serialized format
+     * Restore routes from serialized format.
+     *
+     * @param  array<string, array<string, list<array<string, mixed>>>>  $serializedRoutes
+     * @return array<string, array<string, list<TelegramRoute>>>
      */
     private function restoreRoutesFromSerialization(array $serializedRoutes): array
     {
@@ -245,7 +265,9 @@ final class TelegramRouter
     }
 
     /**
-     * Convert serialized route data back to TelegramRoute
+     * Convert serialized route data back to TelegramRoute.
+     *
+     * @param  array<string, mixed>  $routeData  Same keys as convertRouteToSerializable() output
      */
     private function convertSerializableToRoute(array $routeData): TelegramRoute
     {
@@ -659,8 +681,8 @@ final class TelegramRouter
 
     /**
      * @param  callable|string|string[]  $action
-     * @param  callable|string|null  $pattern  Паттерн для action
-     * @param  array<string, string|null>|array<int, QueryParamInterface>|null  $queryParams  Фильтры по query параметрам: ключ => значение для проверки значения, ключ => null для проверки наличия, или массив объектов QueryParamInterface
+     * @param  callable|string|null  $pattern  Pattern for action
+     * @param  array<string, string|null>|array<int, QueryParamInterface>|null  $queryParams  Query parameter filters: key => value for value check, key => null for existence check, or array of QueryParamInterface objects
      */
     public function onCallbackQuery(callable|string|array $action, string $botId = '*', callable|string|null $pattern = '*', ?array $queryParams = null): void
     {
@@ -692,7 +714,7 @@ final class TelegramRouter
 
     /**
      * @param  callable|string|string[]  $action
-     * @param  array<ChatMemberStatus>|null  $allowedStatuses  Разрешенные статусы для newChatMember. null - любые статусы
+     * @param  array<ChatMemberStatus>|null  $allowedStatuses  Allowed statuses for newChatMember. null - any statuses
      */
     public function onChatMember(callable|string|array $action, string $botId = '*', ?bool $isBot = null, ?array $allowedStatuses = null): void
     {

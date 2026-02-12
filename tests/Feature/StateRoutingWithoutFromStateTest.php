@@ -30,17 +30,17 @@ beforeEach(function () {
 });
 
 it('routes to handler without fromChatState from any state', function () {
-    // Устанавливаем стейт для чата
+    // Set state for chat
     $this->stateManager->shouldReceive('getChatState')
         ->with($this->chat)
         ->andReturn(new State('some_state'));
 
-    // Также мокируем getStateForUser
+    // Also mock getStateForUser
     $this->stateManager->shouldReceive('getUserState')
         ->with($this->chat, $this->user)
         ->andReturn(null);
 
-    // Регистрируем роут БЕЗ fromChatState - должен работать из любого стейта
+    // Register route WITHOUT fromChatState - should work from any state
     $this->router->forBot('test_bot')
         ->chatType(ChatType::PRIVATE)
         ->onCommand('help', function ($data) {
@@ -52,25 +52,25 @@ it('routes to handler without fromChatState from any state', function () {
         'test_bot'
     );
 
-    // Проверяем, что роут найден
+    // Verify that the route was found
     expect($route)->not->toBeNull();
-    expect($route->fromChatState)->toBeNull(); // Должен быть null для роута без fromChatState
+    expect($route->fromChatState)->toBeNull(); // Should be null for route without fromChatState
     expect($route->type)->toBe(RouteType::COMMAND);
     expect($route->botId)->toBe('test_bot');
 });
 
 it('routes to handler without fromChatState when no state is set', function () {
-    // Не устанавливаем стейт (null)
+    // Don't set state (null)
     $this->stateManager->shouldReceive('getChatState')
         ->with($this->chat)
         ->andReturn(null);
 
-    // Также мокируем getStateForUser
+    // Also mock getStateForUser
     $this->stateManager->shouldReceive('getUserState')
         ->with($this->chat, $this->user)
         ->andReturn(null);
 
-    // Регистрируем роут БЕЗ fromChatState
+    // Register route WITHOUT fromChatState
     $this->router->forBot('test_bot')
         ->chatType(ChatType::PRIVATE)
         ->onCommand('help', function ($data) {
@@ -82,7 +82,7 @@ it('routes to handler without fromChatState when no state is set', function () {
         'test_bot'
     );
 
-    // Проверяем, что роут найден
+    // Verify that the route was found
     expect($route)->not->toBeNull();
     expect($route->fromChatState)->toBeNull();
     expect($route->type)->toBe(RouteType::COMMAND);

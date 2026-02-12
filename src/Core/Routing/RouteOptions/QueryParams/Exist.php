@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace HybridGram\Core\Routing\RouteOptions\QueryParams;
 
 /**
- * Проверяет существование ключа в query параметрах
+ * Checks existence of key in query parameters
  */
 final readonly class Exist implements QueryParamInterface
 {

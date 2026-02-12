@@ -56,6 +56,7 @@ use HybridGram\Core\Routing\RouteData\VideoNoteData;
 use HybridGram\Core\Routing\RouteData\VoiceData;
 use HybridGram\Core\Routing\RouteOptions\PollOptions;
 use HybridGram\Core\Routing\RouteOptions\QueryParams\QueryParamInterface;
+use HybridGram\Telegram\Document\MimeType;
 use Illuminate\Support\Facades\App;
 use Phptg\BotApi\Type\Update\Update;
 
@@ -66,27 +67,28 @@ final class TelegramRoute
     public function __construct(
         public RouteType $type = RouteType::ANY,
         public string $botId = '*',
-        /** @param callable|string|string[] $action */
+        /** @var \Closure|string|array<string>|null array — list of action names (strings) */
         public string|array|\Closure|null $action = null,
         public \Closure|string|null $pattern = null,
         /** @var array<TelegramRouteMiddlewareInterface> */
         public array $middlewares = [],
-        /** @param string|string[]|null $fromChatState */
+        /** @var string|string[]|null $fromChatState */
         public string|array|null $fromChatState = null,
-        /** @param string|string[]|null $fromUserState */
+        /** @var string|string[]|null $fromUserState */
         public string|array|null $fromUserState = null,
-        /** @param string|string[]|null $exceptChatState */
+        /** @var string|string[]|null $exceptChatState */
         public string|array|null $exceptChatState = null,
-        /** @param string|string[]|null $exceptUserState */
+        /** @var string|string[]|null $exceptUserState */
         public string|array|null $exceptUserState = null,
         public ?string $toState = null,
-        /** @var ChatType[]|null $chatTypes null означает все типы чатов, по умолчанию [ChatType::PRIVATE] */
+        /** @var ChatType[]|null $chatTypes null means all chat types, default [ChatType::PRIVATE] */
         public ?array $chatTypes = [ChatType::PRIVATE],
         public ?ActionType $actionType = null,
         public ?int $actionTimeout = null,
         public ?int $cacheTtl = null,
         public ?string $cacheKey = null,
         public ?PollOptions $pollOptions = null,
+        /** @var array<MimeType|string>|null array of allowed MIME types (values — MimeType or string) */
         public ?array $documentOptions = null,
         public ?RouteOptions\ChatMemberOptions $chatMemberOptions = null,
         public ?RouteDataInterface $data = null,
@@ -105,7 +107,7 @@ final class TelegramRoute
         return match ($this->type) {
             RouteType::ANY => AnyData::match($update, $this),
             RouteType::TEXT_MESSAGE => TextMessageData::match($update, $this),
-            RouteType::BUSINESS_MESSAGE_TEXT => BusinessMessageTextData::match($update, $this), // todo разделить на command etc
+            RouteType::BUSINESS_MESSAGE_TEXT => BusinessMessageTextData::match($update, $this), // todo split into command etc
             RouteType::BUSINESS_CONNECTION => BusinessConnectionData::match($update, $this),
             RouteType::COMMAND => CommandData::match($update, $this),
             RouteType::DOCUMENT => DocumentData::match($update, $this),
@@ -186,11 +188,7 @@ final class TelegramRoute
         $pipeline = new MiddlewarePipeline;
 
         $pipeline->addMany($manager->getGlobalMiddlewares());
-
-        $routeMiddlewares = array_filter($this->middlewares, function ($middleware) {
-            return $middleware instanceof TelegramRouteMiddlewareInterface;
-        });
-        $pipeline->addMany($routeMiddlewares);
+        $pipeline->addMany($this->middlewares);
 
         return $pipeline->process($update, $finalHandler);
     }

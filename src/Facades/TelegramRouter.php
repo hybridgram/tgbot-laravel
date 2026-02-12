@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Facade;
 
 /**
  * @method static TelegramRouteBuilder forBot(string $botId)
- * @method static void group(array $attributes, null|\Closure|string|array<string> $callback) - receive TelegramRouteBuilder as callback parameter
+ * @method static void group(array<string, string|string[]> $attributes, null|\Closure|string|array<string> $callback) - receive TelegramRouteBuilder as callback parameter
  * @method static void onAnimation(string[]|string|\Closure $action, string $botId = '*', \Closure|string|null $pattern = null)
  * @method static void onAudio(string[]|string|\Closure $action, string $botId = '*', \Closure|string|null $pattern = null)
  * @method static void onSticker(string[]|string|\Closure $action, string $botId = '*', \Closure|string|null $pattern = null)
@@ -55,7 +55,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static void onForumTopicReopened(string[]|string|\Closure $action, string $botId = '*')
  * @method static void onGeneralForumTopicEvent(string[]|string|\Closure $action, string $botId = '*')
  * @method static void onBoostAdded(string[]|string|\Closure $action, string $botId = '*')
- * @method static void onCallbackQuery(string[]|string|\Closure $action, string $botId = '*', \Closure|string|null $pattern = null, ?array<string, string|null>|array<int, \HybridGram\Core\Routing\RouteOptions\QueryParams\QueryParamInterface> $queryParams = null)
+ * @method static void onCallbackQuery(string[]|string|\Closure $action, string $botId = '*', \Closure|string|null $pattern = null, array<string, string|null>|array<int, \HybridGram\Core\Routing\RouteOptions\QueryParams\QueryParamInterface>|null $queryParams = null)
  * @method static void onInlineQuery(string[]|string|\Closure $action, string $botId = '*', \Closure|string|null $pattern = null)
  * @method static void onMyChatMember(string[]|string|\Closure $action, string $botId = '*', ?bool $isBot = null, ?array<ChatMemberStatus> $allowedStatuses = null)
  * @method static void onChatMember(string[]|string|\Closure $action, string $botId = '*', ?bool $isBot = null, ?array<ChatMemberStatus> $allowedStatuses = null)

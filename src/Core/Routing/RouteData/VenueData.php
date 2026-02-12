@@ -22,7 +22,7 @@ final readonly class VenueData extends AbstractRouteData
 
     public static function match(Update $update, TelegramRoute $route): ?VenueData
     {
-        if (empty($update->message?->venue)) {
+        if (empty($update->message->venue)) {
             return null;
         }
 

@@ -7,13 +7,13 @@ namespace HybridGram\Core\Routing\RouteOptions;
 use HybridGram\Telegram\ChatMember\ChatMemberStatus;
 
 /**
- * Опции для фильтрации ChatMember обновлений
+ * Options for filtering ChatMember updates
  */
 final readonly class ChatMemberOptions
 {
     /**
-     * @param  bool|null  $isBot  Фильтр по isBot для пользователя (from). null - любое значение
-     * @param  ChatMemberStatus[]|null  $allowedStatuses  Разрешенные статусы для newChatMember. null - любые статусы
+     * @param  bool|null  $isBot  Filter by isBot for user (from). null - any value
+     * @param  ChatMemberStatus[]|null  $allowedStatuses  Allowed statuses for newChatMember. null - any statuses
      */
     public function __construct(
         public ?bool $isBot = null,

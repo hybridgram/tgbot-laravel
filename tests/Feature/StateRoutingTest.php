@@ -30,17 +30,17 @@ beforeEach(function () {
 });
 
 it('routes to correct handler based on state', function () {
-    // Устанавливаем стейт для чата
+    // Set state for chat
     $this->stateManager->shouldReceive('getChatState')
         ->with($this->chat)
         ->andReturn(new State('waiting_for_name'));
 
-    // Также мокируем getStateForUser (теперь вызывается всегда)
+    // Also mock getStateForUser (now always invoked)
     $this->stateManager->shouldReceive('getUserState')
         ->with($this->chat, $this->user)
         ->andReturn(null);
 
-    // Регистрируем роут для стейта
+    // Register route for state
     $this->router->forBot('test_bot')
         ->chatType(ChatType::PRIVATE)
         ->fromChatState(['waiting_for_name'])
@@ -53,7 +53,7 @@ it('routes to correct handler based on state', function () {
         'test_bot'
     );
 
-    // Проверяем, что роут найден
+    // Verify that the route was found
     expect($route)->not->toBeNull();
     expect($route->fromChatState)->toBe(['waiting_for_name']);
     expect($route->type)->toBe(RouteType::COMMAND);
@@ -61,17 +61,17 @@ it('routes to correct handler based on state', function () {
 });
 
 it('does not route to handler when state does not match', function () {
-    // Устанавливаем другой стейт
+    // Set different state
     $this->stateManager->shouldReceive('getChatState')
         ->with($this->chat)
         ->andReturn(new State('different_state'));
 
-    // Также мокируем getStateForUser
+    // Also mock getStateForUser
     $this->stateManager->shouldReceive('getUserState')
         ->with($this->chat, $this->user)
         ->andReturn(null);
 
-    // Регистрируем роут для другого стейта
+    // Register route for different state
     $this->router->forBot('test_bot')
         ->chatType(ChatType::PRIVATE)
         ->fromChatState(['waiting_for_name'])
@@ -79,7 +79,7 @@ it('does not route to handler when state does not match', function () {
             return 'name_handler';
         });
 
-    // Должен найти fallback роут
+    // Should find fallback route
     $router = $this->router;
     $update = $this->update;
 
@@ -92,17 +92,17 @@ it('does not route to handler when state does not match', function () {
 });
 
 it('routes to handler without state requirement', function () {
-    // Не устанавливаем стейт
+    // Don't set state
     $this->stateManager->shouldReceive('getChatState')
         ->with($this->chat)
         ->andReturn(null);
 
-    // Также мокируем getStateForUser
+    // Also mock getStateForUser
     $this->stateManager->shouldReceive('getUserState')
         ->with($this->chat, $this->user)
         ->andReturn(null);
 
-    // Регистрируем роут без требования стейта
+    // Register route without state requirement
     $this->router->forBot('test_bot')
         ->chatType(ChatType::PRIVATE)
         ->onCommand('start', function ($data) {

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace HybridGram\Core\MediaGroup;
 
 use Illuminate\Support\Facades\Cache;
+use Phptg\BotApi\Type\PhotoSize;
 use Phptg\BotApi\Type\Update\Update;
 
 final class MediaGroupGrouper
@@ -58,6 +59,9 @@ final class MediaGroupGrouper
         return array_merge($result, $ungrouped);
     }
 
+    /**
+     * @param  list<Update>  $updates
+     */
     private static function createGroupedUpdate(array $updates): Update
     {
         if (empty($updates)) {
@@ -67,6 +71,9 @@ final class MediaGroupGrouper
         return $updates[0];
     }
 
+    /**
+     * @return list<PhotoSize>|null
+     */
     private static function extractPhotos(Update $update): ?array
     {
         if ($update->message?->photo === null || empty($update->message->photo)) {
@@ -76,6 +83,10 @@ final class MediaGroupGrouper
         return $update->message->photo;
     }
 
+    /**
+     * @param  list<Update>  $updates
+     * @return list<list<PhotoSize>>
+     */
     public static function extractPhotosFromGroup(array $updates): array
     {
         $photos = [];
@@ -89,6 +100,9 @@ final class MediaGroupGrouper
         return $photos;
     }
 
+    /**
+     * @return list<list<PhotoSize>>|null
+     */
     public static function getGroupedPhotos(string $mediaGroupId): ?array
     {
         $cacheKey = "media_group_items_{$mediaGroupId}";

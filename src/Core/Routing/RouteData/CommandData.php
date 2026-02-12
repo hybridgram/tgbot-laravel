@@ -14,6 +14,9 @@ use Phptg\BotApi\Type\Update\Update;
  */
 final readonly class CommandData extends AbstractRouteData
 {
+    /**
+     * @param  array<string>  $commandParams
+     */
     public function __construct(
         Update $update,
         public string $command,
@@ -74,15 +77,15 @@ final readonly class CommandData extends AbstractRouteData
     }
 
     /**
-     * Парсит команду и аргументы из текста сообщения.
+     * Parses command and arguments from message text.
      *
-     * Поддерживаемые форматы:
-     *  - `/command`                 — команда без аргументов
-     *  - `/command_arg1_arg2`       — inline-аргументы через `_`
+     * Supported formats:
+     *  - `/command`                 — command without arguments
+     *  - `/command_arg1_arg2`       — inline arguments via `_`
      *
-     * Все части (имя и аргументы) приводятся к нижнему регистру и
-     * могут содержать только латинские буквы a-z. В случае несоответствия
-     * форматам или ограничениям возвращает null.
+     * All parts (name and arguments) are lowercased and
+     * may contain only Latin letters a-z. Returns null if
+     * formats or constraints are not met.
      *
      * @return array{0:string,1:array<string>}|null
      */
