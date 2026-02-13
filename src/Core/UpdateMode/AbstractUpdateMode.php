@@ -34,7 +34,7 @@ abstract class AbstractUpdateMode implements UpdateModeInterface
             App::instance('telegram.botId', $this->botConfig->botId);
 
             $finalHandler = function (Update $update) use ($routeWithParams) {
-                if (is_callable($routeWithParams->action)) {
+                if ($routeWithParams->action instanceof \Closure) {
                     return ($routeWithParams->action)($routeWithParams->data);
                 } elseif (is_array($routeWithParams->action)) {
                     if (count($routeWithParams->action) < 2) {

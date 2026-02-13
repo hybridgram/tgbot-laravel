@@ -107,8 +107,6 @@ final class TelegramRoute
         return match ($this->type) {
             RouteType::ANY => AnyData::match($update, $this),
             RouteType::TEXT_MESSAGE => TextMessageData::match($update, $this),
-            RouteType::BUSINESS_MESSAGE_TEXT => BusinessMessageTextData::match($update, $this), // todo split into command etc
-            RouteType::BUSINESS_CONNECTION => BusinessConnectionData::match($update, $this),
             RouteType::COMMAND => CommandData::match($update, $this),
             RouteType::DOCUMENT => DocumentData::match($update, $this),
             RouteType::POLL => PollData::match($update, $this),
@@ -179,10 +177,13 @@ final class TelegramRoute
             RouteType::MESSAGE_REACTION => throw new \Exception('To be implemented'),
             RouteType::DELETED_BUSINESS_MESSAGES => throw new \Exception('To be implemented'),
             RouteType::UNKNOWN => throw new \Exception('To be implemented'),
+
+            RouteType::BUSINESS_MESSAGE_TEXT => BusinessMessageTextData::match($update, $this), // todo split into command etc
+            RouteType::BUSINESS_CONNECTION => BusinessConnectionData::match($update, $this),
         };
     }
 
-    public function executeWithMiddleware(Update $update, callable $finalHandler): mixed
+    public function executeWithMiddleware(Update $update, \Closure $finalHandler): mixed
     {
         $manager = App::get(MiddlewareManager::class);
         $pipeline = new MiddlewarePipeline;

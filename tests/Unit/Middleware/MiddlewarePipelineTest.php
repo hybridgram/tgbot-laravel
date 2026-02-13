@@ -17,7 +17,7 @@ it('executes middleware in correct order', function () {
     {
         public function __construct(private array &$order, private int $id) {}
 
-        public function handle(Update $update, callable $next): mixed
+        public function handle(Update $update, \Closure $next): mixed
         {
             $this->order[] = "before_{$this->id}";
             $result = $next($update);
@@ -31,7 +31,7 @@ it('executes middleware in correct order', function () {
     {
         public function __construct(private array &$order, private int $id) {}
 
-        public function handle(Update $update, callable $next): mixed
+        public function handle(Update $update, \Closure $next): mixed
         {
             $this->order[] = "before_{$this->id}";
             $result = $next($update);

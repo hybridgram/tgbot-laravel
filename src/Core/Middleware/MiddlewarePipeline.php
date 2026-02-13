@@ -33,7 +33,7 @@ final class MiddlewarePipeline
         return $this;
     }
 
-    public function process(Update $update, callable $finalHandler): mixed
+    public function process(Update $update, \Closure $finalHandler): mixed
     {
         if (empty($this->middlewares)) {
             return $finalHandler($update);
@@ -45,7 +45,7 @@ final class MiddlewarePipeline
     }
 
     /** @param list<TelegramRouteMiddlewareInterface> $middlewares */
-    private function createPipeline(array $middlewares, callable $finalHandler): callable
+    private function createPipeline(array $middlewares, \Closure $finalHandler): \Closure
     {
         $pipeline = $finalHandler;
 

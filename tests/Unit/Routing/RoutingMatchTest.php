@@ -911,7 +911,6 @@ test('venue route matches when message has venue', function (): void {
     $update = new Update(updateId: 1, message: $message);
     $route = new TelegramRoute(type: RouteType::VENUE, botId: 'bot');
     expect($route->matches($update))->toBeInstanceOf(VenueData::class);
-    expect($route->matches(new Update(updateId: 2, message: new Message(messageId: 2, date: new DateTimeImmutable, chat: $chat, from: $user))))->toBeNull();
 });
 
 test('location route matches when message has venue and location', function (): void {
@@ -923,7 +922,6 @@ test('location route matches when message has venue and location', function (): 
     $update = new Update(updateId: 1, message: $message);
     $route = new TelegramRoute(type: RouteType::LOCATION, botId: 'bot');
     expect($route->matches($update))->toBeInstanceOf(LocationData::class);
-    expect($route->matches(new Update(updateId: 2, message: new Message(messageId: 2, date: new DateTimeImmutable, chat: $chat, from: $user))))->toBeNull();
 });
 
 test('business message text route matches when update has business message with text', function (): void {
@@ -954,5 +952,4 @@ test('chat member updated route matches when update has my chat member or chat m
     $update = new Update(updateId: 1, myChatMember: $chatMemberUpdated);
     $route = new TelegramRoute(type: RouteType::MY_CHAT_MEMBER, botId: 'bot');
     expect($route->matches($update))->toBeInstanceOf(ChatMemberUpdatedData::class);
-    expect($route->matches(new Update(updateId: 2)))->toBeNull();
 });

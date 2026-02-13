@@ -125,6 +125,9 @@ final class UpdateHelper
         if ($update->purchasedPaidMedia !== null) {
             return UpdateTypeEnum::PURCHASED_PAID_MEDIA;
         }
+        if ($update->message?->location !== null) {
+            return UpdateTypeEnum::LOCATION;
+        }
         if ($update->message !== null) {
             return UpdateTypeEnum::MESSAGE;
         }
@@ -161,6 +164,7 @@ final class UpdateHelper
             UpdateTypeEnum::MY_CHAT_MEMBER => RouteType::MY_CHAT_MEMBER,
             UpdateTypeEnum::CHAT_BOOST => RouteType::CHAT_BOOST,
             UpdateTypeEnum::REMOVED_CHAT_BOOST => RouteType::REMOVED_CHAT_BOOST,
+            UpdateTypeEnum::LOCATION => RouteType::LOCATION,
         };
     }
 
@@ -168,6 +172,10 @@ final class UpdateHelper
     {
         if ($message === null) {
             return RouteType::TEXT_MESSAGE;
+        }
+
+        if (! empty($message->location)) {
+            return RouteType::LOCATION;
         }
 
         if (! empty($message->newChatTitle)) {

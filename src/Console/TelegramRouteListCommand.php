@@ -14,7 +14,7 @@ use Symfony\Component\Console\Terminal;
 
 final class TelegramRouteListCommand extends Command
 {
-    protected $signature = 'hybridgram:route:list';
+    protected $signature = 'hybridgram:route:list {--json : Output routes in JSON format}';
 
     protected $description = 'List all registered Telegram routes';
 
@@ -77,12 +77,20 @@ final class TelegramRouteListCommand extends Command
         $routes = $this->getRoutes($router);
 
         if (empty($routes)) {
-            $this->error('No Telegram routes found.');
+            if ($this->option('json')) {
+                $this->line(json_encode(['error' => 'No Telegram routes found.'], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
+            } else {
+                $this->error('No Telegram routes found.');
+            }
 
             return self::FAILURE;
         }
 
-        $this->displayRoutes($routes);
+        if ($this->option('json')) {
+            $this->displayRoutesJson($routes);
+        } else {
+            $this->displayRoutes($routes);
+        }
 
         return self::SUCCESS;
     }
@@ -276,8 +284,8 @@ final class TelegramRouteListCommand extends Command
                     $property->setAccessible(true);
                     $expectedValue = $property->getValue($item);
 
-                    if (is_callable($expectedValue)) {
-                        $params[] = sprintf('%s (callable)', $paramKey);
+                    if ($expectedValue instanceof \Closure) {
+                        $params[] = sprintf('%s (\Closure)', $paramKey);
                     } else {
                         $params[] = sprintf('%s=%s', $paramKey, $expectedValue);
                     }
@@ -330,6 +338,29 @@ final class TelegramRouteListCommand extends Command
         $spaces = str_repeat(' ', max($offset, 0));
         $this->line($spaces.'<fg=blue;options=bold>'.$routeCountText.'</>');
         $this->line('');
+    }
+
+    /**
+     * Display the route information in JSON format.
+     *
+     * @param  array<string, array<int, array<string, mixed>>>  $groupedRoutes
+     */
+    protected function displayRoutesJson(array $groupedRoutes): void
+    {
+        $totalRoutes = 0;
+        $output = [];
+
+        foreach ($groupedRoutes as $botId => $routes) {
+            $totalRoutes += count($routes);
+            $output[$botId] = $routes;
+        }
+
+        $result = [
+            'total_routes' => $totalRoutes,
+            'routes' => $output,
+        ];
+
+        $this->line(json_encode($result, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
     }
 
     /**

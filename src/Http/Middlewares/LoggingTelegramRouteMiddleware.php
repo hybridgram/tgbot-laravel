@@ -9,7 +9,7 @@ use Phptg\BotApi\Type\Update\Update;
 
 final class LoggingTelegramRouteMiddleware implements TelegramRouteMiddlewareInterface
 {
-    public function handle(Update $update, callable $next): mixed
+    public function handle(Update $update, \Closure $next): mixed
     {
         logger()->info('Processing update', [
             'update_id' => $update->updateId,

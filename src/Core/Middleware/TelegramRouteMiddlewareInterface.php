@@ -8,5 +8,5 @@ use Phptg\BotApi\Type\Update\Update;
 
 interface TelegramRouteMiddlewareInterface
 {
-    public function handle(Update $update, callable $next): mixed;
+    public function handle(Update $update, \Closure $next): mixed;
 }

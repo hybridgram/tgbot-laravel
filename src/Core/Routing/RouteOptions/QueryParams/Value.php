@@ -6,13 +6,13 @@ namespace HybridGram\Core\Routing\RouteOptions\QueryParams;
 
 /**
  * Checks value of key in query parameters
- * Supports validation by string, number, or via callable
+ * Supports validation by string, number, or via \Closure
  */
 final readonly class Value implements QueryParamInterface
 {
     /**
      * @param  string  $key  Parameter key
-     * @param  string|\Closure|int  $expectedValue  Expected value or callable for validation
+     * @param  string|\Closure|int  $expectedValue  Expected value or \Closure for validation
      */
     public function __construct(
         private string $key,
@@ -36,8 +36,8 @@ final readonly class Value implements QueryParamInterface
 
         $actualValue = $params[$this->key];
 
-        // If expected value is callable, invoke it
-        if (is_callable($this->expectedValue)) {
+        // If expected value is \Closure, invoke it
+        if ($this->expectedValue instanceof \Closure) {
             return (bool) call_user_func($this->expectedValue, $actualValue);
         }
 

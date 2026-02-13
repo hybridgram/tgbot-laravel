@@ -51,7 +51,7 @@ it('can cache routes with closures using SerializableClosure', function () {
     expect(count($routes['COMMAND']['test_bot']))->toBe(2); // start + closure
     expect(count($routes['TEXT_MESSAGE']['test_bot']))->toBe(2); // hello + closure_pattern
 
-    // Verify closures are still callable after restoration
+    // Verify closures are still \Closure after restoration
     $closureCommand = $routes['COMMAND']['test_bot'][1];
     expect($closureCommand->action)->toBeInstanceOf(Closure::class);
 
