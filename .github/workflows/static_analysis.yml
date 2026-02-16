@@ -1,4 +1,4 @@
-name: CI
+name: Static analysis
 
 on:
   push:
@@ -9,32 +9,6 @@ on:
       - main
 
 jobs:
-  tests:
-    name: Tests
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ github.head_ref || github.ref }}
-
-      - name: Pull latest changes
-        run: git pull origin ${{ github.head_ref || github.ref_name }}
-
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.4'
-          extensions: mbstring, xml, ctype, json
-          coverage: none
-
-      - name: Install dependencies
-        run: composer install --prefer-dist --no-progress --no-interaction
-
-      - name: Run tests
-        run: vendor/bin/pest
-
   phpstan:
     name: PHPStan
     runs-on: ubuntu-latest
