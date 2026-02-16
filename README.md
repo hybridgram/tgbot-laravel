@@ -4,8 +4,8 @@ Laravel toolkit for fast Telegram bots creation with Go-powered webhook updating
 [![Latest Stable Version](http://poser.pugx.org/hybridgram/tgbot-laravel/v)](https://packagist.org/packages/hybridgram/tgbot-laravel) 
 [![Total Downloads](http://poser.pugx.org/hybridgram/tgbot-laravel/downloads)](https://packagist.org/packages/hybridgram/tgbot-laravel)
 [![PHP Version Require](http://poser.pugx.org/hybridgram/tgbot-laravel/require/php)](https://packagist.org/packages/hybridgram/tgbot-laravel)
-[![Static analysis](https://github.com/hybridgram/tgbot-laravel/actions/workflows/ci.yml/badge.svg)](https://github.com/phptg/bot-api/actions/workflows/ci.yml)
-[![Tests status](https://github.com/hybridgram/tgbot-laravel/actions/workflows/ci.yml/badge.svg)](https://github.com/phptg/bot-api/actions/workflows/ci.yml)
+[![Static analysis](https://github.com/hybridgram/tgbot-laravel/actions/workflows/static_analysis.yml/badge.svg)](https://github.com/hybridgram/tgbot-laravel/actions/workflows/static_analysis.yml)
+[![Tests status](https://github.com/hybridgram/tgbot-laravel/actions/workflows/tests.yml/badge.svg)](https://github.com/hybridgram/tgbot-laravel/actions/workflows/tests.yml)
 
 
 ## Quick start
