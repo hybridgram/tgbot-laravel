@@ -6373,7 +6373,7 @@
                     "role": "lead"
                 }
             ],
-            "description": "Invoke \Closures with a timeout",
+            "description": "Invoke callables with a timeout",
             "homepage": "https://github.com/sebastianbergmann/php-invoker/",
             "keywords": [
                 "process"
