@@ -29,7 +29,7 @@ it('correctly identifies route attributes on SampleController', function () use 
 
     $sampleRoutes = array_values(array_filter(
         $routes,
-        fn (DiscoveredRoute $r) => $r->className === \Tests\Unit\Routing\Attributes\Fixtures\SampleController::class,
+        fn (DiscoveredRoute $r) => $r->className === Tests\Unit\Routing\Attributes\Fixtures\SampleController::class,
     ));
 
     expect($sampleRoutes)->toHaveCount(4);
@@ -60,7 +60,7 @@ it('collects class-level config attributes', function () use ($fixturesDir) {
 
     $sampleRoutes = array_values(array_filter(
         $routes,
-        fn (DiscoveredRoute $r) => $r->className === \Tests\Unit\Routing\Attributes\Fixtures\SampleController::class,
+        fn (DiscoveredRoute $r) => $r->className === Tests\Unit\Routing\Attributes\Fixtures\SampleController::class,
     ));
 
     // Every route from SampleController should have ForBot, ChatTypes, TgMiddlewares at class level
@@ -78,7 +78,7 @@ it('collects method-level config attributes', function () use ($fixturesDir) {
 
     $sampleRoutes = array_values(array_filter(
         $routes,
-        fn (DiscoveredRoute $r) => $r->className === \Tests\Unit\Routing\Attributes\Fixtures\SampleController::class,
+        fn (DiscoveredRoute $r) => $r->className === Tests\Unit\Routing\Attributes\Fixtures\SampleController::class,
     ));
 
     // start() has no method-level config attributes
@@ -98,7 +98,7 @@ it('ignores classes without route attributes', function () use ($fixturesDir) {
 
     $noAttrRoutes = array_filter(
         $routes,
-        fn (DiscoveredRoute $r) => $r->className === \Tests\Unit\Routing\Attributes\Fixtures\NoAttributeController::class,
+        fn (DiscoveredRoute $r) => $r->className === Tests\Unit\Routing\Attributes\Fixtures\NoAttributeController::class,
     );
 
     expect($noAttrRoutes)->toBeEmpty();

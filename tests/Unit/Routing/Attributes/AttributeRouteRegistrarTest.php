@@ -45,7 +45,7 @@ it('registers OnCommand route with correct properties', function () use ($fixtur
     expect($startRoute->type)->toBe(RouteType::COMMAND);
     expect($startRoute->botId)->toBe('main');
     expect($startRoute->pattern)->toBe('/start');
-    expect($startRoute->action)->toBe([\Tests\Unit\Routing\Attributes\Fixtures\SampleController::class, 'start']);
+    expect($startRoute->action)->toBe([Tests\Unit\Routing\Attributes\Fixtures\SampleController::class, 'start']);
     expect($startRoute->chatTypes)->toBe([ChatType::PRIVATE]);
 });
 

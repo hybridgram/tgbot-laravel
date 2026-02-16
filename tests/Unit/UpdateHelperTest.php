@@ -2,33 +2,33 @@
 
 declare(strict_types=1);
 
-use HybridGram\Core\UpdateHelper;
-use HybridGram\Core\UpdateMode\UpdateTypeEnum;
 use HybridGram\Core\Routing\ChatType;
 use HybridGram\Core\Routing\RouteType;
-use Phptg\BotApi\Type\Chat;
-use Phptg\BotApi\Type\Message;
-use Phptg\BotApi\Type\Update\Update;
-use Phptg\BotApi\Type\User;
-use Phptg\BotApi\Type\Inline\InlineQuery;
-use Phptg\BotApi\Type\Inline\ChosenInlineResult;
-use Phptg\BotApi\Type\Payment\ShippingQuery;
-use Phptg\BotApi\Type\Payment\PreCheckoutQuery;
-use Phptg\BotApi\Type\CallbackQuery;
-use Phptg\BotApi\Type\ChatMemberUpdated;
-use Phptg\BotApi\Type\ChatMemberMember;
-use Phptg\BotApi\Type\ChatJoinRequest;
-use Phptg\BotApi\Type\ChatBoostUpdated;
+use HybridGram\Core\UpdateHelper;
+use HybridGram\Core\UpdateMode\UpdateTypeEnum;
 use Phptg\BotApi\Type\BusinessConnection;
-use Phptg\BotApi\Type\MessageReactionUpdated;
-use Phptg\BotApi\Type\MessageReactionCountUpdated;
-use Phptg\BotApi\Type\PollAnswer;
-use Phptg\BotApi\Type\Sticker\Sticker;
-use Phptg\BotApi\Type\Poll;
-use Phptg\BotApi\Type\PollOption;
-use Phptg\BotApi\Type\Payment\ShippingAddress;
+use Phptg\BotApi\Type\CallbackQuery;
+use Phptg\BotApi\Type\Chat;
 use Phptg\BotApi\Type\ChatBoost;
 use Phptg\BotApi\Type\ChatBoostSourcePremium;
+use Phptg\BotApi\Type\ChatBoostUpdated;
+use Phptg\BotApi\Type\ChatJoinRequest;
+use Phptg\BotApi\Type\ChatMemberMember;
+use Phptg\BotApi\Type\ChatMemberUpdated;
+use Phptg\BotApi\Type\Inline\ChosenInlineResult;
+use Phptg\BotApi\Type\Inline\InlineQuery;
+use Phptg\BotApi\Type\Message;
+use Phptg\BotApi\Type\MessageReactionCountUpdated;
+use Phptg\BotApi\Type\MessageReactionUpdated;
+use Phptg\BotApi\Type\Payment\PreCheckoutQuery;
+use Phptg\BotApi\Type\Payment\ShippingAddress;
+use Phptg\BotApi\Type\Payment\ShippingQuery;
+use Phptg\BotApi\Type\Poll;
+use Phptg\BotApi\Type\PollAnswer;
+use Phptg\BotApi\Type\PollOption;
+use Phptg\BotApi\Type\Sticker\Sticker;
+use Phptg\BotApi\Type\Update\Update;
+use Phptg\BotApi\Type\User;
 
 describe('UpdateHelper::getChatFromUpdate', function () {
     it('extracts chat from message', function () {
@@ -705,7 +705,7 @@ describe('UpdateHelper::mapToRouteType', function () {
             date: new DateTimeImmutable,
             chat: $chat,
             photo: [
-                new \Phptg\BotApi\Type\PhotoSize(
+                new Phptg\BotApi\Type\PhotoSize(
                     fileId: 'file1',
                     fileUniqueId: 'unique1',
                     width: 800,
@@ -725,7 +725,7 @@ describe('UpdateHelper::mapToRouteType', function () {
             date: new DateTimeImmutable,
             chat: $chat,
             photo: [
-                new \Phptg\BotApi\Type\PhotoSize(
+                new Phptg\BotApi\Type\PhotoSize(
                     fileId: 'file1',
                     fileUniqueId: 'unique1',
                     width: 800,
@@ -745,7 +745,7 @@ describe('UpdateHelper::mapToRouteType', function () {
             messageId: 1,
             date: new DateTimeImmutable,
             chat: $chat,
-            document: new \Phptg\BotApi\Type\Document(
+            document: new Phptg\BotApi\Type\Document(
                 fileId: 'file1',
                 fileUniqueId: 'unique1',
             ),
@@ -761,7 +761,7 @@ describe('UpdateHelper::mapToRouteType', function () {
             messageId: 1,
             date: new DateTimeImmutable,
             chat: $chat,
-            document: new \Phptg\BotApi\Type\Document(
+            document: new Phptg\BotApi\Type\Document(
                 fileId: 'file1',
                 fileUniqueId: 'unique1',
             ),
@@ -778,7 +778,7 @@ describe('UpdateHelper::mapToRouteType', function () {
             messageId: 1,
             date: new DateTimeImmutable,
             chat: $chat,
-            audio: new \Phptg\BotApi\Type\Audio(
+            audio: new Phptg\BotApi\Type\Audio(
                 fileId: 'file1',
                 fileUniqueId: 'unique1',
                 duration: 120,
@@ -795,7 +795,7 @@ describe('UpdateHelper::mapToRouteType', function () {
             messageId: 1,
             date: new DateTimeImmutable,
             chat: $chat,
-            voice: new \Phptg\BotApi\Type\Voice(
+            voice: new Phptg\BotApi\Type\Voice(
                 fileId: 'file1',
                 fileUniqueId: 'unique1',
                 duration: 10,
@@ -833,7 +833,7 @@ describe('UpdateHelper::mapToRouteType', function () {
             messageId: 1,
             date: new DateTimeImmutable,
             chat: $chat,
-            location: new \Phptg\BotApi\Type\Location(
+            location: new Phptg\BotApi\Type\Location(
                 latitude: 40.7128,
                 longitude: -74.0060,
             ),
@@ -849,7 +849,7 @@ describe('UpdateHelper::mapToRouteType', function () {
             messageId: 1,
             date: new DateTimeImmutable,
             chat: $chat,
-            contact: new \Phptg\BotApi\Type\Contact(
+            contact: new Phptg\BotApi\Type\Contact(
                 phoneNumber: '+1234567890',
                 firstName: 'John',
             ),
@@ -964,7 +964,7 @@ describe('UpdateHelper::mapMessageType', function () {
             messageId: 1,
             date: new DateTimeImmutable,
             chat: $chat,
-            animation: new \Phptg\BotApi\Type\Animation(
+            animation: new Phptg\BotApi\Type\Animation(
                 fileId: 'file1',
                 fileUniqueId: 'unique1',
                 width: 800,
@@ -986,7 +986,7 @@ describe('UpdateHelper::mapMessageType', function () {
             messageId: 1,
             date: new DateTimeImmutable,
             chat: $chat,
-            videoNote: new \Phptg\BotApi\Type\VideoNote(
+            videoNote: new Phptg\BotApi\Type\VideoNote(
                 fileId: 'file1',
                 fileUniqueId: 'unique1',
                 length: 120,
