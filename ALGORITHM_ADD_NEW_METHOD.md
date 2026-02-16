@@ -27,10 +27,12 @@ enum RouteType
 
 ---
 
-### 2. Создать класс данных для роута (если нужен)
+### 2. Создать класс данных для роута с методом `match()`
 **Файл:** `src/Core/Routing/RouteData/{MethodName}Data.php` (НОВЫЙ ФАЙЛ)
 
-**Действие:** Создать новый класс, наследующийся от `AbstractRouteData`
+**Действие:** Создать новый класс, наследующийся от `AbstractRouteData`, который содержит:
+- Конструктор с данными роута
+- Статический метод `match()` с логикой матчинга
 
 **Шаблон:**
 ```php
@@ -40,19 +42,48 @@ declare(strict_types=1);
 
 namespace HybridGram\Core\Routing\RouteData;
 
+use HybridGram\Core\Routing\TelegramRoute;
 use Phptg\BotApi\Type\Update\Update;
 
 final readonly class VideoData extends AbstractRouteData
 {
     public function __construct(
         Update $update,
-        public array $videos, // или другие данные
+        public mixed $video, // или другие данные
         string $botId,
     ) {
         parent::__construct($update, $botId);
     }
+
+    public static function match(Update $update, TelegramRoute $route): ?self
+    {
+        if (is_null($update->message)) {
+            return null;
+        }
+
+        if (empty($update->message->video)) {
+            return null;
+        }
+
+        // Если есть pattern, проверяем его
+        if ($route->pattern !== null && $route->pattern !== '*') {
+            if ($route->pattern instanceof \Closure) {
+                if (! call_user_func($route->pattern, $update)) {
+                    return null;
+                }
+            }
+        }
+
+        return new self($update, $update->message->video, $route->botId);
+    }
 }
 ```
+
+**Примечание:**
+- Статический метод `match()` содержит всю логику матчинга (ранее это было в `TelegramRoute`)
+- Адаптируйте проверки под конкретный тип данных
+- Если нужна проверка pattern, добавьте логику аналогично `PhotoData` или `TextMessageData`
+
 ---
 
 ### 3. Добавить метод в `TelegramRouteBuilder.php`
@@ -62,17 +93,17 @@ final readonly class VideoData extends AbstractRouteData
 
 **Шаблон:**
 ```php
-public function onVideo(callable|string|array $action, \Closure|string|null $pattern = null): void
+public function onVideo(\Closure|string|array $action, \Closure|string|null $pattern = null): void
 {
     $this->route->type = RouteType::VIDEO;
     $this->route->action = $action;
-    $this->route->pattern = $pattern;
+    $this->pattern($pattern);
 
     $this->register();
 }
 ```
 
-**Примечание:** 
+**Примечание:**
 - Если метод не требует pattern, можно убрать параметр `$pattern`
 - Если нужны дополнительные опции (как у `onPoll`), добавить параметр с опциями
 
@@ -85,7 +116,7 @@ public function onVideo(callable|string|array $action, \Closure|string|null $pat
 
 **Шаблон:**
 ```php
-public function onVideo(callable|string|array $action, string $botId = '*', callable|null $pattern = null): void
+public function onVideo(\Closure|string|array $action, string $botId = '*', \Closure|null $pattern = null): void
 {
     new TelegramRouteBuilder()
         ->forBot($botId)
@@ -97,47 +128,138 @@ public function onVideo(callable|string|array $action, string $botId = '*', call
 
 ---
 
----
-
-### 6. Добавить логику матчинга в `TelegramRoute.php`
+### 5. Добавить case в `TelegramRoute::matches()`
 **Файл:** `src/Core/Routing/TelegramRoute.php`
 
-**Действие 1:** Добавить case в метод `matches()` в match-выражении
+**Действие:** Добавить case в метод `matches()` в match-выражении, делегируя матчинг статическому методу Data-класса
 
 **Шаблон:**
 ```php
 return match ($this->type) {
-    RouteType::PHOTO => $this->matchesPhoto($update),
-    RouteType::VIDEO => $this->matchesVideo($update), // новый case
+    RouteType::PHOTO => PhotoData::match($update, $this),
+    RouteType::VIDEO => VideoData::match($update, $this), // новый case
     // ...
 };
 ```
 
-**Действие 2:** Добавить метод `matches{MethodName}()` после последнего метода `matches*()`
-
-**Шаблон:**
-```php
-protected function matchesVideo(Update $update): ?VideoData
-{
-    if (is_null($update->message)) {
-        return null;
-    }
-
-    if (empty($update->message->video)) {
-        return null;
-    }
-
-    return new VideoData($update, $update->message->video, $this->botId);
-}
-```
-
-**Примечание:** 
-- Адаптируйте проверки под конкретный тип данных
-- Если нужна проверка pattern, добавьте логику аналогично `matchesMessage()` или `matchesCommand()`
+**Примечание:** Не забудьте добавить `use` импорт Data-класса в начало файла.
 
 ---
 
-### 7. Добавить PHPDoc в Facade
+### 6. Добавить маппинг в `UpdateHelper::mapToRouteType()`
+**Файл:** `src/Core/UpdateHelper.php`
+
+**Действие:** Добавить определение типа апдейта для нового метода
+
+**Для типов сообщений** (photo, video, document и т.д.) — добавить в метод `mapMessageType()`:
+```php
+private static function mapMessageType(?Message $message): RouteType
+{
+    // ...
+    if ($message->video) {
+        return RouteType::VIDEO;
+    }
+    // ...
+}
+```
+
+**Для типов апдейтов верхнего уровня** (poll_answer, business_connection и т.д.) — добавить в метод `mapToRouteType()`:
+```php
+public static function mapToRouteType(Update $update): RouteType
+{
+    // ...
+    UpdateTypeEnum::SOME_TYPE => RouteType::SOME_TYPE,
+    // ...
+}
+```
+
+**Примечание:** Порядок проверок в `mapMessageType()` важен — более специфичные типы должны проверяться раньше общих.
+
+---
+
+### 7. Создать PHP-атрибут для нового метода
+**Файл:** `src/Core/Routing/Attributes/On{MethodName}.php` (НОВЫЙ ФАЙЛ)
+
+**Действие:** Создать атрибут, реализующий интерфейс `TelegramRouteAttribute`. Атрибут позволяет использовать декларативный стиль роутинга через PHP-атрибуты на методах контроллеров.
+
+**Шаблон (простой метод с pattern):**
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace HybridGram\Core\Routing\Attributes;
+
+use Attribute;
+use HybridGram\Core\Routing\TelegramRouteBuilder;
+
+#[Attribute(Attribute::TARGET_METHOD)]
+final class OnVideo implements TelegramRouteAttribute
+{
+    public function __construct(
+        public ?string $pattern = null,
+    ) {}
+
+    public function registerRoute(TelegramRouteBuilder $builder, \Closure|string|array $action): void
+    {
+        $builder->onVideo($action, $this->pattern);
+    }
+}
+```
+
+**Шаблон (метод с дополнительными опциями, как OnPoll):**
+```php
+#[Attribute(Attribute::TARGET_METHOD)]
+final class OnPoll implements TelegramRouteAttribute
+{
+    public function __construct(
+        public ?bool $isAnonymous = null,
+        public ?PollType $pollType = null,
+    ) {}
+
+    public function registerRoute(TelegramRouteBuilder $builder, \Closure|string|array $action): void
+    {
+        $pollOptions = ($this->isAnonymous !== null || $this->pollType !== null)
+            ? new PollOptions($this->isAnonymous, $this->pollType)
+            : null;
+
+        $builder->onPoll($action, $pollOptions);
+    }
+}
+```
+
+**Шаблон (простой метод без параметров):**
+```php
+#[Attribute(Attribute::TARGET_METHOD)]
+final class OnVenue implements TelegramRouteAttribute
+{
+    public function registerRoute(TelegramRouteBuilder $builder, \Closure|string|array $action): void
+    {
+        $builder->onVenue($action);
+    }
+}
+```
+
+**Примечание:**
+- Атрибут должен реализовывать интерфейс `TelegramRouteAttribute`
+- Параметры конструктора атрибута должны соответствовать параметрам метода `on{MethodName}()` в `TelegramRouteBuilder` (кроме `$action`)
+- Конфиг-атрибуты (`ForBot`, `FromUserState`, `ChatTypes` и т.д.) реализуют отдельный интерфейс `TelegramRouteConfigAttribute` и применяются на уровне класса или метода
+
+**Пример использования атрибутов в контроллере:**
+```php
+#[ForBot('main')]
+#[ChatTypes([ChatType::PRIVATE])]
+class VideoController
+{
+    #[OnVideo(pattern: 'some_pattern')]
+    #[FromUserState(['awaiting_video'])]
+    public function handleVideo(): void {}
+}
+```
+
+---
+
+### 8. Добавить PHPDoc в Facade
 **Файл:** `src/Facades/TelegramRouter.php`
 
 **Действие:** Добавить PHPDoc метод в комментарии `@method`
@@ -145,19 +267,16 @@ protected function matchesVideo(Update $update): ?VideoData
 **Шаблон:**
 ```php
 /**
- * @method static void onVideo(array|string|callable $action, string $botId = '*', ?callable $pattern = null)
+ * @method static void onVideo(array|string|\Closure $action, string $botId = '*', ?\Closure $pattern = null)
  * @see TelegramRouterService
  */
 ```
 
-## 7.1 доработать
-\HybridGram\Core\UpdateHelper::mapToRouteType
-
 ---
 
-### 8. Добавить тесты
+### 9. Добавить тесты
 
-#### 8.1 Unit тест
+#### 9.1 Unit тест
 **Файл:** `tests/Unit/TelegramRouterTest.php`
 
 **Действие:** Добавить тест для проверки регистрации роута в группе
@@ -176,7 +295,7 @@ it('can use onVideo in group', function () {
 });
 ```
 
-#### 8.2 Feature тест
+#### 9.2 Feature тест
 **Файл:** `tests/Feature/TelegramRouterTest.php`
 
 **Действие:** Добавить тест для проверки роутинга
@@ -217,13 +336,13 @@ test('onVideo routes correctly', function () {
 ## Чеклист
 
 - [ ] 1. Добавлен case в `RouteType.php`
-- [ ] 2. Создан класс данных `{MethodName}Data.php` (если нужен)
+- [ ] 2. Создан класс данных `{MethodName}Data.php` со статическим методом `match()`
 - [ ] 3. Добавлен метод `on{MethodName}()` в `TelegramRouteBuilder.php`
 - [ ] 4. Добавлен метод `on{MethodName}()` в `TelegramRouter.php`
-- [ ] 5. Добавлен метод `on{MethodName}()` в `RouteGroup.php`
-- [ ] 6. Добавлен case в `matches()` в `TelegramRoute.php`
-- [ ] 7. Добавлен метод `matches{MethodName}()` в `TelegramRoute.php`
-- [ ] 8. Добавлен PHPDoc в `TelegramRouter.php` (Facade)
+- [ ] 5. Добавлен case `{MethodName}Data::match($update, $this)` в `TelegramRoute::matches()`
+- [ ] 6. Добавлен маппинг в `UpdateHelper::mapToRouteType()` (или `mapMessageType()`)
+- [ ] 7. Создан PHP-атрибут `On{MethodName}` в `src/Core/Routing/Attributes/`
+- [ ] 8. Добавлен PHPDoc в `Facades/TelegramRouter.php`
 - [ ] 9. Добавлен unit тест в `tests/Unit/TelegramRouterTest.php`
 - [ ] 10. Добавлен feature тест в `tests/Feature/TelegramRouterTest.php`
 
@@ -233,15 +352,17 @@ test('onVideo routes correctly', function () {
 
 ### Пример 1: `onPhoto` (уже реализован)
 - RouteType: `PHOTO`
-- Data класс: `PhotoData` с массивом `$photos`
-- Pattern: опциональный `Closure`
-- Матчинг: проверка наличия `$update->message->photo`
+- Data класс: `PhotoData` с массивом `$photoSizes` и статическим `match()`
+- Атрибут: `OnPhoto` с опциональным `$pattern`
+- Pattern: опциональный `Closure|string`
+- Матчинг: проверка наличия `$update->message->photo` (в `PhotoData::match()`)
 
 ### Пример 2: `onPoll` (уже реализован)
 - RouteType: `POLL`
-- Data класс: `PollData` с объектом `$poll`
+- Data класс: `PollData` с объектом `$poll` и статическим `match()`
+- Атрибут: `OnPoll` с `$isAnonymous` и `$pollType`
 - Опции: `PollOptions` для фильтрации
-- Матчинг: проверка наличия `$update->message->poll` + проверка опций
+- Матчинг: проверка наличия `$update->message->poll` + проверка опций (в `PollData::match()`)
 
 ---
 
@@ -252,6 +373,8 @@ test('onVideo routes correctly', function () {
 3. **Проверки:** Всегда проверяйте наличие данных перед созданием объектов данных
 4. **Тесты:** Минимально необходимые тесты - только happy path
 5. **Согласованность:** Следуйте паттернам существующих методов (`onCommand`, `onMessage`, `onPhoto`)
+6. **Матчинг в Data-классах:** Вся логика матчинга находится в статическом методе `match()` Data-класса, а НЕ в `TelegramRoute`
+7. **Атрибуты:** Каждый новый метод роутинга должен иметь соответствующий PHP-атрибут для поддержки декларативного стиля
 
 ---
 
@@ -260,12 +383,12 @@ test('onVideo routes correctly', function () {
 | Файл | Что делать |
 |------|-----------|
 | `RouteType.php` | Добавить case |
-| `RouteData/{Method}Data.php` | Создать класс данных |
+| `RouteData/{Method}Data.php` | Создать класс данных с `match()` |
 | `TelegramRouteBuilder.php` | Добавить `on{Method}()` |
 | `TelegramRouter.php` | Добавить `on{Method}()` |
-| `RouteGroup.php` | Добавить `on{Method}()` |
-| `TelegramRoute.php` | Добавить case и `matches{Method}()` |
+| `TelegramRoute.php` | Добавить case `{Method}Data::match()` в `matches()` |
+| `UpdateHelper.php` | Добавить маппинг типа в `mapToRouteType()` / `mapMessageType()` |
+| `Attributes/On{Method}.php` | Создать PHP-атрибут |
 | `Facades/TelegramRouter.php` | Добавить PHPDoc |
 | `tests/Unit/TelegramRouterTest.php` | Добавить unit тест |
 | `tests/Feature/TelegramRouterTest.php` | Добавить feature тест |
-

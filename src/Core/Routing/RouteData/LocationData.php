@@ -18,12 +18,8 @@ final readonly class LocationData extends AbstractRouteData
         parent::__construct($update, $botId);
     }
 
-    public static function match(Update $update, TelegramRoute $route): ?LocationData
+    public static function match(Update $update, TelegramRoute $route): LocationData
     {
-        if (empty($update->message->venue)) {
-            return null;
-        }
-
         return new LocationData($update, $update->message->location, $route->botId);
     }
 }

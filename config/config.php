@@ -54,6 +54,17 @@ return [
         ],
     ],
 
+    'attribute_routing' => [
+        // Directories to scan for controller classes with route attributes.
+        // When empty, attribute routing is inactive.
+        'directories' => [
+             app_path('Handlers'),
+        ],
+
+        // Directories to exclude from scanning.
+        'exclude_directories' => [],
+    ],
+
     'auth' => [
         // Guard name for Telegram authentication
         'guard' => 'hybridgram',

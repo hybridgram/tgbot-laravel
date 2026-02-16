@@ -10,7 +10,7 @@ use Phptg\BotApi\Type\Update\Update;
 
 final class AuthTelegramRouteMiddleware implements TelegramRouteMiddlewareInterface
 {
-    public function handle(Update $update, callable $next): mixed
+    public function handle(Update $update, \Closure $next): mixed
     {
         try {
             /** @var \HybridGram\Auth\TelegramGuard $guard */

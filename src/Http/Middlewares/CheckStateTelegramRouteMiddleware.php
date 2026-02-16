@@ -22,7 +22,7 @@ final readonly class CheckStateTelegramRouteMiddleware implements TelegramRouteM
         private bool $exceptMode = false
     ) {}
 
-    public function handle(Update $update, callable $next): mixed
+    public function handle(Update $update, \Closure $next): mixed
     {
         /** @var StateManagerInterface $stateManager */
         $stateManager = App::get(StateManagerInterface::class);

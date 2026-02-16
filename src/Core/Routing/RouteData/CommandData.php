@@ -82,6 +82,7 @@ final readonly class CommandData extends AbstractRouteData
      * Supported formats:
      *  - `/command`                 — command without arguments
      *  - `/command_arg1_arg2`       — inline arguments via `_`
+     *  - `/command arg1_arg2`       — arguments separated by space, then by `_`
      *
      * All parts (name and arguments) are lowercased and
      * may contain only Latin letters a-z. Returns null if
@@ -101,8 +102,22 @@ final readonly class CommandData extends AbstractRouteData
             return null;
         }
 
+        // Если есть аргументы через пробел
         if ($rest !== '') {
-            return null;
+            $command = mb_strtolower($firstToken);
+
+            $arguments = array_map(
+                static fn (string $v): string => mb_strtolower($v),
+                array_filter(explode('_', $rest), static fn ($v) => $v !== '')
+            );
+
+            try {
+                CommandHelper::make($command, $arguments);
+            } catch (\InvalidArgumentException) {
+                return null;
+            }
+
+            return [$command, $arguments];
         }
 
         $segments = explode('_', $firstToken);
@@ -113,10 +128,13 @@ final readonly class CommandData extends AbstractRouteData
         }
 
         $command = mb_strtolower($commandRaw);
-        $arguments = array_map(static fn (string $v): string => mb_strtolower($v), array_filter($segments, static fn ($v) => $v !== ''));
+        $arguments = array_map(
+            static fn (string $v): string => mb_strtolower($v),
+            array_filter($segments, static fn ($v) => $v !== '')
+        );
 
         try {
-            CommandHelper::make($command, $arguments); // todo validate method
+            CommandHelper::make($command, $arguments);
         } catch (\InvalidArgumentException) {
             return null;
         }

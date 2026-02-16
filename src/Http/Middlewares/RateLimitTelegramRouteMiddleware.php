@@ -16,7 +16,7 @@ final class RateLimitTelegramRouteMiddleware implements TelegramRouteMiddlewareI
 
     public function __construct(private readonly int $maxRequests = 10, private readonly int $timeWindow = 60) {}
 
-    public function handle(Update $update, callable $next): mixed
+    public function handle(Update $update, \Closure $next): mixed
     {
         $userId = $this->getUserId($update);
 

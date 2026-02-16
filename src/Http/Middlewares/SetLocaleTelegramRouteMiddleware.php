@@ -21,7 +21,7 @@ final readonly class SetLocaleTelegramRouteMiddleware implements TelegramRouteMi
         private \Closure|string|null $userLocale = null
     ) {}
 
-    public function handle(Update $update, callable $next): mixed
+    public function handle(Update $update, \Closure $next): mixed
     {
         $locale = null;
         if ($this->userLocale instanceof \Closure) {
