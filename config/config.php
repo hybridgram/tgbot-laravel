@@ -58,7 +58,7 @@ return [
         // Directories to scan for controller classes with route attributes.
         // When empty, attribute routing is inactive.
         'directories' => [
-             app_path('Handlers'),
+            app_path('Handlers'),
         ],
 
         // Directories to exclude from scanning.

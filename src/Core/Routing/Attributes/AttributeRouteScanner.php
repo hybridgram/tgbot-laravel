@@ -156,7 +156,7 @@ final class AttributeRouteScanner
      * Filter classes to only include those in target directories.
      *
      * @param  array<mixed, mixed>  $classmap  FQCN => file path
-     * @return list<string>  Filtered FQCNs
+     * @return list<string> Filtered FQCNs
      */
     private function filterClassesByDirectories(array $classmap): array
     {

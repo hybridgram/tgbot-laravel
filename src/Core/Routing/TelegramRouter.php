@@ -40,7 +40,7 @@ final class TelegramRouter
      *     send_action?: ActionType
      * } $attributes
      */
-    public function group(array $attributes, \Closure $callback): void
+    public function group(array $attributes, Closure $callback): void
     {
         $group = new RouteGroup($attributes);
         $builder = $group->addAttributesToBuilder(new TelegramRouteBuilder);
@@ -324,9 +324,9 @@ final class TelegramRouter
     }
 
     /**
-     * @param  \Closure|string|string[]  $action
+     * @param  Closure|string|string[]  $action
      */
-    public function onMessage(\Closure|string|array $action, string $botId = '*', string|\Closure|null $pattern = null): void
+    public function onMessage(Closure|string|array $action, string $botId = '*', string|Closure|null $pattern = null): void
     {
         new TelegramRouteBuilder()
             ->forBot($botId)
@@ -334,9 +334,9 @@ final class TelegramRouter
     }
 
     /**
-     * @param  \Closure|string|string[]  $action
+     * @param  Closure|string|string[]  $action
      */
-    public function onBusinessMessageText(\Closure|string|array $action, string $botId = '*', string|\Closure|null $pattern = null): void
+    public function onBusinessMessageText(Closure|string|array $action, string $botId = '*', string|Closure|null $pattern = null): void
     {
         new TelegramRouteBuilder()
             ->forBot($botId)
@@ -344,12 +344,12 @@ final class TelegramRouter
     }
 
     /**
-     * @param  \Closure|string|string[]  $action
+     * @param  Closure|string|string[]  $action
      */
     public function onCommand(
-        \Closure|string|array $action,
+        Closure|string|array $action,
         string $botId = '*',
-        string|\Closure|null $pattern = null,
+        string|Closure|null $pattern = null,
         ?Closure $commandParamOptions = null,
     ): void {
         new TelegramRouteBuilder()
@@ -359,9 +359,9 @@ final class TelegramRouter
 
     /**
      * @param  array<MimeType|string>  $documentOptions
-     * @param  \Closure|string|string[]  $action
+     * @param  Closure|string|string[]  $action
      */
-    public function onDocument(\Closure|string|array $action, string $botId = '*', string|\Closure|null $pattern = null, ?array $documentOptions = null): void
+    public function onDocument(Closure|string|array $action, string $botId = '*', string|Closure|null $pattern = null, ?array $documentOptions = null): void
     {
         new TelegramRouteBuilder()
             ->forBot($botId)
@@ -369,9 +369,9 @@ final class TelegramRouter
     }
 
     /**
-     * @param  \Closure|string|string[]  $action
+     * @param  Closure|string|string[]  $action
      */
-    public function onPoll(\Closure|string|array $action, string $botId = '*', ?\Closure $pattern = null, ?bool $isAnonymous = null, ?PollType $pollType = null): void
+    public function onPoll(Closure|string|array $action, string $botId = '*', ?Closure $pattern = null, ?bool $isAnonymous = null, ?PollType $pollType = null): void
     {
         new TelegramRouteBuilder()
             ->forBot($botId)
@@ -379,9 +379,9 @@ final class TelegramRouter
     }
 
     /**
-     * @param  \Closure|string|string[]  $action
+     * @param  Closure|string|string[]  $action
      */
-    public function onPollClosed(\Closure|string|array $action, string $botId = '*', ?\Closure $pattern = null, ?bool $isAnonymous = null, ?PollType $pollType = null): void
+    public function onPollClosed(Closure|string|array $action, string $botId = '*', ?Closure $pattern = null, ?bool $isAnonymous = null, ?PollType $pollType = null): void
     {
         new TelegramRouteBuilder()
             ->forBot($botId)
@@ -389,9 +389,9 @@ final class TelegramRouter
     }
 
     /**
-     * @param  \Closure|string|string[]  $action
+     * @param  Closure|string|string[]  $action
      */
-    public function onPollAnswered(\Closure|string|array $action, string $botId = '*', ?\Closure $pattern = null, ?bool $isAnonymous = null, ?PollType $pollType = null): void
+    public function onPollAnswered(Closure|string|array $action, string $botId = '*', ?Closure $pattern = null, ?bool $isAnonymous = null, ?PollType $pollType = null): void
     {
         new TelegramRouteBuilder()
             ->forBot($botId)
@@ -399,9 +399,9 @@ final class TelegramRouter
     }
 
     /**
-     * @param  \Closure|string|string[]  $action
+     * @param  Closure|string|string[]  $action
      */
-    public function onPhoto(\Closure|string|array $action, string $botId = '*', ?\Closure $pattern = null): void
+    public function onPhoto(Closure|string|array $action, string $botId = '*', ?Closure $pattern = null): void
     {
         new TelegramRouteBuilder()
             ->forBot($botId)
@@ -409,9 +409,9 @@ final class TelegramRouter
     }
 
     /**
-     * @param  \Closure|string|string[]  $action
+     * @param  Closure|string|string[]  $action
      */
-    public function onPhotoMediaGroup(\Closure|string|array $action, string $botId = '*', string|\Closure|null $pattern = null): void
+    public function onPhotoMediaGroup(Closure|string|array $action, string $botId = '*', string|Closure|null $pattern = null): void
     {
         new TelegramRouteBuilder()
             ->forBot($botId)
@@ -419,9 +419,9 @@ final class TelegramRouter
     }
 
     /**
-     * @param  \Closure|string|string[]  $action
+     * @param  Closure|string|string[]  $action
      */
-    public function onVenue(\Closure|string|array $action, string $botId = '*'): void
+    public function onVenue(Closure|string|array $action, string $botId = '*'): void
     {
         new TelegramRouteBuilder()
             ->forBot($botId)
@@ -429,9 +429,9 @@ final class TelegramRouter
     }
 
     /**
-     * @param  \Closure|string|string[]  $action
+     * @param  Closure|string|string[]  $action
      */
-    public function onLocation(\Closure|string|array $action, string $botId = '*'): void
+    public function onLocation(Closure|string|array $action, string $botId = '*'): void
     {
         new TelegramRouteBuilder()
             ->forBot($botId)
@@ -439,9 +439,9 @@ final class TelegramRouter
     }
 
     /**
-     * @param  \Closure|string|string[]  $action
+     * @param  Closure|string|string[]  $action
      */
-    public function onAnimation(\Closure|string|array $action, string $botId = '*', ?\Closure $pattern = null): void
+    public function onAnimation(Closure|string|array $action, string $botId = '*', ?Closure $pattern = null): void
     {
         new TelegramRouteBuilder()
             ->forBot($botId)
@@ -449,9 +449,9 @@ final class TelegramRouter
     }
 
     /**
-     * @param  \Closure|string|string[]  $action
+     * @param  Closure|string|string[]  $action
      */
-    public function onAudio(\Closure|string|array $action, string $botId = '*', ?\Closure $pattern = null): void
+    public function onAudio(Closure|string|array $action, string $botId = '*', ?Closure $pattern = null): void
     {
         new TelegramRouteBuilder()
             ->forBot($botId)
@@ -459,9 +459,9 @@ final class TelegramRouter
     }
 
     /**
-     * @param  \Closure|string|string[]  $action
+     * @param  Closure|string|string[]  $action
      */
-    public function onSticker(\Closure|string|array $action, string $botId = '*', ?\Closure $pattern = null): void
+    public function onSticker(Closure|string|array $action, string $botId = '*', ?Closure $pattern = null): void
     {
         new TelegramRouteBuilder()
             ->forBot($botId)
@@ -469,9 +469,9 @@ final class TelegramRouter
     }
 
     /**
-     * @param  \Closure|string|string[]  $action
+     * @param  Closure|string|string[]  $action
      */
-    public function onVideoNote(\Closure|string|array $action, string $botId = '*', ?\Closure $pattern = null): void
+    public function onVideoNote(Closure|string|array $action, string $botId = '*', ?Closure $pattern = null): void
     {
         new TelegramRouteBuilder()
             ->forBot($botId)
@@ -479,9 +479,9 @@ final class TelegramRouter
     }
 
     /**
-     * @param  \Closure|string|string[]  $action
+     * @param  Closure|string|string[]  $action
      */
-    public function onVoice(\Closure|string|array $action, string $botId = '*', ?\Closure $pattern = null): void
+    public function onVoice(Closure|string|array $action, string $botId = '*', ?Closure $pattern = null): void
     {
         new TelegramRouteBuilder()
             ->forBot($botId)
@@ -489,9 +489,9 @@ final class TelegramRouter
     }
 
     /**
-     * @param  \Closure|string|string[]  $action
+     * @param  Closure|string|string[]  $action
      */
-    public function onStory(\Closure|string|array $action, string $botId = '*', ?\Closure $pattern = null): void
+    public function onStory(Closure|string|array $action, string $botId = '*', ?Closure $pattern = null): void
     {
         new TelegramRouteBuilder()
             ->forBot($botId)
@@ -499,9 +499,9 @@ final class TelegramRouter
     }
 
     /**
-     * @param  \Closure|string|string[]  $action
+     * @param  Closure|string|string[]  $action
      */
-    public function onPaidMedia(\Closure|string|array $action, string $botId = '*', ?\Closure $pattern = null): void
+    public function onPaidMedia(Closure|string|array $action, string $botId = '*', ?Closure $pattern = null): void
     {
         new TelegramRouteBuilder()
             ->forBot($botId)
@@ -509,9 +509,9 @@ final class TelegramRouter
     }
 
     /**
-     * @param  \Closure|string|string[]  $action
+     * @param  Closure|string|string[]  $action
      */
-    public function onContact(\Closure|string|array $action, string $botId = '*'): void
+    public function onContact(Closure|string|array $action, string $botId = '*'): void
     {
         new TelegramRouteBuilder()
             ->forBot($botId)
@@ -519,9 +519,9 @@ final class TelegramRouter
     }
 
     /**
-     * @param  \Closure|string|string[]  $action
+     * @param  Closure|string|string[]  $action
      */
-    public function onChecklist(\Closure|string|array $action, string $botId = '*'): void
+    public function onChecklist(Closure|string|array $action, string $botId = '*'): void
     {
         new TelegramRouteBuilder()
             ->forBot($botId)
@@ -529,9 +529,9 @@ final class TelegramRouter
     }
 
     /**
-     * @param  \Closure|string|string[]  $action
+     * @param  Closure|string|string[]  $action
      */
-    public function onDice(\Closure|string|array $action, string $botId = '*'): void
+    public function onDice(Closure|string|array $action, string $botId = '*'): void
     {
         new TelegramRouteBuilder()
             ->forBot($botId)
@@ -539,9 +539,9 @@ final class TelegramRouter
     }
 
     /**
-     * @param  \Closure|string|string[]  $action
+     * @param  Closure|string|string[]  $action
      */
-    public function onGame(\Closure|string|array $action, string $botId = '*'): void
+    public function onGame(Closure|string|array $action, string $botId = '*'): void
     {
         new TelegramRouteBuilder()
             ->forBot($botId)
@@ -549,9 +549,9 @@ final class TelegramRouter
     }
 
     /**
-     * @param  \Closure|string|string[]  $action
+     * @param  Closure|string|string[]  $action
      */
-    public function onInvoice(\Closure|string|array $action, string $botId = '*'): void
+    public function onInvoice(Closure|string|array $action, string $botId = '*'): void
     {
         new TelegramRouteBuilder()
             ->forBot($botId)
@@ -559,9 +559,9 @@ final class TelegramRouter
     }
 
     /**
-     * @param  \Closure|string|string[]  $action
+     * @param  Closure|string|string[]  $action
      */
-    public function onSuccessfulPayment(\Closure|string|array $action, string $botId = '*'): void
+    public function onSuccessfulPayment(Closure|string|array $action, string $botId = '*'): void
     {
         new TelegramRouteBuilder()
             ->forBot($botId)
@@ -569,9 +569,9 @@ final class TelegramRouter
     }
 
     /**
-     * @param  \Closure|string|string[]  $action
+     * @param  Closure|string|string[]  $action
      */
-    public function onPassportData(\Closure|string|array $action, string $botId = '*'): void
+    public function onPassportData(Closure|string|array $action, string $botId = '*'): void
     {
         new TelegramRouteBuilder()
             ->forBot($botId)
@@ -579,9 +579,9 @@ final class TelegramRouter
     }
 
     /**
-     * @param  \Closure|string|string[]  $action
+     * @param  Closure|string|string[]  $action
      */
-    public function onBusinessConnection(\Closure|string|array $action, string $botId = '*'): void
+    public function onBusinessConnection(Closure|string|array $action, string $botId = '*'): void
     {
         new TelegramRouteBuilder()
             ->forBot($botId)
@@ -589,9 +589,9 @@ final class TelegramRouter
     }
 
     /**
-     * @param  \Closure|string|string[]  $action
+     * @param  Closure|string|string[]  $action
      */
-    public function onReply(\Closure|string|array $action, string $botId = '*', \Closure|string|null $pattern = null): void
+    public function onReply(Closure|string|array $action, string $botId = '*', Closure|string|null $pattern = null): void
     {
         new TelegramRouteBuilder()
             ->forBot($botId)
@@ -599,9 +599,9 @@ final class TelegramRouter
     }
 
     /**
-     * @param  \Closure|string|string[]  $action
+     * @param  Closure|string|string[]  $action
      */
-    public function onExternalReply(\Closure|string|array $action, string $botId = '*', \Closure|string|null $pattern = null): void
+    public function onExternalReply(Closure|string|array $action, string $botId = '*', Closure|string|null $pattern = null): void
     {
         new TelegramRouteBuilder()
             ->forBot($botId)
@@ -609,9 +609,9 @@ final class TelegramRouter
     }
 
     /**
-     * @param  \Closure|string|string[]  $action
+     * @param  Closure|string|string[]  $action
      */
-    public function onQuote(\Closure|string|array $action, string $botId = '*', \Closure|string|null $pattern = null): void
+    public function onQuote(Closure|string|array $action, string $botId = '*', Closure|string|null $pattern = null): void
     {
         new TelegramRouteBuilder()
             ->forBot($botId)
@@ -619,9 +619,9 @@ final class TelegramRouter
     }
 
     /**
-     * @param  \Closure|string|string[]  $action
+     * @param  Closure|string|string[]  $action
      */
-    public function onReplyToStory(\Closure|string|array $action, string $botId = '*', \Closure|string|null $pattern = null): void
+    public function onReplyToStory(Closure|string|array $action, string $botId = '*', Closure|string|null $pattern = null): void
     {
         new TelegramRouteBuilder()
             ->forBot($botId)
@@ -629,9 +629,9 @@ final class TelegramRouter
     }
 
     /**
-     * @param  \Closure|string|string[]  $action
+     * @param  Closure|string|string[]  $action
      */
-    public function onNewChatTitle(\Closure|string|array $action, string $botId = '*'): void
+    public function onNewChatTitle(Closure|string|array $action, string $botId = '*'): void
     {
         new TelegramRouteBuilder()
             ->forBot($botId)
@@ -639,9 +639,9 @@ final class TelegramRouter
     }
 
     /**
-     * @param  \Closure|string|string[]  $action
+     * @param  Closure|string|string[]  $action
      */
-    public function onNewChatPhoto(\Closure|string|array $action, string $botId = '*'): void
+    public function onNewChatPhoto(Closure|string|array $action, string $botId = '*'): void
     {
         new TelegramRouteBuilder()
             ->forBot($botId)
@@ -649,9 +649,9 @@ final class TelegramRouter
     }
 
     /**
-     * @param  \Closure|string|string[]  $action
+     * @param  Closure|string|string[]  $action
      */
-    public function onDeleteChatPhoto(\Closure|string|array $action, string $botId = '*'): void
+    public function onDeleteChatPhoto(Closure|string|array $action, string $botId = '*'): void
     {
         new TelegramRouteBuilder()
             ->forBot($botId)
@@ -659,9 +659,9 @@ final class TelegramRouter
     }
 
     /**
-     * @param  \Closure|string|string[]  $action
+     * @param  Closure|string|string[]  $action
      */
-    public function onMessageAutoDeleteTimerChanged(\Closure|string|array $action, string $botId = '*'): void
+    public function onMessageAutoDeleteTimerChanged(Closure|string|array $action, string $botId = '*'): void
     {
         new TelegramRouteBuilder()
             ->forBot($botId)
@@ -669,9 +669,9 @@ final class TelegramRouter
     }
 
     /**
-     * @param  \Closure|string|string[]  $action
+     * @param  Closure|string|string[]  $action
      */
-    public function onPinnedMessage(\Closure|string|array $action, string $botId = '*'): void
+    public function onPinnedMessage(Closure|string|array $action, string $botId = '*'): void
     {
         new TelegramRouteBuilder()
             ->forBot($botId)
@@ -679,9 +679,9 @@ final class TelegramRouter
     }
 
     /**
-     * @param  \Closure|string|string[]  $action
+     * @param  Closure|string|string[]  $action
      */
-    public function onGeneralForumTopicEvent(\Closure|string|array $action, string $botId = '*'): void
+    public function onGeneralForumTopicEvent(Closure|string|array $action, string $botId = '*'): void
     {
         new TelegramRouteBuilder()
             ->forBot($botId)
@@ -689,9 +689,9 @@ final class TelegramRouter
     }
 
     /**
-     * @param  \Closure|string|string[]  $action
+     * @param  Closure|string|string[]  $action
      */
-    public function onBoostAdded(\Closure|string|array $action, string $botId = '*'): void
+    public function onBoostAdded(Closure|string|array $action, string $botId = '*'): void
     {
         new TelegramRouteBuilder()
             ->forBot($botId)
@@ -699,11 +699,11 @@ final class TelegramRouter
     }
 
     /**
-     * @param  \Closure|string|string[]  $action
-     * @param  \Closure|string|null  $pattern  Pattern for action
+     * @param  Closure|string|string[]  $action
+     * @param  Closure|string|null  $pattern  Pattern for action
      * @param  array<string, string|null>|array<int, QueryParamInterface>|null  $queryParams  Query parameter filters: key => value for value check, key => null for existence check, or array of QueryParamInterface objects
      */
-    public function onCallbackQuery(\Closure|string|array $action, string $botId = '*', \Closure|string|null $pattern = '*', ?array $queryParams = null): void
+    public function onCallbackQuery(Closure|string|array $action, string $botId = '*', Closure|string|null $pattern = '*', ?array $queryParams = null): void
     {
         new TelegramRouteBuilder()
             ->forBot($botId)
@@ -711,9 +711,9 @@ final class TelegramRouter
     }
 
     /**
-     * @param  \Closure|string|string[]  $action
+     * @param  Closure|string|string[]  $action
      */
-    public function onAny(\Closure|string|array $action, string $botId = '*'): void
+    public function onAny(Closure|string|array $action, string $botId = '*'): void
     {
         new TelegramRouteBuilder()
             ->forBot($botId)
@@ -721,10 +721,10 @@ final class TelegramRouter
     }
 
     /**
-     * @param  \Closure|string|string[]  $action
+     * @param  Closure|string|string[]  $action
      * @param  array<ChatMemberStatus>|null  $allowedStatuses
      */
-    public function onMyChatMember(\Closure|string|array $action, string $botId = '*', ?bool $isBot = null, ?array $allowedStatuses = null): void
+    public function onMyChatMember(Closure|string|array $action, string $botId = '*', ?bool $isBot = null, ?array $allowedStatuses = null): void
     {
         new TelegramRouteBuilder()
             ->forBot($botId)
@@ -732,10 +732,10 @@ final class TelegramRouter
     }
 
     /**
-     * @param  \Closure|string|string[]  $action
+     * @param  Closure|string|string[]  $action
      * @param  array<ChatMemberStatus>|null  $allowedStatuses  Allowed statuses for newChatMember. null - any statuses
      */
-    public function onChatMember(\Closure|string|array $action, string $botId = '*', ?bool $isBot = null, ?array $allowedStatuses = null): void
+    public function onChatMember(Closure|string|array $action, string $botId = '*', ?bool $isBot = null, ?array $allowedStatuses = null): void
     {
         new TelegramRouteBuilder()
             ->forBot($botId)
@@ -743,9 +743,9 @@ final class TelegramRouter
     }
 
     /**
-     * @param  \Closure|string|string[]  $action
+     * @param  Closure|string|string[]  $action
      */
-    public function onFallback(\Closure|string|array $action, string $botId = '*'): void
+    public function onFallback(Closure|string|array $action, string $botId = '*'): void
     {
         new TelegramRouteBuilder()
             ->forBot($botId)

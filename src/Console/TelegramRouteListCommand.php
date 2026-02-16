@@ -284,7 +284,7 @@ final class TelegramRouteListCommand extends Command
                     $property->setAccessible(true);
                     $expectedValue = $property->getValue($item);
 
-                    if ($expectedValue instanceof \Closure) {
+                    if ($expectedValue instanceof Closure) {
                         $params[] = sprintf('%s (\Closure)', $paramKey);
                     } else {
                         $params[] = sprintf('%s=%s', $paramKey, $expectedValue);

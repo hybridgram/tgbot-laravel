@@ -20,7 +20,7 @@ use HybridGram\Core\Routing\ChatType;
 #[ForBot('main')]
 #[ChatTypes([ChatType::PRIVATE])]
 #[TgMiddlewares([SampleMiddleware::class])]
-class SampleController
+final class SampleController
 {
     #[OnCommand(pattern: '/start')]
     public function start(): void {}

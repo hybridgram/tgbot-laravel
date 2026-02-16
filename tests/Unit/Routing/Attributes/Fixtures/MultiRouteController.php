@@ -12,7 +12,7 @@ use HybridGram\Core\Routing\Attributes\OnLocation;
 use HybridGram\Core\Routing\Attributes\OnVenue;
 
 #[ForBot('secondary')]
-class MultiRouteController
+final class MultiRouteController
 {
     #[OnCommand(pattern: '/help')]
     public function help(): void {}
