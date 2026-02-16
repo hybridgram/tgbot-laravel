@@ -26,7 +26,7 @@
         "symfony/console": "^6.0|^7.0",
         "symfony/process": "^6.4|^7.0",
         "phptg/bot-api": "0.14.1",
-      "ext-pcntl": "*"
+        "ext-pcntl": "*"
     },
     "require-dev": {
         "larastan/larastan": "^3.0",
@@ -89,5 +89,6 @@
         "release:patch": "conventional-changelog --patch --commit",
         "release:minor": "conventional-changelog --minor --commit",
         "release:major": "conventional-changelog --major --commit"
-    }
+    },
+    "version": "0.2.0"
 }
