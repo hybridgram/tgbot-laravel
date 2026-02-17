@@ -248,8 +248,8 @@ final class PollingUpdateMode extends AbstractUpdateMode
 
         $text = preg_replace('/\s+/u', ' ', mb_trim($text)) ?? '';
         $max = 160;
-        if ($this->stringLength($text) > $max) {
-            $text = $this->stringSlice($text, 0, $max - 1).'…';
+        if (mb_strlen($text) > $max) {
+            $text = mb_substr($text, 0, $max - 1).'…';
         }
 
         return 'text='.$text;
@@ -272,16 +272,6 @@ final class PollingUpdateMode extends AbstractUpdateMode
         }
 
         return "<fg=yellow>payload:</fg=yellow>\n".$json;
-    }
-
-    private function stringLength(string $value): int
-    {
-        return function_exists('mb_strlen') ? mb_strlen($value) : mb_strlen($value);
-    }
-
-    private function stringSlice(string $value, int $start, int $length): string
-    {
-        return function_exists('mb_substr') ? mb_substr($value, $start, $length) : mb_substr($value, $start, $length);
     }
 
     private function getCommandBoolOption(string $name): bool
