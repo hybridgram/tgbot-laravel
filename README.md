@@ -1,6 +1,8 @@
 # HybridGram
 Laravel toolkit for fast Telegram bots creation with Go-powered webhook updating.
 
+![Header image](assets/header.jpg "Text to show on mouseover")
+
 [![Latest Stable Version](http://poser.pugx.org/hybridgram/tgbot-laravel/v)](https://packagist.org/packages/hybridgram/tgbot-laravel) 
 [![Total Downloads](http://poser.pugx.org/hybridgram/tgbot-laravel/downloads)](https://packagist.org/packages/hybridgram/tgbot-laravel)
 [![PHP Version Require](http://poser.pugx.org/hybridgram/tgbot-laravel/require/php)](https://packagist.org/packages/hybridgram/tgbot-laravel)
