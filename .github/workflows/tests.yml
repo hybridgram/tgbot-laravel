@@ -8,6 +8,10 @@ on:
       - main
 jobs:
   tests:
+    permissions:
+      contents: read
+      pull-requests: write
+      packages: read
     name: Tests
     runs-on: ubuntu-latest
 
@@ -25,10 +29,13 @@ jobs:
         with:
           php-version: '8.4'
           extensions: mbstring, xml, ctype, json
-          coverage: none
+          coverage: pcov
 
       - name: Install dependencies
         run: composer install --prefer-dist --no-progress --no-interaction
 
-      - name: Run tests
-        run: vendor/bin/pest
+      - name: Run tests with coverage
+        run: vendor/bin/pest --coverage --parallel
+
+      - name: Run mutation tests
+        run: vendor/bin/pest --mutate --parallel --everything --covered-only
