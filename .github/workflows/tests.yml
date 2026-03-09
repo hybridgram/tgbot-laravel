@@ -25,10 +25,10 @@ jobs:
         with:
           php-version: '8.4'
           extensions: mbstring, xml, ctype, json
-          coverage: none
+          coverage: pcov
 
       - name: Install dependencies
         run: composer install --prefer-dist --no-progress --no-interaction
 
       - name: Run tests
-        run: vendor/bin/pest
+        run: vendor/bin/pest --coverage --type-coverage --mutate --parallel
