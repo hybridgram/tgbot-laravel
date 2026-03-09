@@ -8,6 +8,10 @@ on:
       - main
 jobs:
   tests:
+    permissions:
+      contents: read
+      pull-requests: write
+      packages: read
     name: Tests
     runs-on: ubuntu-latest
 

@@ -10,6 +10,10 @@ on:
 
 jobs:
   phpstan:
+    permissions:
+      contents: read
+      pull-requests: write
+      packages: read
     name: PHPStan
     runs-on: ubuntu-latest
 
