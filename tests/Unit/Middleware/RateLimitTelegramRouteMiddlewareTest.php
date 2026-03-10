@@ -62,7 +62,7 @@ it('default maxRequests is exactly 10', function () {
     $message = new Message(messageId: 1, date: new DateTimeImmutable, chat: $chat, from: $user, text: 'hi');
     $update = new Update(updateId: 1, message: $message);
 
-    $middleware = new RateLimitTelegramRouteMiddleware;
+    $middleware = new RateLimitTelegramRouteMiddleware();
     $next = fn (Update $u) => 'ok';
 
     for ($i = 0; $i < 10; $i++) {

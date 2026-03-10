@@ -14,7 +14,7 @@ final class StateManager implements StateManagerInterface
 
     private const CACHE_PREFIX_USER = 'telegram_state_user_';
 
-    private const CACHE_TTL = 86400; // 24 hours
+    private const  CACHE_TTL = 86400; // 24 hours
 
     public function getChatState(Chat $chat): ?State
     {

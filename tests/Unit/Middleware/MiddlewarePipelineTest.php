@@ -7,7 +7,7 @@ use HybridGram\Core\Middleware\TelegramRouteMiddlewareInterface;
 use Phptg\BotApi\Type\Update\Update;
 
 it('executes middleware in correct order', function () {
-    $pipeline = new MiddlewarePipeline;
+    $pipeline = new MiddlewarePipeline();
 
     $executionOrder = [];
 
@@ -61,7 +61,7 @@ it('executes middleware in correct order', function () {
 });
 
 it('handles empty middleware pipeline', function () {
-    $pipeline = new MiddlewarePipeline;
+    $pipeline = new MiddlewarePipeline();
 
     $update = new Update(1);
     $finalHandler = function (Update $update) {
@@ -74,7 +74,7 @@ it('handles empty middleware pipeline', function () {
 });
 
 it('throws exception for invalid middleware', function () {
-    $pipeline = new MiddlewarePipeline;
+    $pipeline = new MiddlewarePipeline();
 
     expect(fn () => $pipeline->addMany(['invalid']))
         ->toThrow(InvalidArgumentException::class, 'All middlewares must implement MiddlewareInterface');
