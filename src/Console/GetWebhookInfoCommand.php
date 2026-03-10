@@ -23,7 +23,7 @@ final class GetWebhookInfoCommand extends Command
         $config = BotConfig::getBotConfig($botId);
 
         if ($config === null) {
-            $this->error("Bot config not found for bot: {$botId}");
+            $this->error("Bot config not found for bot: $botId");
 
             return;
         }
@@ -34,9 +34,9 @@ final class GetWebhookInfoCommand extends Command
         $info = $apiWrapper->getWebhookInfo();
 
         if ($info instanceof FailResult) {
-            $this->error("Failed to get webhook info for bot {$botId}: {$info->response->body}");
+            $this->error("Failed to get webhook info for bot $botId: {$info->response->body}");
         } else {
-            $this->info("Webhook info for bot {$botId}:");
+            $this->info("Webhook info for bot $botId:");
             $this->line(json_encode($info, JSON_PRETTY_PRINT));
         }
     }

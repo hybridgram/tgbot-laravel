@@ -24,7 +24,7 @@ final class SetWebhookCommand extends Command
         $config = BotConfig::getBotConfig($botId);
 
         if ($config === null) {
-            $this->error("Bot config not found for bot: {$botId}");
+            $this->error("Bot config not found for bot: $botId");
 
             return;
         }
@@ -43,7 +43,7 @@ final class SetWebhookCommand extends Command
                 $host = $parsedUrl['host'] ?? '';
                 $path = $parsedUrl['path'] ?? '';
                 $query = isset($parsedUrl['query']) ? '?'.$parsedUrl['query'] : '';
-                $url = "{$scheme}://{$host}:{$webhookConfig->port}{$path}{$query}";
+                $url = "$scheme://$host:$webhookConfig->port$path$query";
             }
         }
 
@@ -63,10 +63,10 @@ final class SetWebhookCommand extends Command
         if ($result instanceof FailResult) {
             $this->error("Failed to set webhook: {$result->response->body}");
         } else {
-            $this->info("Webhook set successfully for bot: {$botId}");
-            $this->line("URL: {$url}");
+            $this->info("Webhook set successfully for bot: $botId");
+            $this->line("URL: $url");
             if ($webhookConfig->ipAddress) {
-                $this->line("IP Address: {$webhookConfig->ipAddress}");
+                $this->line("IP Address: $webhookConfig->ipAddress");
             }
             if ($allowedUpdates !== null) {
                 $this->line('Allowed Updates: '.implode(', ', $allowedUpdates));

@@ -18,7 +18,7 @@
         }
     ],
     "require": {
-        "php": "^8.4",
+        "php": "^8.2",
         "laravel/prompts": "^0.3.7",
         "laravel/serializable-closure": "^2.0",
         "nyholm/psr7": "^1.8",
@@ -26,7 +26,8 @@
         "symfony/console": "^6.0|^7.0",
         "symfony/process": "^6.4|^7.0",
         "phptg/bot-api": "0.14.1",
-        "ext-pcntl": "*"
+        "ext-pcntl": "*",
+        "ext-curl": "*"
     },
     "require-dev": {
         "larastan/larastan": "^3.0",
@@ -34,7 +35,7 @@
         "laravel/pint": "^1.25",
         "marcocesarato/php-conventional-changelog": "^1.17",
         "orchestra/testbench": "^9.0",
-        "pestphp/pest": "^4.1",
+        "pestphp/pest": "^3.0",
         "phpstan/phpstan": "^2.1"
     },
     "autoload": {
@@ -54,6 +55,9 @@
         "allow-plugins": {
             "pestphp/pest-plugin": true,
             "php-http/discovery": true
+        },
+        "platform": {
+            "php": "8.2.0"
         },
         "preferred-install": "dist",
         "sort-packages": true

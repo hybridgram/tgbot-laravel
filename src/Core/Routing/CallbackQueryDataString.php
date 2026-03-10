@@ -15,9 +15,9 @@ namespace HybridGram\Core\Routing;
  */
 final class CallbackQueryDataString implements \Stringable
 {
-    private const int MIN_BYTES = 1;
+    private const MIN_BYTES = 1;
 
-    private const int MAX_BYTES = 64;
+    private const MAX_BYTES = 64;
 
     /** @var array<string, string> */
     private array $params = [];

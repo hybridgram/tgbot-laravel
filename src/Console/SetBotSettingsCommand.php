@@ -40,7 +40,7 @@ final class SetBotSettingsCommand extends Command
         $config = BotConfig::getBotConfig($botId);
 
         if ($config === null) {
-            $this->error("Bot config not found for bot: {$botId}");
+            $this->error("Bot config not found for bot: $botId");
 
             return self::FAILURE;
         }
@@ -48,10 +48,10 @@ final class SetBotSettingsCommand extends Command
         $settings = BotSettingsRegistry::get($botId);
 
         if ($settings === null) {
-            $this->warn("No settings registered for bot: {$botId}");
+            $this->warn("No settings registered for bot: $botId");
             $this->line('Register settings in your service provider:');
             $this->line('');
-            $this->line("    BotSettingsRegistry::forBot('{$botId}', function () {");
+            $this->line("    BotSettingsRegistry::forBot('$botId', function () {");
             $this->line('        return BotSettings::create()');
             $this->line("            ->description('Your bot description')");
             $this->line("            ->description('Описание вашего бота', 'ru');");
@@ -61,7 +61,7 @@ final class SetBotSettingsCommand extends Command
         }
 
         if ($settings->isEmpty()) {
-            $this->warn("Settings for bot '{$botId}' are empty.");
+            $this->warn("Settings for bot '$botId' are empty.");
 
             return self::SUCCESS;
         }
@@ -72,7 +72,7 @@ final class SetBotSettingsCommand extends Command
             return self::SUCCESS;
         }
 
-        $this->info("Applying settings for bot: {$botId}");
+        $this->info("Applying settings for bot: $botId");
 
         $dispatcher = App::make(OutgoingDispatcherInterface::class);
         $api = (new TelegramBotApi($config->token, 'https://api.telegram.org', null, $dispatcher))
@@ -85,13 +85,13 @@ final class SetBotSettingsCommand extends Command
 
         if ($applier->allSuccessful()) {
             $this->newLine();
-            $this->info("All settings applied successfully for bot: {$botId}");
+            $this->info("All settings applied successfully for bot: $botId");
 
             return self::SUCCESS;
         }
 
         $this->newLine();
-        $this->error("Some settings failed to apply for bot: {$botId}");
+        $this->error("Some settings failed to apply for bot: $botId");
 
         return self::FAILURE;
     }
@@ -178,7 +178,7 @@ final class SetBotSettingsCommand extends Command
                     : 'default';
                 $lang = $cmdConfig['languageCode'] ?: 'all';
                 $count = count($cmdConfig['commands']);
-                $this->line("  [{$index}] scope: {$scopeLabel}, lang: {$lang}, commands: {$count}");
+                $this->line("  [$index] scope: $scopeLabel, lang: $lang, commands: $count");
             }
         }
     }
@@ -190,9 +190,9 @@ final class SetBotSettingsCommand extends Command
     {
         foreach ($results as $key => $result) {
             if ($result['success']) {
-                $this->line("  <info>[OK]</info> {$key}");
+                $this->line("  <info>[OK]</info> $key");
             } else {
-                $this->line("  <error>[FAIL]</error> {$key}: {$result['error']}");
+                $this->line("  <error>[FAIL]</error> $key: {$result['error']}");
             }
         }
     }

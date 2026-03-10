@@ -24,7 +24,7 @@ final class DeleteWebhookCommand extends Command
         $config = BotConfig::getBotConfig($botId);
 
         if ($config === null) {
-            $this->error("Bot config not found for bot: {$botId}");
+            $this->error("Bot config not found for bot: $botId");
 
             return;
         }
@@ -38,9 +38,9 @@ final class DeleteWebhookCommand extends Command
         $result = $telegram->deleteWebhook($dropPendingUpdates);
 
         if ($result instanceof FailResult) {
-            $this->error("Failed to delete webhook for bot {$botId}: {$result->response->body}");
+            $this->error("Failed to delete webhook for bot $botId: {$result->response->body}");
         } else {
-            $this->info("Webhook deleted successfully for bot: {$botId}");
+            $this->info("Webhook deleted successfully for bot: $botId");
             if ($dropPendingUpdates) {
                 $this->line('Pending updates were dropped');
             }

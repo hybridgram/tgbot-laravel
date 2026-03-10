@@ -144,9 +144,9 @@ final class SendTelegramMethodJob implements ShouldQueue
     {
         $nextKey = $this->fifoNextKey();
         $processingKey = $this->fifoProcessingKey();
-        $delayMs = 100;
 
-        return $this->withFifoLock(function () use ($nextKey, $processingKey, $delayMs): array {
+        return $this->withFifoLock(function () use ($nextKey, $processingKey): array {
+            $delayMs = 100;
             // Initialize "next" pointer if missing.
             Cache::add($nextKey, 1, 60 * 60 * 24 * 30);
 

@@ -11,11 +11,11 @@ use Illuminate\Support\Facades\Cache;
 
 final class CacheOutgoingRateLimiter implements OutgoingRateLimiterInterface
 {
-    private const int WINDOW_MILLISECONDS = 60_000;
+    private const WINDOW_MILLISECONDS = 60_000;
 
-    private const int CACHE_TTL_SECONDS = 180;
+    private const CACHE_TTL_SECONDS = 180;
 
-    private const string CACHE_KEY_PREFIX = 'tg:out:';
+    private const CACHE_KEY_PREFIX = 'tg:out:';
 
     public function __construct(
         private readonly int $rateLimitPerMinute,

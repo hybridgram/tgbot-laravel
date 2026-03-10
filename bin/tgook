@@ -26,7 +26,7 @@ function detectPlatform(): array
         $platform = 'linux';
         $ext = '';
     } else {
-        fwrite(STDERR, "Error: Unsupported OS: {$os}\n");
+        fwrite(STDERR, "Error: Unsupported OS: $os\n");
         exit(1);
     }
     
@@ -35,7 +35,7 @@ function detectPlatform(): array
     } elseif (strpos($arch, 'aarch64') !== false || strpos($arch, 'arm64') !== false) {
         $architecture = 'arm64';
     } else {
-        fwrite(STDERR, "Error: Unsupported architecture: {$arch}\n");
+        fwrite(STDERR, "Error: Unsupported architecture: $arch\n");
         exit(1);
     }
     
@@ -66,12 +66,12 @@ function getLatestRelease(): array
     $error = curl_error($ch);
 
     if ($error) {
-        fwrite(STDERR, "Error: Failed to fetch release info: {$error}\n");
+        fwrite(STDERR, "Error: Failed to fetch release info: $error\n");
         exit(1);
     }
     
     if ($httpCode !== 200) {
-        fwrite(STDERR, "Error: GitHub API returned status {$httpCode}\n");
+        fwrite(STDERR, "Error: GitHub API returned status $httpCode\n");
         exit(1);
     }
     
@@ -90,7 +90,7 @@ function findAsset(array $release, array $platform): ?array
     
     foreach ($release['assets'] ?? [] as $asset) {
         $name = $asset['name'] ?? '';
-        if (preg_match("/^{$pattern}$/", $name)) {
+        if (preg_match("/^$pattern$/", $name)) {
             return $asset;
         }
     }
@@ -104,7 +104,7 @@ function downloadFile(string $url, string $destination): bool
     $fp = fopen($destination, 'wb');
     
     if (!$fp) {
-        fwrite(STDERR, "Error: Cannot create file: {$destination}\n");
+        fwrite(STDERR, "Error: Cannot create file: $destination\n");
         return false;
     }
     
@@ -127,7 +127,7 @@ function downloadFile(string $url, string $destination): bool
     
     if (!$success || $httpCode !== 200) {
         @unlink($destination);
-        fwrite(STDERR, "Error: Failed to download file: " . ($error ?: "HTTP {$httpCode}") . "\n");
+        fwrite(STDERR, "Error: Failed to download file: " . ($error ?: "HTTP $httpCode") . "\n");
         return false;
     }
     
@@ -243,14 +243,14 @@ function installBinary(): string
     }
     
     if (!rename($extractedFile, $binaryPath)) {
-        fwrite(STDERR, "Error: Failed to move binary to {$binaryPath}\n");
+        fwrite(STDERR, "Error: Failed to move binary to $binaryPath\n");
         exit(1);
     }
     
     @chmod($binaryPath, 0755);
     @file_put_contents(VERSION_FILE, $latestVersion);
     
-    fwrite(STDERR, "Installed go-proxy {$latestVersion}\n");
+    fwrite(STDERR, "Installed go-proxy $latestVersion\n");
     
     return $binaryPath;
 }
@@ -258,7 +258,7 @@ function installBinary(): string
 $binaryPath = installBinary();
 
 if (!file_exists($binaryPath) || !is_executable($binaryPath)) {
-    fwrite(STDERR, "Error: Binary not found or not executable: {$binaryPath}\n");
+    fwrite(STDERR, "Error: Binary not found or not executable: $binaryPath\n");
     exit(1);
 }
 

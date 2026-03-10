@@ -19,11 +19,7 @@ final class RouteGroup
      *     middlewares?: array<int, string|object>,
      *     send_action?: ActionType } $attributes
      */
-    private array $attributes {
-        get {
-            return $this->attributes;
-        }
-    }
+    private array $attributes = [];
 
     /**
      * @param array{
@@ -148,5 +144,10 @@ final class RouteGroup
     public function getAttribute(string $key, mixed $default = null): mixed
     {
         return $this->attributes[$key] ?? $default;
+    }
+
+    public function getAttributes(): array
+    {
+        return $this->attributes;
     }
 }
