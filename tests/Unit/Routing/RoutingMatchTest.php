@@ -103,7 +103,9 @@ test('command route delegates to command data match', function (): void {
         updateId: 1,
         message: new Message(
             messageId: 10,
-            date: DateTimeImmutable::createFromTimestamp(time()),
+            date: PHP_VERSION_ID >= 80400
+                ? DateTimeImmutable::createFromTimestamp(time())
+                : (new DateTimeImmutable())->setTimestamp(time()),
             chat: new Chat(id: 123, type: 'private'),
             text: '/start',
         ),
@@ -128,7 +130,9 @@ test('command route supports inline underscore arguments', function (): void {
         updateId: 2,
         message: new Message(
             messageId: 11,
-            date: DateTimeImmutable::createFromTimestamp(time()),
+            date: PHP_VERSION_ID >= 80400
+                ? DateTimeImmutable::createFromTimestamp(time())
+                : (new DateTimeImmutable())->setTimestamp(time()),
             chat: new Chat(id: 123, type: 'private'),
             text: '/start_arg1_arg2',
         ),

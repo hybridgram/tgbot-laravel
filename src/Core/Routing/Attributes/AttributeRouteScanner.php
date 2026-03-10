@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace HybridGram\Core\Routing\Attributes;
 
+use FilesystemIterator;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use ReflectionClass;
@@ -222,7 +223,7 @@ final class AttributeRouteScanner
             }
 
             $iterator = new RecursiveIteratorIterator(
-                new RecursiveDirectoryIterator($directory, RecursiveDirectoryIterator::SKIP_DOTS),
+                new RecursiveDirectoryIterator($directory, FilesystemIterator::SKIP_DOTS),
             );
 
             /** @var SplFileInfo $file */

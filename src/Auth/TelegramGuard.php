@@ -97,7 +97,7 @@ final class TelegramGuard implements Guard
     /**
      * Set the current user.
      */
-    public function setUser(?Authenticatable $user): static
+    public function setUser(?Authenticatable $user): TelegramGuard
     {
         $this->user = $user;
 

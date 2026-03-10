@@ -258,7 +258,7 @@ final class TelegramBotApi
      * Methods that should always go directly (bypass dispatcher)
      * These are informational/getting/setting webhook methods, not outgoing messages
      */
-    private const array SERVICE_METHODS = [
+    private const SERVICE_METHODS = [
         'getUpdates',
         'setWebhook',
         'deleteWebhook',

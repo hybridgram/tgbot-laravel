@@ -8,11 +8,11 @@ use HybridGram\Core\Config\BotConfig;
 
 final readonly class PollingRunStrategy
 {
-    public const string NONE = 'none';
+    public const NONE = 'none';
 
-    public const string SINGLE = 'single';
+    public const SINGLE = 'single';
 
-    public const string MULTIPLE = 'multiple';
+    public const MULTIPLE = 'multiple';
 
     private function __construct(
         public string $type,

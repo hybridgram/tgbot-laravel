@@ -64,7 +64,7 @@ final class StartPollingCommand extends Command
     {
         $artisan = base_path('artisan');
         if (! is_file($artisan)) {
-            $this->error("Cannot start multiple polling processes: artisan not found at '{$artisan}'.");
+            $this->error("Cannot start multiple polling processes: artisan not found at '$artisan'.");
 
             return;
         }
@@ -73,7 +73,7 @@ final class StartPollingCommand extends Command
 
         $processes = [];
         foreach ($pollingConfigs as $config) {
-            $processes[] = $this->startChildPollingProcess(PHP_BINARY, $artisan, $config->botId);
+            $processes[] = $this->startChildPollingProcess($artisan, $config->botId);
         }
 
         $stopRequested = false;
@@ -120,7 +120,7 @@ final class StartPollingCommand extends Command
     {
         $artisan = base_path('artisan');
         if (! is_file($artisan)) {
-            $this->error("Cannot use --hot-reload: artisan not found at '{$artisan}'.");
+            $this->error("Cannot use --hot-reload: artisan not found at '$artisan'.");
 
             return;
         }
@@ -150,7 +150,7 @@ final class StartPollingCommand extends Command
                 pcntl_signal_dispatch();
             }
 
-            $process = $this->startChildPollingProcess(PHP_BINARY, $artisan);
+            $process = $this->startChildPollingProcess($artisan);
             $restartCount++;
             $lastRestartAt = microtime(true);
 
@@ -304,10 +304,10 @@ final class StartPollingCommand extends Command
         return $latest;
     }
 
-    private function startChildPollingProcess(string $phpBinary, string $artisanPath, ?string $botIdOverride = null): Process
+    private function startChildPollingProcess(string $artisanPath, ?string $botIdOverride = null): Process
     {
         $args = [
-            $phpBinary,
+            PHP_BINARY,
             // Ensure unbuffered output so logs (e.g. --log-updates) are visible immediately when piped.
             '-d',
             'output_buffering=0',
