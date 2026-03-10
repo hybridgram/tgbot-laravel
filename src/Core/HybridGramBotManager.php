@@ -90,8 +90,10 @@ final class HybridGramBotManager
 
     private function addBotIfNotExists(BotConfig $botConfig): void
     {
-        if (array_any($this->botConfigs, fn ($existingConfig) => $existingConfig->botId === $botConfig->botId)) {
-            return;
+        foreach ($this->botConfigs as $existingConfig) {
+            if ($existingConfig->botId === $botConfig->botId) {
+                return;
+            }
         }
 
         $this->botConfigs[] = $botConfig;

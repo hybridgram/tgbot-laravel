@@ -19,7 +19,7 @@ final class RouteGroup
      *     middlewares?: array<int, string|object>,
      *     send_action?: ActionType } $attributes
      */
-    private array $attributes = [];
+    private array $attributes;
 
     /**
      * @param array{
@@ -146,6 +146,9 @@ final class RouteGroup
         return $this->attributes[$key] ?? $default;
     }
 
+    /**
+     * @return array{for_bot: string, from_state?: list<string>, to_state?: string|list<string>|null, chat_type?: ChatType|list<ChatType>|null, cache_key?: string|list<string>, cache_ttl?: int, middlewares?: array<int, string|object>, send_action?: ActionType}
+     */
     public function getAttributes(): array
     {
         return $this->attributes;
