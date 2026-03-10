@@ -18,6 +18,8 @@ jobs:
     permissions:
       contents: read
       security-events: write
+    env:
+      COMPOSER_IGNORE_PLATFORM_REQS: ext-pcntl,ext-curl
 
     steps:
       - name: Checkout code
